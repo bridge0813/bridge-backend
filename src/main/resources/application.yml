@@ -1,0 +1,28 @@
+#spring:
+#  datasource:
+#    url: jdbc:h2:tcp://localhost/~/bridge
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bridge?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: bridge-project
+    password: 1234!
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #       show_sql: true
+        format_sql: true
+      show_sql: true
+
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
