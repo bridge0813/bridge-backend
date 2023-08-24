@@ -12,7 +12,7 @@ public class StaticMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
+    @Column(name = "staticMessage_id")
     private Long id;
 
     private String content;
