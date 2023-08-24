@@ -46,4 +46,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StaticMessage> staticMessages = new ArrayList<>();         // 유저가 만든 지정 메세지 목록
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
 }
