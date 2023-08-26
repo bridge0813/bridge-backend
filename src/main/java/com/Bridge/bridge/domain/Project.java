@@ -4,8 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -24,9 +23,9 @@ public class Project {
 
     private String dueDate;         //기간
 
-    private int recruitNum;         //모집인원 수
-
-    private String recruitSkill;    //모집 분야
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name =  "part", joinColumns = @JoinColumn(name = "project_id"))
+    private List<Part> recruit = new ArrayList<>(); // 모집 분야, 모집 인원
 
     private String tagLimit;        //지원자 태그 제한록
 
