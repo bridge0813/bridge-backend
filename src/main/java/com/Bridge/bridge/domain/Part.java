@@ -14,9 +14,12 @@ public class Part {
 
     private String recruitSkill;    //모집 분야
 
-    public Part(int recruitNum, String recruitSkill) {
+    private String requirement; // 모집 요건
+
+    public Part(int recruitNum, String recruitSkill, String requirement) {
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;
+        this.requirement = requirement;
     }
 
     @Override
@@ -24,11 +27,11 @@ public class Part {
         if (this == o) return true;
         if (!(o instanceof Part)) return false;
         Part part = (Part) o;
-        return recruitNum == part.recruitNum && Objects.equals(recruitSkill, part.recruitSkill);
+        return recruitNum == part.recruitNum && Objects.equals(recruitSkill, part.recruitSkill) && Objects.equals(requirement, part.requirement);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(recruitNum, recruitSkill);
+        return Objects.hash(recruitNum, recruitSkill, requirement);
     }
 }
