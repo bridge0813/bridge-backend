@@ -51,4 +51,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
+
+    public User(String email, String platformId) {
+        this.email = email;
+        this.platformId = platformId;
+    }
 }
