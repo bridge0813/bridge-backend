@@ -3,30 +3,39 @@ package com.Bridge.bridge.security.apple;
 import com.Bridge.bridge.dto.response.AppleMemberResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class AppleUtils {
 
@@ -180,5 +189,43 @@ public class AppleUtils {
             throw new Exception("Apple OAuth 로그인 중 public key 생성에 문제가 발생했습니다.");
         }
 
+    }
+
+    /**
+     * acceseToken을 얻기 위해 필요한 Client_Secret 생성
+     */
+    public String createClientSecret() throws Exception {
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(APPLE_KEY_ID).build();
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + 3600000);
+
+        return Jwts.builder()
+                .setHeaderParam("alg", "ES256")
+                .setHeaderParam("kid", APPLE_KEY_ID)
+                .setSubject(APPLE_CLIENT_ID)
+                .setIssuer(APPLE_TEAM_ID)
+                .setAudience(APPLE_ISS)
+                .setExpiration(expiration)
+                .setIssuedAt(now)
+                .signWith(SignatureAlgorithm.ES256, getPrivateKey())
+                .compact();
+    }
+
+    /**
+     * 비밀키 파일 읽어오기
+     */
+    private PrivateKey getPrivateKey() throws Exception {
+        InputStream privateKey = new ClassPathResource(APPLE_KEY_PATH).getInputStream();
+
+        String result = new BufferedReader(new InputStreamReader(privateKey)) .lines().collect(Collectors.joining("\n"));
+
+        String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
+                .replace("-----END PRIVATE KEY-----", "");
+
+        byte[] encoded = Base64.decodeBase64(key);
+
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
+        KeyFactory keyFactory = KeyFactory.getInstance("EC");
+        return keyFactory.generatePrivate(keySpec);
     }
 }
