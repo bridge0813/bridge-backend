@@ -1,4 +1,4 @@
-package com.Bridge.bridge.security;
+package com.Bridge.bridge.dto.response.apple;
 
 import lombok.Data;
 

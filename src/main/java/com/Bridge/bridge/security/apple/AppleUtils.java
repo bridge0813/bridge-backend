@@ -1,6 +1,6 @@
 package com.Bridge.bridge.security.apple;
 
-import com.Bridge.bridge.dto.response.AppleMemberResponse;
+import com.Bridge.bridge.dto.response.apple.AppleMemberResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JWSAlgorithm;

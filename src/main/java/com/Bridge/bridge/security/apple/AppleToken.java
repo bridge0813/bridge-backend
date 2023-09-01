@@ -1,6 +1,6 @@
 package com.Bridge.bridge.security.apple;
 
-import com.Bridge.bridge.security.AppleTokenResponse;
+import com.Bridge.bridge.dto.response.apple.AppleTokenResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class AppleToken {
                 new HttpEntity<>(params, headers);
 
         ResponseEntity<String> accessTokenResponse = rt.exchange(
-                "https://kauth.kakao.com/oauth/token",
+                "https://appleid.apple.com/auth/token",
                 HttpMethod.POST,
                 appleTokenRequest,
                 String.class

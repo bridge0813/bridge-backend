@@ -1,11 +1,11 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.response.AppleMemberResponse;
-import com.Bridge.bridge.dto.response.AppleResponse;
+import com.Bridge.bridge.dto.response.apple.AppleMemberResponse;
+import com.Bridge.bridge.dto.response.apple.AppleResponse;
 import com.Bridge.bridge.dto.response.OAuthTokenResponse;
 import com.Bridge.bridge.repository.UserRepository;
-import com.Bridge.bridge.security.AppleTokenResponse;
+import com.Bridge.bridge.dto.response.apple.AppleTokenResponse;
 import com.Bridge.bridge.security.apple.AppleToken;
 import com.Bridge.bridge.security.apple.AppleUtils;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.dto.response.AppleResponse;
+import com.Bridge.bridge.dto.response.apple.AppleResponse;
 import com.Bridge.bridge.dto.response.OAuthTokenResponse;
 import com.Bridge.bridge.service.AuthService;
 import lombok.RequiredArgsConstructor;
