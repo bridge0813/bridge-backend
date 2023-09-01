@@ -6,11 +6,11 @@
 #    driver-class-name: org.h2.Driver
 
 spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/bridge?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-#    username: root
-#    password: dusch0627
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bridge?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: dusch0627
 
   jpa:
     hibernate:

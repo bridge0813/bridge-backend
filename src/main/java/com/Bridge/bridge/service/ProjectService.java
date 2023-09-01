@@ -1,6 +1,7 @@
-package com.Bridge.bridge.Service;
+package com.Bridge.bridge.service;
 
-import com.Bridge.bridge.Repository.ProjectRepository;
+import com.Bridge.bridge.dto.ProjectListDto;
+import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    public List<Project> findByTitleAndContent(String searchWord){ // 모집글 검색 기능(제목+내용)
+    public List<ProjectListDto> findByTitleAndContent(String searchWord){ // 모집글 검색 기능(제목+내용)
 
         List<Project> allProject = projectRepository.findAll();
 
@@ -26,8 +27,17 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());
 
-        System.out.println(findProject.size());
-        return findProject;
+        List<ProjectListDto> response = findProject.stream()
+                .map((project) -> ProjectListDto.builder()
+                        .title(project.getTitle())
+                        .startDate(project.getStartDate())
+                        .endDate(project.getEndDate())
+                        .recruit(project.getRecruit())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return response;
     }
 
 }

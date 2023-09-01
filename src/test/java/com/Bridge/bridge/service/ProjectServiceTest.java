@@ -1,13 +1,13 @@
-package com.Bridge.bridge.Service;
+package com.Bridge.bridge.service;
 
-import com.Bridge.bridge.Repository.ProjectRepository;
+import com.Bridge.bridge.dto.ProjectListDto;
+import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +26,7 @@ class ProjectServiceTest {
         // given
 
         // When
-        List<Project> result = projectService.findByTitleAndContent("어플");
+        List<ProjectListDto> result = projectService.findByTitleAndContent("어플");
 
         // Then
         assertEquals(result.size(), 4);

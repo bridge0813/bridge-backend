@@ -1,7 +1,6 @@
-package com.Bridge.bridge.Repository;
+package com.Bridge.bridge.repository;
 
 import com.Bridge.bridge.domain.Project;
-import com.Bridge.bridge.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
