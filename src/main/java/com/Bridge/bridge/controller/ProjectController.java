@@ -15,6 +15,9 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-
+    @PostMapping("/searchProject")
+    public List<ProjectListDto> searchProject(@RequestBody String searchWord){
+        return projectService.findByTitleAndContent(searchWord);
+    }
 
 }
