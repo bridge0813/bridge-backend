@@ -22,6 +22,8 @@ public class User {
 
     private String photo;               // 프로필 사진
 
+    private String platformId;          // 소셜 로그인 고유 아이디
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;            // 개인 프로필
@@ -49,4 +51,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
+
+    public User(String email, String platformId) {
+        this.email = email;
+        this.platformId = platformId;
+    }
 }
