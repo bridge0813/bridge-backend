@@ -9,12 +9,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/bridge?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: bridge-project
-    password: 1234!
+    username: root
+    password: dusch0627
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         #       show_sql: true

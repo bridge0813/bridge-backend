@@ -22,4 +22,6 @@ public class ApplyProject {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
+
+    private boolean pass; // 수락 OR 거절 여부
 }
