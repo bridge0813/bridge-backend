@@ -156,10 +156,7 @@ public class AppleUtils {
      * @param keys
      */
     private PublicKey generatePublicKeys(Map<String, String> header, ApplePublicKeys keys) throws Exception {
-        ApplePublicKey publicKey = keys.getKeys().stream()
-                .filter(k -> k.getAlg().equals(header.get("alg")) && k.getKid().equals(header.get("kid")))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Apple JWT 값의 alg, kid 정보가 올바르지 않습니다."));
+        ApplePublicKey publicKey = keys.getMatchesKey(header.get("alg"), header.get("kid"));
 
         byte[] nBytes = Base64Utils.decodeFromUrlSafeString(publicKey.getN());
         byte[] eBytes = Base64Utils.decodeFromUrlSafeString(publicKey.getE());
