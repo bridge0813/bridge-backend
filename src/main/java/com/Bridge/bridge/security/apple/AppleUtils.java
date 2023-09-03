@@ -57,21 +57,8 @@ public class AppleUtils {
     @Value("${apple.iss}")
     private String APPLE_ISS;
 
-    private final static String APPLE_AUTH_URL = "https://appleid.apple.com/auth/authorize";
-
     private final ObjectMapper objectMapper;
 
-
-    /**
-     * 처음 로그인 시 애플로그인으로 이동할 수 있게 하는 URL
-     * @return : apple 로그인 URL 반환
-     */
-    public String getAppleLogin() {
-        return APPLE_AUTH_URL
-                + "?client_id=" + APPLE_CLIENT_ID
-                + "&redirect_uri=" + APPLE_REDIRECT_URL
-                + "&response_type=code%20id_token&scope=name%20email&response_mode=form_post";
-    }
 
     /**
      * ID Token 검증 후 유저 정보 가져오는 메소드
