@@ -70,7 +70,7 @@ public class AppleUtils {
         ApplePublicKeys applePublicKeys = getPublicKey();
         PublicKey publicKey = generatePublicKeys(headers, applePublicKeys);
 
-        Claims claims = passePublicKeyAndGetClaims(idToken, publicKey);
+        Claims claims = parsePublicKeyAndGetClaims(idToken, publicKey);
         if (!validateClaims(claims)) {
             throw new Exception("Claim 값이 올바르지 않음");
         }
@@ -106,7 +106,7 @@ public class AppleUtils {
      * @param idToken
      * @param publicKey
      */
-    public Claims passePublicKeyAndGetClaims(String idToken, PublicKey publicKey) throws Exception {
+    public Claims parsePublicKeyAndGetClaims(String idToken, PublicKey publicKey) throws Exception {
         try {
             return Jwts.parser()
                     .setSigningKey(publicKey)
