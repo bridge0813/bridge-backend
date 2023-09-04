@@ -82,7 +82,7 @@ public class AppleUtils {
      * payload 검증 메소드
      * @param claims
      */
-    private boolean validateClaims(Claims claims) {
+    public boolean validateClaims(Claims claims) {
         return claims.getIssuer().contains(APPLE_ISS) &&
                 claims.getAudience().equals(APPLE_CLIENT_ID);
     }
@@ -91,7 +91,7 @@ public class AppleUtils {
      * ID Token 헤더 디코딩 메소드
      * @param idToken
      */
-    private Map<String, String> parseHeaders(String idToken) throws IllegalAccessException {
+    public Map<String, String> parseHeaders(String idToken) throws IllegalAccessException {
         try {
             String encodedHeader = idToken.split("\\.")[0];
             String decodedHeader = new String(Base64Utils.decodeFromUrlSafeString(encodedHeader));
@@ -106,7 +106,7 @@ public class AppleUtils {
      * @param idToken
      * @param publicKey
      */
-    private Claims passePublicKeyAndGetClaims(String idToken, PublicKey publicKey) throws Exception {
+    public Claims passePublicKeyAndGetClaims(String idToken, PublicKey publicKey) throws Exception {
         try {
             return Jwts.parser()
                     .setSigningKey(publicKey)
@@ -155,7 +155,7 @@ public class AppleUtils {
      * @param header
      * @param keys
      */
-    private PublicKey generatePublicKeys(Map<String, String> header, ApplePublicKeys keys) throws Exception {
+    public PublicKey generatePublicKeys(Map<String, String> header, ApplePublicKeys keys) throws Exception {
         ApplePublicKey publicKey = keys.getMatchesKey(header.get("alg"), header.get("kid"));
 
         byte[] nBytes = Base64Utils.decodeFromUrlSafeString(publicKey.getN());
