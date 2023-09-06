@@ -24,6 +24,9 @@ public class User {
 
     private String platformId;          // 소셜 로그인 고유 아이디
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Field> fields = new ArrayList<>(); // 관심 분야
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;            // 개인 프로필
