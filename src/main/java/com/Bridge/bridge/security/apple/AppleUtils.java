@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -178,7 +179,7 @@ public class AppleUtils {
     /**
      * acceseToken을 얻기 위해 필요한 Client_Secret 생성
      */
-    public String createClientSecret() throws Exception {
+    public String createClientSecret() {
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(APPLE_KEY_ID).build();
         Date now = new Date();
         Date expiration = new Date(now.getTime() + 3600000);
@@ -198,18 +199,24 @@ public class AppleUtils {
     /**
      * 비밀키 파일 읽어오기
      */
-    private PrivateKey getPrivateKey() throws Exception {
-        InputStream privateKey = new ClassPathResource(APPLE_KEY_PATH).getInputStream();
+    private PrivateKey getPrivateKey() {
+        try {
+            InputStream privateKey = new ClassPathResource(APPLE_KEY_PATH).getInputStream();
 
-        String result = new BufferedReader(new InputStreamReader(privateKey)) .lines().collect(Collectors.joining("\n"));
+            String result = new BufferedReader(new InputStreamReader(privateKey)) .lines().collect(Collectors.joining("\n"));
 
-        String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
-                .replace("-----END PRIVATE KEY-----", "");
+            String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
+                    .replace("-----END PRIVATE KEY-----", "");
 
-        byte[] encoded = Base64.decodeBase64(key);
+            byte[] encoded = Base64.decodeBase64(key);
 
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-        KeyFactory keyFactory = KeyFactory.getInstance("EC");
-        return keyFactory.generatePrivate(keySpec);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
+            KeyFactory keyFactory = null;
+            keyFactory = KeyFactory.getInstance("EC");
+
+            return keyFactory.generatePrivate(keySpec);
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -30,7 +30,7 @@ public class AppleToken {
 
     private final AppleUtils appleUtils;
 
-    public AppleTokenResponse getAccessToken(String code) throws Exception {
+    public AppleTokenResponse getAccessToken(String code)  {
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
