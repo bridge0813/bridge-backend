@@ -26,8 +26,7 @@ public class Project {
 
     private String endDate;         // 프로젝트 종료일
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name =  "part", joinColumns = @JoinColumn(name = "project_id"))
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Part> recruit = new ArrayList<>(); // 모집 분야, 모집 인원
 
     @ElementCollection(fetch = FetchType.LAZY)
