@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,9 +24,9 @@ public class ProjectService {
     private final UserRepository userRepository;
 
     /*
-        Func : 프로젝트 모집글 검색
-        Parameter : 검색어
-        Return : 프로젝트 모집글 List
+        Func : 프로젝트 모집글 생성
+        Parameter : 프로젝트 입력 폼
+        Return : 생성 여부 -> STRING
     */
     public String createProject(ReqProjectDto reqProjectDto){
         try {
@@ -58,11 +59,34 @@ public class ProjectService {
             // 모집글 DB에 저장하기
             Project project = projectRepository.save(newProject);
 
-            return "success";
+            return "Create Success";
         }
         catch (Exception e){
             System.out.println(e);
-            return "failed";
+            return "Create Failed";
+        }
+
+    }
+
+    /*
+        Func : 프로젝트 모집글 삭제
+        Parameter : 프로젝트 모집글 ID
+        Return : 삭제 여부 -> STRING
+    */
+    public String deleteProject(Long project_id, String useremail){
+        // 삭제할 프로젝트 모집글 찾기
+        Project project = projectRepository.findById(project_id).get();
+
+        // 삭제할 모집글을 작성한 유저 찾기
+        User user = userRepository.findByEmail(useremail);
+
+        // 해당 모집글 삭제하기
+        if (user.getId().equals(project.getUser().getId())){ // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
+            projectRepository.delete(project);
+            return "Delete Success";
+        }
+        else{
+            return "Delete failed";
         }
 
     }
