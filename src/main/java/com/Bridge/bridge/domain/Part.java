@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Part {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Builder
     public Part(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement, Project project) {
         this.recruitPart = recruitPart;
         this.recruitNum = recruitNum;

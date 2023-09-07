@@ -46,4 +46,17 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 해당 프로젝트 글을 북마크한 유저 목록
 
+    @Builder
+    public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
+        this.title = title;
+        this.overview = overview;
+        this.dueDate = dueDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.recruit = recruit;
+        this.tagLimit = tagLimit;
+        this.meetingWay = meetingWay;
+        this.stage = stage;
+        this.user = user;
+    }
 }
