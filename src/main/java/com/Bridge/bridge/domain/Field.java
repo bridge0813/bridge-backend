@@ -1,6 +1,7 @@
 package com.Bridge.bridge.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Field {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +23,16 @@ public class Field {
 
     private String fieldName; // 관심 분야
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Field(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    //-- 연관관계 메소드 --//
+    public void updateFieldUser(User user) {
+        this.user = user;
+    }
 }

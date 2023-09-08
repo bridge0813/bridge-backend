@@ -27,7 +27,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Field> fields = new ArrayList<>(); // 관심 분야
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_id")
     private Profile profile;            // 개인 프로필
 
@@ -58,5 +58,15 @@ public class User {
     public User(String email, String platformId) {
         this.email = email;
         this.platformId = platformId;
+    }
+
+    public void registerName(String name) {
+        this.name = name;
+    }
+
+    //-- 연관관계 편의 메소드 --//
+    public void updateProfile(Profile profile) {
+        this.profile = profile;
+        profile.updateUser(this);
     }
 }
