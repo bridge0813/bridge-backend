@@ -33,4 +33,15 @@ public class Profile {
 
     @OneToMany(mappedBy = "profile")
     private List<File> files = new ArrayList<>();
+
+    @Builder
+    public Profile(String selfIntro, String career, List<String> skill) {
+        this.selfIntro = selfIntro;
+        this.career = career;
+        this.skill = skill;
+    }
+
+    public void updateUser(User user) {
+        this.user = user;
+    }
 }
