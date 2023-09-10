@@ -81,7 +81,7 @@ class ProjectServiceTest {
     @Test
     void deleteProject() {
         // given
-        Long projectId = Long.valueOf(1);
+        Long projectId = Long.valueOf(8);
         String userEmail = "user1@gmail.com";
 
         // when

@@ -3,12 +3,14 @@ package com.Bridge.bridge.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Project {
 
@@ -58,5 +60,9 @@ public class Project {
         this.meetingWay = meetingWay;
         this.stage = stage;
         this.user = user;
+    }
+
+    public void setRecruit(List<Part> recruit) {
+        this.recruit = recruit;
     }
 }

@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +38,19 @@ public class ProjectService {
             // 모집글 작성한 user 찾기
             User user = userRepository.findByEmail(reqProjectDto.getUserEmail());
 
+            Project newProject = Project.builder()
+                    .title(reqProjectDto.getTitle())
+                    .overview(reqProjectDto.getOverview())
+                    .dueDate(reqProjectDto.getDueDate())
+                    .startDate(reqProjectDto.getStartDate())
+                    .endDate(reqProjectDto.getEndDate())
+                    .recruit(new ArrayList<>())
+                    .tagLimit(reqProjectDto.getTagLimit())
+                    .meetingWay(reqProjectDto.getMeetingWay())
+                    .stage(reqProjectDto.getStage())
+                    .user(user)
+                    .build();
+
             // 모집 분야, 인원 -> Part entity화 하기
             List<Part> recruit = reqProjectDto.getRecruit().stream()
                     .map((p) -> Part.builder()
@@ -42,21 +58,14 @@ public class ProjectService {
                             .recruitNum(p.getRecruitNum())
                             .recruitSkill(p.getRecruitSkill())
                             .requirement(p.getRequirement())
-                            .build())
+                            .build()
+                    )
                     .collect(Collectors.toList());
 
-            Project newProject = Project.builder()
-                    .title(reqProjectDto.getTitle())
-                    .overview(reqProjectDto.getOverview())
-                    .dueDate(reqProjectDto.getDueDate())
-                    .startDate(reqProjectDto.getStartDate())
-                    .endDate(reqProjectDto.getEndDate())
-                    .recruit(recruit)
-                    .tagLimit(reqProjectDto.getTagLimit())
-                    .meetingWay(reqProjectDto.getMeetingWay())
-                    .stage(reqProjectDto.getStage())
-                    .user(user)
-                    .build();
+            recruit.stream()
+                            .forEach((part -> part.setProject(newProject)));
+
+            newProject.setRecruit(recruit);
 
             // 모집글 DB에 저장하기
             Project project = projectRepository.save(newProject);

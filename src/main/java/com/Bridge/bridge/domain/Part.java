@@ -38,4 +38,9 @@ public class Part {
         this.requirement = requirement;
         this.project = project;
     }
+
+    public void setProject(Project project) {
+        this.project = project;
+        project.getRecruit().add(this);
+    }
 }
