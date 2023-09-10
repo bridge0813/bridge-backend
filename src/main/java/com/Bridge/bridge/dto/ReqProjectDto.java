@@ -3,6 +3,7 @@ package com.Bridge.bridge.dto;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.nimbusds.jose.shaded.gson.JsonObject;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ReqProjectDto { // 모집글 생성 시 받아올 데이터 관련 
 
     private String endDate;         // 프로젝트 종료일
 
-    private List<JsonObject> recruit; // 모집 분야, 모집 인원
+    private List<ReqPartDto> recruit; // 모집 분야, 모집 인원
 
     private List<String> tagLimit;        //지원자 태그 제한록
 
@@ -30,7 +31,19 @@ public class ReqProjectDto { // 모집글 생성 시 받아올 데이터 관련 
 
     private String stage;           // 진행 단계
 
-    private String useremail;        // 모집글을 작성한 유저 이메일
+    private String userEmail;        // 모집글을 작성한 유저 이메일
 
-
+    @Builder
+    public ReqProjectDto(String title, String overview, String dueDate, String startDate, String endDate, List<ReqPartDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userEmail) {
+        this.title = title;
+        this.overview = overview;
+        this.dueDate = dueDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.recruit = recruit;
+        this.tagLimit = tagLimit;
+        this.meetingWay = meetingWay;
+        this.stage = stage;
+        this.userEmail = userEmail;
+    }
 }
