@@ -75,21 +75,26 @@ public class ProjectService {
         Parameter : 프로젝트 모집글 ID
         Return : 삭제 여부 -> STRING
     */
-    public String deleteProject(Long project_id, String useremail){
-        // 삭제할 프로젝트 모집글 찾기
-        Project project = projectRepository.findById(project_id).get();
+    public ResponseEntity deleteProject(Long project_id, String useremail){
+        try {
+            // 삭제할 프로젝트 모집글 찾기
+            Project project = projectRepository.findById(project_id).get();
 
-        // 삭제할 모집글을 작성한 유저 찾기
-        User user = userRepository.findByEmail(useremail);
+            // 삭제할 모집글을 작성한 유저 찾기
+            User user = userRepository.findByEmail(useremail);
 
-        // 해당 모집글 삭제하기
-        if (user.getId().equals(project.getUser().getId())){ // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
-            projectRepository.delete(project);
-            return "Delete Success";
+            // 해당 모집글 삭제하기
+            if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
+                projectRepository.delete(project);
+                return new ResponseEntity(HttpStatus.ACCEPTED);
+            }
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        else{
-            return "Delete failed";
+        catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+
 
     }
 

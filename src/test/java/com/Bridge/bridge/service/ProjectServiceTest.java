@@ -77,4 +77,32 @@ class ProjectServiceTest {
         Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 있을 때(올바른 접근)")
+    @Test
+    void deleteProject() {
+        // given
+        Long projectId = Long.valueOf(1);
+        String userEmail = "user1@gmail.com";
+
+        // when
+        ResponseEntity result = projectService.deleteProject(projectId, userEmail);
+
+        // then
+        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    }
+
+    @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 없을 때(올바르지 못한 접근)")
+    @Test
+    void deleteProject_Wrong() {
+        // given
+        Long projectId = Long.valueOf(1);
+        String userEmail = "user3@gmail.com";
+
+        // when
+        ResponseEntity result = projectService.deleteProject(projectId, userEmail);
+
+        // then
+        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
 }
