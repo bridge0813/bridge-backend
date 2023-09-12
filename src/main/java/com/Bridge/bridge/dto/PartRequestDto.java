@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ReqPartDto {
+public class PartRequestDto {
 
     private String recruitPart;
 
@@ -17,7 +17,7 @@ public class ReqPartDto {
     private String requirement;
 
     @Builder
-    public ReqPartDto(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement) {
+    public PartRequestDto(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement) {
         this.recruitPart = recruitPart;
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;

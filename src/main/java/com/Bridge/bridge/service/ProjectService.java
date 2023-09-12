@@ -3,21 +3,17 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.ProjectListDto;
-import com.Bridge.bridge.dto.ReqProjectDto;
+import com.Bridge.bridge.dto.ProjectRequestDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,50 +27,33 @@ public class ProjectService {
     /*
         Func : 프로젝트 모집글 생성
         Parameter : 프로젝트 입력 폼
-        Return : 생성 여부 -> STRING
+        Return : 생성 여부 -> HttpStatus
     */
-    public ResponseEntity createProject(ReqProjectDto reqProjectDto){
+    public HttpStatus createProject(ProjectRequestDto projectRequestDto){
         try {
             // 모집글 작성한 user 찾기
-            User user = userRepository.findByEmail(reqProjectDto.getUserEmail());
+            User user = userRepository.findByEmail(projectRequestDto.getUserEmail());
 
-            Project newProject = Project.builder()
-                    .title(reqProjectDto.getTitle())
-                    .overview(reqProjectDto.getOverview())
-                    .dueDate(reqProjectDto.getDueDate())
-                    .startDate(reqProjectDto.getStartDate())
-                    .endDate(reqProjectDto.getEndDate())
-                    .recruit(new ArrayList<>())
-                    .tagLimit(reqProjectDto.getTagLimit())
-                    .meetingWay(reqProjectDto.getMeetingWay())
-                    .stage(reqProjectDto.getStage())
-                    .user(user)
-                    .build();
+            Project newProject = projectRequestDto.toEntityOfProject(user);
 
             // 모집 분야, 인원 -> Part entity화 하기
-            List<Part> recruit = reqProjectDto.getRecruit().stream()
-                    .map((p) -> Part.builder()
-                            .recruitPart(p.getRecruitPart())
-                            .recruitNum(p.getRecruitNum())
-                            .recruitSkill(p.getRecruitSkill())
-                            .requirement(p.getRequirement())
-                            .build()
-                    )
-                    .collect(Collectors.toList());
+            List<Part> recruit = projectRequestDto.toEntityOfPart();
 
+            // Part- Project 매핑
             recruit.stream()
                             .forEach((part -> part.setProject(newProject)));
 
-            newProject.setRecruit(recruit);
+            // User - Project 매핑
+            user.setProject(newProject);
 
             // 모집글 DB에 저장하기
-            Project project = projectRepository.save(newProject);
+            projectRepository.save(newProject);
 
-            return new ResponseEntity(HttpStatus.OK);
+            return HttpStatus.OK;
         }
         catch (Exception e){
             System.out.println(e);
-            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+            return HttpStatus.NOT_ACCEPTABLE;
         }
 
     }
@@ -82,26 +61,28 @@ public class ProjectService {
     /*
         Func : 프로젝트 모집글 삭제
         Parameter : 프로젝트 모집글 ID
-        Return : 삭제 여부 -> STRING
+        Return : 삭제 여부 -> HttpStatus
     */
-    public ResponseEntity deleteProject(Long project_id, String useremail){
+    public HttpStatus deleteProject(Long projectId, Long userId){
         try {
             // 삭제할 프로젝트 모집글 찾기
-            Project project = projectRepository.findById(project_id).get();
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트 입니다."));
 
             // 삭제할 모집글을 작성한 유저 찾기
-            User user = userRepository.findByEmail(useremail);
+            User user = userRepository.findById(userId).get();
 
             // 해당 모집글 삭제하기
             if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
                 projectRepository.delete(project);
-                return new ResponseEntity(HttpStatus.ACCEPTED);
+
+                return HttpStatus.ACCEPTED;
             }
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return HttpStatus.BAD_REQUEST;
         }
         catch (Exception e){
             System.out.println(e);
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return HttpStatus.NOT_FOUND;
         }
 
 

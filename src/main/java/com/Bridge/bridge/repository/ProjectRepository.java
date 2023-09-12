@@ -11,7 +11,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Override
     List<Project> findAll();
 
-    Optional<Project> findById(Long id);
+    Optional<Project> findByUser_Id(Long UserId);
 
     @Override
     <S extends Project> S save(S entity);

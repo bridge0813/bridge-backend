@@ -1,21 +1,25 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.ProjectListDto;
-import com.Bridge.bridge.dto.ReqPartDto;
-import com.Bridge.bridge.dto.ReqProjectDto;
+import com.Bridge.bridge.dto.PartRequestDto;
+import com.Bridge.bridge.dto.ProjectRequestDto;
 import com.Bridge.bridge.repository.ProjectRepository;
-import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +30,8 @@ class ProjectServiceTest {
     ProjectService projectService;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @DisplayName("모집글 검색 기능 test")
     @Test
@@ -44,19 +50,22 @@ class ProjectServiceTest {
     @Test
     void createProject() {
         // given
+        User user = new User("test1@gmaill.com", "apple");
+        userRepository.save(user);
+
         List<String> skill = new ArrayList<>();
         skill.add("Java");
         skill.add("Spring boot");
 
-        List<ReqPartDto> recruit = new ArrayList<>();
-        recruit.add(ReqPartDto.builder()
+        List<PartRequestDto> recruit = new ArrayList<>();
+        recruit.add(PartRequestDto.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
                 .build());
 
-        ReqProjectDto newProject = ReqProjectDto.builder()
+        ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
                 .dueDate("2023-09-07")
@@ -65,44 +74,119 @@ class ProjectServiceTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail("newUser@gmail.com")
+                .userEmail(user.getEmail())
                 .stage("Before Start")
                 .build();
 
         // when
-        ResponseEntity result = projectService.createProject(newProject);
+        HttpStatus result = projectService.createProject(newProject);
 
         // then
+        Assertions.assertThat(result).isEqualTo(HttpStatus.OK);
 
-        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Project project = projectRepository.findByUser_Id(user.getId()).get();
+        projectRepository.delete(project);
+        userRepository.delete(user);
     }
 
     @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 있을 때(올바른 접근)")
     @Test
     void deleteProject() {
         // given
-        Long projectId = Long.valueOf(8);
-        String userEmail = "user1@gmail.com";
+        User user = new User("test2@gmaill.com", "apple");
+        userRepository.save(user);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<PartRequestDto> recruit = new ArrayList<>();
+        recruit.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        ProjectRequestDto newProject = ProjectRequestDto.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .userEmail(user.getEmail())
+                .stage("Before Start")
+                .build();
+
+        projectService.createProject(newProject);
+
+        Long userId = user.getId();
+        Long projectId = projectRepository.findByUser_Id(userId).get().getId();
+
 
         // when
-        ResponseEntity result = projectService.deleteProject(projectId, userEmail);
+        HttpStatus result = projectService.deleteProject(projectId, userId);
 
         // then
-        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        Assertions.assertThat(result).isEqualTo(HttpStatus.ACCEPTED);
+        userRepository.delete(user);
+
     }
 
     @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 없을 때(올바르지 못한 접근)")
     @Test
     void deleteProject_Wrong() {
         // given
-        Long projectId = Long.valueOf(1);
-        String userEmail = "user3@gmail.com";
+        User user1 = new User("ImUser@gmail.com", "apple");
+        userRepository.save(user1);
+
+        User user2 = new User("NotUser@gmail.com", "google");
+        userRepository.save(user2);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<PartRequestDto> recruit = new ArrayList<>();
+        recruit.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        ProjectRequestDto newProject = ProjectRequestDto.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .userEmail(user1.getEmail())
+                .stage("Before Start")
+                .build();
+
+        projectService.createProject(newProject);
+
+        Long userId = user1.getId();
+        Long projectId = projectRepository.findByUser_Id(userId).get().getId();
 
         // when
-        ResponseEntity result = projectService.deleteProject(projectId, userEmail);
+        HttpStatus result = projectService.deleteProject(projectId, user2.getId());
 
         // then
-        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Assertions.assertThat(result).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        Project project = projectRepository.findByUser_Id(user1.getId()).get();
+        projectRepository.delete(project);
+
+        userRepository.delete(user1);
+        userRepository.delete(user2);
     }
 
 }

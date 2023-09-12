@@ -10,7 +10,6 @@ import java.util.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Project {
 
@@ -65,4 +64,6 @@ public class Project {
     public void setRecruit(List<Part> recruit) {
         this.recruit = recruit;
     }
+
+
 }

@@ -56,4 +56,8 @@ public class User {
         this.email = email;
         this.platformId = platformId;
     }
+
+    public void setProject(Project project){
+        this.projects.add(project);
+    }
 }
