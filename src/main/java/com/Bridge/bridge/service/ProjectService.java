@@ -98,6 +98,7 @@ public class ProjectService {
         Parameter : 프로젝트 모집글 수정폼
         Return : PrjectResponseDto -> 수정본
     */
+    @Transactional
     public ProjectResponseDto updateProject(Long projectId, Long userId, ProjectRequestDto projectRequestDto){
         try {
             // 모집글 작성한 user 찾기
@@ -122,7 +123,7 @@ public class ProjectService {
 
         }
         catch (Exception e){
-            System.out.println(e);
+            System.out.println(e + e.getMessage());
         }
         return null;
     }
