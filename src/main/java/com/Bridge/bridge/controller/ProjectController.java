@@ -38,4 +38,10 @@ public class ProjectController {
         return new ResponseEntity(result);
     }
 
+    // 프로젝트 모집글 수정
+    @PutMapping("/project")
+    public ProjectResponseDto updateProject(@RequestParam Long projectId, @RequestBody Long userId, ProjectRequestDto projectRequestDto){
+        return projectService.updateProject(projectId, userId, projectRequestDto);
+    }
+
 }
