@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +17,6 @@ public class Profile {
     @Column(name = "profile_id")
     private Long id;
 
-    private String skill;           // 기술 스택
-
     private String refLink;         // 참고 링크
 
     private String refFile;         // 첨부 파일
@@ -26,9 +25,23 @@ public class Profile {
 
     private String career;          // 경력 사항
 
+    @ElementCollection
+    private List<String> skill;           // 기술 스택
+
     @OneToOne(mappedBy = "profile")
     private User user;              // 해당 프로필을 작성한 유저
 
     @OneToMany(mappedBy = "profile")
     private List<File> files = new ArrayList<>();
+
+    @Builder
+    public Profile(String selfIntro, String career, List<String> skill) {
+        this.selfIntro = selfIntro;
+        this.career = career;
+        this.skill = skill;
+    }
+
+    public void updateUser(User user) {
+        this.user = user;
+    }
 }
