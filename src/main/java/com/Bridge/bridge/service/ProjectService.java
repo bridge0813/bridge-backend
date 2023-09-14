@@ -37,7 +37,9 @@ public class ProjectService {
             Project newProject = projectRequestDto.toEntityOfProject(user);
 
             // 모집 분야, 인원 -> Part entity화 하기
-            List<Part> recruit = projectRequestDto.toEntityOfPart();
+            List<Part> recruit = projectRequestDto.getRecruit().stream()
+                            .map((p) -> p.toEntity())
+                            .collect(Collectors.toList());
 
             // Part- Project 매핑
             recruit.stream()

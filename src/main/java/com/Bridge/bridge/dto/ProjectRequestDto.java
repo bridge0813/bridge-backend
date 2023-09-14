@@ -64,16 +64,4 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
                 .user(user)
                 .build();
     }
-
-    public List<Part> toEntityOfPart(){
-        return this.getRecruit().stream()
-                .map((p) -> Part.builder()
-                        .recruitPart(p.getRecruitPart())
-                        .recruitNum(p.getRecruitNum())
-                        .recruitSkill(p.getRecruitSkill())
-                        .requirement(p.getRequirement())
-                        .build()
-                )
-                .collect(Collectors.toList());
-    }
 }

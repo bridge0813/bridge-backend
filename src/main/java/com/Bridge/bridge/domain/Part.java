@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -42,5 +43,7 @@ public class Part {
         this.project = project;
         project.getRecruit().add(this);
     }
+
+
 
 }

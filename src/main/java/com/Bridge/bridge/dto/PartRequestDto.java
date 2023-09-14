@@ -1,9 +1,11 @@
 package com.Bridge.bridge.dto;
 
+import com.Bridge.bridge.domain.Part;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class PartRequestDto {
@@ -22,5 +24,14 @@ public class PartRequestDto {
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;
         this.requirement = requirement;
+    }
+
+    public Part toEntity(){
+        return Part.builder()
+                .recruitPart(this.getRecruitPart())
+                .recruitNum(this.getRecruitNum())
+                .recruitSkill(this.getRecruitSkill())
+                .requirement(this.getRequirement())
+                .build();
     }
 }
