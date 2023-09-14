@@ -1,5 +1,9 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.PartRequestDto;
+import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.PartResponseDto;
+import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +11,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -65,5 +70,23 @@ public class Project {
         this.recruit = recruit;
     }
 
+    public ProjectResponseDto toDto(){
+        List<PartResponseDto> recruit = this.getRecruit().stream()
+                .map((part) -> part.toDto())
+                .collect(Collectors.toList());
+
+        return ProjectResponseDto.builder()
+                .title(this.getTitle())
+                .overview(this.getOverview())
+                .dueDate(this.getDueDate())
+                .startDate(this.getStartDate())
+                .endDate(this.getEndDate())
+                .recruit(recruit)
+                .tagLimit(this.getTagLimit())
+                .meetingWay(this.getMeetingWay())
+                .stage(this.getStage())
+                .userName(this.getUser().getName())
+                .build();
+    }
 
 }

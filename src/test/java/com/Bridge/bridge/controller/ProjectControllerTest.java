@@ -119,7 +119,7 @@ class ProjectControllerTest {
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectService.createProject(newProject, user.getId());
 
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();

@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.response.PartResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,15 @@ public class Part {
     public void setProject(Project project) {
         this.project = project;
         project.getRecruit().add(this);
+    }
+
+    public PartResponseDto toDto(){
+        return PartResponseDto.builder()
+                .recruitPart(this.getRecruitPart())
+                .recruitNum(this.getRecruitNum())
+                .recruitSkill(this.getRecruitSkill())
+                .requirement(this.getRequirement())
+                .build();
     }
 
 

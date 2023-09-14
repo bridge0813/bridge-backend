@@ -2,6 +2,7 @@ package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.ProjectListDto;
 import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,8 @@ public class ProjectController {
 
     // 프로젝트 모집글 작성
     @PostMapping("/project")
-    public ResponseEntity createProject(@RequestBody ProjectRequestDto projectRequestDto){
-        HttpStatus result = projectService.createProject(projectRequestDto);
+    public ResponseEntity createProject(@RequestBody ProjectRequestDto projectRequestDto, Long userId){
+        HttpStatus result = projectService.createProject(projectRequestDto, userId);
         return new ResponseEntity(result);
     }
 
@@ -36,7 +37,5 @@ public class ProjectController {
         HttpStatus result = projectService.deleteProject(projectId, userId);
         return new ResponseEntity(result);
     }
-
-
 
 }

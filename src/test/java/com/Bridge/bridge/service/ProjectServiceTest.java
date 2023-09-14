@@ -79,7 +79,7 @@ class ProjectServiceTest {
                 .build();
 
         // when
-        HttpStatus result = projectService.createProject(newProject);
+        HttpStatus result = projectService.createProject(newProject, user.getId());
 
         // then
         Assertions.assertThat(result).isEqualTo(HttpStatus.OK);
@@ -121,7 +121,7 @@ class ProjectServiceTest {
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectService.createProject(newProject, user.getId());
 
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -171,7 +171,7 @@ class ProjectServiceTest {
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectService.createProject(newProject, user1.getId());
 
         Long userId = user1.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();

@@ -4,6 +4,7 @@ import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.ProjectListDto;
 import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.repository.UserRepository;
@@ -29,10 +30,11 @@ public class ProjectService {
         Parameter : 프로젝트 입력 폼
         Return : 생성 여부 -> HttpStatus
     */
-    public HttpStatus createProject(ProjectRequestDto projectRequestDto){
+    public HttpStatus createProject(ProjectRequestDto projectRequestDto, Long userId){
         try {
             // 모집글 작성한 user 찾기
-            User user = userRepository.findByEmail(projectRequestDto.getUserEmail());
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
 
             Project newProject = projectRequestDto.toEntityOfProject(user);
 
@@ -72,7 +74,8 @@ public class ProjectService {
                     .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트 입니다."));
 
             // 삭제할 모집글을 작성한 유저 찾기
-            User user = userRepository.findById(userId).get();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
 
             // 해당 모집글 삭제하기
             if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
@@ -88,6 +91,40 @@ public class ProjectService {
         }
 
 
+    }
+
+    /*
+        Func : 프로젝트 모집글 수정
+        Parameter : 프로젝트 모집글 수정폼
+        Return : PrjectResponseDto -> 수정본
+    */
+    public ProjectResponseDto updateProject(Long projectId, Long userId, ProjectRequestDto projectRequestDto){
+        try {
+            // 모집글 작성한 user 찾기
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+
+            // 모집글 찾기
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
+
+            // 모집글 작성자와 유저가 같은지 확인하기
+            if (user.getId().equals(project.getUser().getId())) {
+                Project update = projectRequestDto.toEntityOfProject(user);
+
+                projectRepository.save(update);
+
+                return update.toDto();
+            }
+            else {
+                throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
+            }
+
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
     }
 
     /*
