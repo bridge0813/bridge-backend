@@ -81,10 +81,10 @@ class ProjectServiceTest {
                 .build();
 
         // when
-        HttpStatus result = projectService.createProject(newProject, user.getId());
+        Boolean result = projectService.createProject(newProject, user.getId());
 
         // then
-        Assertions.assertThat(result).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(result).isEqualTo(true);
 
         Project project = projectRepository.findByUser_Id(user.getId()).get();
         projectRepository.delete(project);
@@ -130,10 +130,10 @@ class ProjectServiceTest {
 
 
         // when
-        HttpStatus result = projectService.deleteProject(projectId, userId);
+        Boolean result = projectService.deleteProject(projectId, userId);
 
         // then
-        Assertions.assertThat(result).isEqualTo(HttpStatus.ACCEPTED);
+        Assertions.assertThat(result).isEqualTo(true);
         userRepository.delete(user);
 
     }
@@ -179,10 +179,10 @@ class ProjectServiceTest {
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
 
         // when
-        HttpStatus result = projectService.deleteProject(projectId, user2.getId());
+        Boolean result = projectService.deleteProject(projectId, user2.getId());
 
         // then
-        Assertions.assertThat(result).isEqualTo(HttpStatus.BAD_REQUEST);
+        Assertions.assertThat(result).isEqualTo(false);
 
         Project project = projectRepository.findByUser_Id(user1.getId()).get();
         projectRepository.delete(project);

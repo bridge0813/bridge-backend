@@ -30,7 +30,7 @@ public class ProjectService {
         Parameter : 프로젝트 입력 폼
         Return : 생성 여부 -> HttpStatus
     */
-    public HttpStatus createProject(ProjectRequestDto projectRequestDto, Long userId){
+    public Boolean createProject(ProjectRequestDto projectRequestDto, Long userId){
         try {
             // 모집글 작성한 user 찾기
             User user = userRepository.findById(userId)
@@ -53,11 +53,11 @@ public class ProjectService {
             // 모집글 DB에 저장하기
             projectRepository.save(newProject);
 
-            return HttpStatus.OK;
+            return true;
         }
         catch (Exception e){
             System.out.println(e);
-            return HttpStatus.NOT_ACCEPTABLE;
+            return false;
         }
 
     }
@@ -67,7 +67,7 @@ public class ProjectService {
         Parameter : 프로젝트 모집글 ID
         Return : 삭제 여부 -> HttpStatus
     */
-    public HttpStatus deleteProject(Long projectId, Long userId){
+    public Boolean deleteProject(Long projectId, Long userId){
         try {
             // 삭제할 프로젝트 모집글 찾기
             Project project = projectRepository.findById(projectId)
@@ -81,16 +81,14 @@ public class ProjectService {
             if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
                 projectRepository.delete(project);
 
-                return HttpStatus.ACCEPTED;
+                return true;
             }
-            return HttpStatus.BAD_REQUEST;
+            return false;
         }
         catch (Exception e){
             System.out.println(e);
-            return HttpStatus.NOT_FOUND;
         }
-
-
+        return null;
     }
 
     /*
