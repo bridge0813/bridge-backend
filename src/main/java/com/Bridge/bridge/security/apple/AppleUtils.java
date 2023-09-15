@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -57,21 +58,8 @@ public class AppleUtils {
     @Value("${apple.iss}")
     private String APPLE_ISS;
 
-    private final static String APPLE_AUTH_URL = "https://appleid.apple.com/auth/authorize";
-
     private final ObjectMapper objectMapper;
 
-
-    /**
-     * 처음 로그인 시 애플로그인으로 이동할 수 있게 하는 URL
-     * @return : apple 로그인 URL 반환
-     */
-    public String getAppleLogin() {
-        return APPLE_AUTH_URL
-                + "?client_id=" + APPLE_CLIENT_ID
-                + "&redirect_uri=" + APPLE_REDIRECT_URL
-                + "&response_type=code%20id_token&scope=name%20email&response_mode=form_post";
-    }
 
     /**
      * ID Token 검증 후 유저 정보 가져오는 메소드
@@ -83,7 +71,7 @@ public class AppleUtils {
         ApplePublicKeys applePublicKeys = getPublicKey();
         PublicKey publicKey = generatePublicKeys(headers, applePublicKeys);
 
-        Claims claims = passePublicKeyAndGetClaims(idToken, publicKey);
+        Claims claims = parsePublicKeyAndGetClaims(idToken, publicKey);
         if (!validateClaims(claims)) {
             throw new Exception("Claim 값이 올바르지 않음");
         }
@@ -95,7 +83,7 @@ public class AppleUtils {
      * payload 검증 메소드
      * @param claims
      */
-    private boolean validateClaims(Claims claims) {
+    public boolean validateClaims(Claims claims) {
         return claims.getIssuer().contains(APPLE_ISS) &&
                 claims.getAudience().equals(APPLE_CLIENT_ID);
     }
@@ -104,7 +92,7 @@ public class AppleUtils {
      * ID Token 헤더 디코딩 메소드
      * @param idToken
      */
-    private Map<String, String> parseHeaders(String idToken) throws IllegalAccessException {
+    public Map<String, String> parseHeaders(String idToken) throws IllegalAccessException {
         try {
             String encodedHeader = idToken.split("\\.")[0];
             String decodedHeader = new String(Base64Utils.decodeFromUrlSafeString(encodedHeader));
@@ -119,7 +107,7 @@ public class AppleUtils {
      * @param idToken
      * @param publicKey
      */
-    private Claims passePublicKeyAndGetClaims(String idToken, PublicKey publicKey) throws Exception {
+    public Claims parsePublicKeyAndGetClaims(String idToken, PublicKey publicKey) throws Exception {
         try {
             return Jwts.parser()
                     .setSigningKey(publicKey)
@@ -168,11 +156,8 @@ public class AppleUtils {
      * @param header
      * @param keys
      */
-    private PublicKey generatePublicKeys(Map<String, String> header, ApplePublicKeys keys) throws Exception {
-        ApplePublicKey publicKey = keys.getKeys().stream()
-                .filter(k -> k.getAlg().equals(header.get("alg")) && k.getKid().equals(header.get("kid")))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Apple JWT 값의 alg, kid 정보가 올바르지 않습니다."));
+    public PublicKey generatePublicKeys(Map<String, String> header, ApplePublicKeys keys) throws Exception {
+        ApplePublicKey publicKey = keys.getMatchesKey(header.get("alg"), header.get("kid"));
 
         byte[] nBytes = Base64Utils.decodeFromUrlSafeString(publicKey.getN());
         byte[] eBytes = Base64Utils.decodeFromUrlSafeString(publicKey.getE());
@@ -194,7 +179,7 @@ public class AppleUtils {
     /**
      * acceseToken을 얻기 위해 필요한 Client_Secret 생성
      */
-    public String createClientSecret() throws Exception {
+    public String createClientSecret() {
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(APPLE_KEY_ID).build();
         Date now = new Date();
         Date expiration = new Date(now.getTime() + 3600000);
@@ -214,18 +199,24 @@ public class AppleUtils {
     /**
      * 비밀키 파일 읽어오기
      */
-    private PrivateKey getPrivateKey() throws Exception {
-        InputStream privateKey = new ClassPathResource(APPLE_KEY_PATH).getInputStream();
+    private PrivateKey getPrivateKey() {
+        try {
+            InputStream privateKey = new ClassPathResource(APPLE_KEY_PATH).getInputStream();
 
-        String result = new BufferedReader(new InputStreamReader(privateKey)) .lines().collect(Collectors.joining("\n"));
+            String result = new BufferedReader(new InputStreamReader(privateKey)) .lines().collect(Collectors.joining("\n"));
 
-        String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
-                .replace("-----END PRIVATE KEY-----", "");
+            String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
+                    .replace("-----END PRIVATE KEY-----", "");
 
-        byte[] encoded = Base64.decodeBase64(key);
+            byte[] encoded = Base64.decodeBase64(key);
 
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-        KeyFactory keyFactory = KeyFactory.getInstance("EC");
-        return keyFactory.generatePrivate(keySpec);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
+            KeyFactory keyFactory = null;
+            keyFactory = KeyFactory.getInstance("EC");
+
+            return keyFactory.generatePrivate(keySpec);
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
