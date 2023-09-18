@@ -25,7 +25,7 @@ public class ProjectController {
     }
 
     // 검색어 기준으로 프로젝트 모집글 조회
-    @GetMapping("/project")
+    @GetMapping("/project/list")
     public List<ProjectListDto> searchProject(@RequestParam String searchWord){
         return projectService.findByTitleAndContent(searchWord);
     }
@@ -47,6 +47,12 @@ public class ProjectController {
     @PutMapping("/project")
     public ProjectResponseDto updateProject(@RequestParam Long projectId, @RequestBody Long userId, ProjectRequestDto projectRequestDto){
         return projectService.updateProject(projectId, userId, projectRequestDto);
+    }
+
+    // 프로젝트 모집글 상세보기
+    @GetMapping("/project")
+    public ProjectResponseDto detailProject(@RequestParam Long projectId){
+        return projectService.getProject(projectId);
     }
 
 }

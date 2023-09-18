@@ -154,4 +154,18 @@ public class ProjectService {
         return response;
     }
 
+     /*
+        Func : 프로젝트 모집글 상세보기
+        Parameter : projectID - 모집글 ID
+        Return : projectResponse
+    */
+    public ProjectResponseDto getProject(Long projectId){
+
+        // 해당 모집글 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
+
+        return project.toDto();
+    }
+
 }
