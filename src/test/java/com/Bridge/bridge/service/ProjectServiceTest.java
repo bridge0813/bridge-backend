@@ -391,10 +391,8 @@ class ProjectServiceTest {
                 .stage("Before Start")
                 .build();
 
-        Long wrongId = Long.valueOf(123456789);
-
         // when
-        ProjectResponseDto result = projectService.updateProject(newProject.getId(), wrongId, updateProject);
+        ProjectResponseDto result = projectService.updateProject(newProject.getId(), user1.getId()+Long.valueOf(123), updateProject);
 
         // then
         projectRepository.delete(newProject);
@@ -473,6 +471,98 @@ class ProjectServiceTest {
 
         userRepository.delete(user1);
         userRepository.delete(user2);
+    }
+
+    @DisplayName("모집글 상세보기 기능")
+    @Test
+    void detailProject() {
+        // given
+        User user1 = new User("user1@gmail.com", "detailTest");
+        userRepository.save(user1);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject = Project.builder()
+                .title("Find project")
+                .overview("This is the project that i find")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user1)
+                .stage("Before Start")
+                .build();
+
+        Project theProject = projectRepository.save(newProject);
+
+        // when
+        ProjectResponseDto result = projectService.getProject(theProject.getId());
+
+        // then
+        Assertions.assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
+
+        projectRepository.delete(theProject);
+        userRepository.delete(user1);
+    }
+
+    @DisplayName("모집글 상세보기 기능 - 잘못된 모집글 Id")
+    @Test
+    void detailProject_wrongProjectId() {
+        // given
+        User user1 = new User("detail_Wrong@gmail.com", "detailTest_wrongProjectID");
+        userRepository.save(user1);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject = Project.builder()
+                .title("Find project")
+                .overview("This is the project that i find")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user1)
+                .stage("Before Start")
+                .build();
+
+        Project theProject = projectRepository.save(newProject);
+
+        // when
+
+
+
+        // then
+        assertThrows(EntityNotFoundException.class,
+                () -> {
+                    ProjectResponseDto result = projectService.getProject(theProject.getId() + Long.valueOf(123));
+                });
+
+        projectRepository.delete(theProject);
+        userRepository.delete(user1);
     }
 
 

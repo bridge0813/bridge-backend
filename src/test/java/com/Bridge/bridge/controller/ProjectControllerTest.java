@@ -1,5 +1,7 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.PartRequestDto;
 import com.Bridge.bridge.dto.ProjectRequestDto;
@@ -24,7 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -214,6 +216,51 @@ class ProjectControllerTest {
                         .param("projectId", String.valueOf(projectId))
                         .content(objectMapper.writeValueAsString(data)))
                 .andExpect(status().is(202)) // 응답 status를 ok로 테스트
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("모집글 상세보기")
+    void detailProject() throws Exception {
+        // given
+        User user1 = new User("detail_Wrong@gmail.com", "detailTest_wrongProjectID");
+        userRepository.save(user1);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject = Project.builder()
+                .title("Find project")
+                .overview("This is the project that i find")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user1)
+                .stage("Before Start")
+                .build();
+
+        Project theProject = projectRepository.save(newProject);
+
+
+        // when
+        mockMvc.perform(get("/project")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("projectId", String.valueOf(theProject.getId())))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.title").value(newProject.getTitle()))
                 .andDo(print());
 
     }
