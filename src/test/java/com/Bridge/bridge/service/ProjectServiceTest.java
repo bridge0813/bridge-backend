@@ -81,10 +81,10 @@ class ProjectServiceTest {
                 .build();
 
         // when
-        Boolean result = projectService.createProject(newProject, user.getId());
+        Long newProjectId = projectService.createProject(newProject, user.getId());
 
         // then
-        Assertions.assertThat(result).isEqualTo(true);
+        Assertions.assertThat(newProjectId).isNotEqualTo(null);
 
         Project project = projectRepository.findByUser_Id(user.getId()).get();
         projectRepository.delete(project);

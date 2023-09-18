@@ -28,9 +28,9 @@ public class ProjectService {
     /*
         Func : 프로젝트 모집글 생성
         Parameter : 프로젝트 입력 폼
-        Return : 생성 여부 -> HttpStatus
+        Return : 새로 생성된 프로젝트 ID
     */
-    public Boolean createProject(ProjectRequestDto projectRequestDto, Long userId){
+    public Long createProject(ProjectRequestDto projectRequestDto, Long userId){
         try {
             // 모집글 작성한 user 찾기
             User user = userRepository.findById(userId)
@@ -51,13 +51,13 @@ public class ProjectService {
             user.setProject(newProject);
 
             // 모집글 DB에 저장하기
-            projectRepository.save(newProject);
+            Project save = projectRepository.save(newProject);
 
-            return true;
+            return save.getId();
         }
         catch (Exception e){
             System.out.println(e);
-            return false;
+            return null;
         }
 
     }
