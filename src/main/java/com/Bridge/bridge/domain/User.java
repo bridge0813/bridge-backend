@@ -24,6 +24,9 @@ public class User {
 
     private String platformId;          // 소셜 로그인 고유 아이디
 
+    @Enumerated(EnumType.STRING)
+    private Platform platform;          // 플랫폼 구별 enum
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Field> fields = new ArrayList<>(); // 관심 분야
 
@@ -40,8 +43,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 내가 북마크한 프로젝트 글 목록
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<JoinChat> joinChats = new ArrayList<>();           // 내가 참여한 채팅방 목록
+    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
+    private List<Chat> madeChat = new ArrayList<>();           // 내가 만든 채팅방 목록
+
+    @OneToMany(mappedBy = "receiveUser", cascade = CascadeType.ALL)
+    private List<Chat> joinChat = new ArrayList<>();           // 내가 참여한 채팅방 목록
 
     @OneToMany(mappedBy = "rcvUser", cascade = CascadeType.ALL)
     private List<Alarm> rcvAlarms = new ArrayList<>();              // 알림 수신 목록
