@@ -61,8 +61,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
 
-    public User(String email, String platformId) {
+    public User(String name, String email, Platform platform, String platformId) {
+        this.name = name;
         this.email = email;
+        this.platform = platform;
         this.platformId = platformId;
     }
 
