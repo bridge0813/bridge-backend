@@ -68,10 +68,6 @@ public class User {
         this.platformId = platformId;
     }
 
-    public void registerName(String name) {
-        this.name = name;
-    }
-
     //-- 연관관계 편의 메소드 --//
     public void updateProfile(Profile profile) {
         this.profile = profile;
