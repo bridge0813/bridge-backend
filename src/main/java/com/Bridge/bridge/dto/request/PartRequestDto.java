@@ -1,4 +1,4 @@
-package com.Bridge.bridge.dto;
+package com.Bridge.bridge.dto.request;
 
 import com.Bridge.bridge.domain.Part;
 import lombok.Builder;

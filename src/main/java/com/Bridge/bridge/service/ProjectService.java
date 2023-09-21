@@ -2,14 +2,13 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.ProjectListDto;
-import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,7 +130,7 @@ public class ProjectService {
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
-    public List<ProjectListDto> findByTitleAndContent(String searchWord){
+    public List<ProjectListResponseDto> findByTitleAndContent(String searchWord){
 
         List<Project> allProject = projectRepository.findAll();
 
@@ -141,8 +140,8 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());
 
-        List<ProjectListDto> response = findProject.stream()
-                .map((project) -> ProjectListDto.builder()
+        List<ProjectListResponseDto> response = findProject.stream()
+                .map((project) -> ProjectListResponseDto.builder()
                         .title(project.getTitle())
                         .startDate(project.getStartDate())
                         .endDate(project.getEndDate())

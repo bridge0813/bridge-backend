@@ -1,7 +1,7 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.dto.ProjectListDto;
-import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ProjectController {
 
     // 검색어 기준으로 프로젝트 모집글 조회
     @GetMapping("/project/list")
-    public List<ProjectListDto> searchProject(@RequestParam String searchWord){
+    public List<ProjectListResponseDto> searchProject(@RequestParam String searchWord){
         return projectService.findByTitleAndContent(searchWord);
     }
 

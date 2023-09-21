@@ -3,9 +3,9 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.ProjectListDto;
-import com.Bridge.bridge.dto.PartRequestDto;
-import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.request.PartRequestDto;
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
@@ -14,14 +14,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +37,7 @@ class ProjectServiceTest {
         // given
 
         // When
-        List<ProjectListDto> result = projectService.findByTitleAndContent("어플");
+        List<ProjectListResponseDto> result = projectService.findByTitleAndContent("어플");
 
         // Then
         assertEquals(result.size(), 4);
