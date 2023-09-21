@@ -2,6 +2,7 @@ package com.Bridge.bridge.domain;
 
 import com.Bridge.bridge.dto.response.PartResponseDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Project {
 
     private String endDate;         // 프로젝트 종료일
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Part> recruit = new ArrayList<>(); // 모집 분야, 모집 인원
 

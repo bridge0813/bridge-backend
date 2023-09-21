@@ -2,10 +2,12 @@ package com.Bridge.bridge.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class FilterRequestDto {
 
     private String part;

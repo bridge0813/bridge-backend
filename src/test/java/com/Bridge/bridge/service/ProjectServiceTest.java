@@ -3,6 +3,7 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
@@ -560,6 +561,95 @@ class ProjectServiceTest {
         projectRepository.delete(theProject);
         userRepository.delete(user1);
     }
+    
+    @DisplayName("모집글 필터링")
+    @Test
+    void filtering() {
+        // given
+        User user = new User("test1@gmaill.com", "apple");
+        userRepository.save(user);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Javascript");
+        skill2.add("Spring boot");
+        skill2.add("NodeJS");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("아무거나")
+                .build());
+
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("skill2")
+                .build());
+
+        Project newProject1 = Project.builder()
+                .title("Find project")
+                .overview("This is the project that i find")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(new ArrayList<>())
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.stream()
+                .forEach((part -> part.setProject(newProject1)));
+
+        Project newProject2 = Project.builder()
+                .title("Project2")
+                .overview("This is new Project2")
+                .dueDate("2023-09-17")
+                .startDate("2023-09-21")
+                .endDate("2023-09-30")
+                .recruit(new ArrayList<>())
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit2.stream()
+                .forEach((part -> part.setProject(newProject2)));
+
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
+
+        List<String> findSkills = new ArrayList<>();
+        findSkills.add("Java");
+        findSkills.add("Spring boot");
+
+        FilterRequestDto filterRequestDto = FilterRequestDto.builder()
+                .part("backend")
+                .skills(findSkills)
+                .build();
+
+        // when
+        int result = projectService.filterProjectList(filterRequestDto).size();
+
+        // then
+        Assertions.assertThat(result).isEqualTo(1);
+
+        projectRepository.delete(newProject1);
+        projectRepository.delete(newProject2);
+        userRepository.delete(user);
+    }
+
 
 
 }

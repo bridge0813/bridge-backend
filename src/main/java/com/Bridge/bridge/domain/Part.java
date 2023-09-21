@@ -1,6 +1,7 @@
 package com.Bridge.bridge.domain;
 
 import com.Bridge.bridge.dto.response.PartResponseDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class Part {
 
     private String requirement; // 모집 요건
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;

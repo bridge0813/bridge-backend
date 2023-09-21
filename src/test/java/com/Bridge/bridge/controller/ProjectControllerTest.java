@@ -3,12 +3,15 @@ package com.Bridge.bridge.controller;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.service.ProjectService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,5 +265,88 @@ class ProjectControllerTest {
                 .andDo(print());
 
     }
+
+    @Test
+    void filtering() throws Exception {
+        // given
+        User user = new User("test1@gmaill.com", "apple");
+        userRepository.save(user);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Spring boot");
+
+        List<PartRequestDto> recruit1 = new ArrayList<>();
+        recruit1.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("backend")
+                .build());
+
+        List<PartRequestDto> recruit2 = new ArrayList<>();
+        recruit2.add(PartRequestDto.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("frontend")
+                .build());
+
+        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
+                .title("This is what i find")
+                .overview("This is backend Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit1)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .userEmail(user.getEmail())
+                .stage("Before Start")
+                .build();
+
+        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
+                .title("This is not what i find")
+                .overview("This is frontend Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit2)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .userEmail(user.getEmail())
+                .stage("Before Start")
+                .build();
+
+        projectService.createProject(newProject1, user.getId());
+        projectService.createProject(newProject2, user.getId());
+
+        List<String> findSkills = new ArrayList<>();
+        findSkills.add("Java");
+        findSkills.add("Spring boot");
+
+        FilterRequestDto filterRequestDto = FilterRequestDto.builder()
+                .part("backend")
+                .skills(findSkills)
+                .build();
+
+        String body = objectMapper.writeValueAsString(filterRequestDto);
+
+        // when
+        String expectByTitle = "$.[?(@.title == '%s')]";
+
+        mockMvc.perform(post("/project/category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath(expectByTitle, "This is what i find").exists())
+                .andDo(print());
+
+    }
+
 
 }
