@@ -1,5 +1,6 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -53,6 +54,12 @@ public class ProjectController {
     @GetMapping("/project")
     public ProjectResponseDto detailProject(@RequestParam Long projectId){
         return projectService.getProject(projectId);
+    }
+
+    // 프로젝트 모집글 필터링 조회
+    @PostMapping("/project/category")
+    public List<ProjectListResponseDto> filterProjects(@RequestBody FilterRequestDto filterRequestDto){
+        return projectService.filterProjectList(filterRequestDto);
     }
 
 }

@@ -2,9 +2,11 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.repository.UserRepository;
@@ -23,6 +25,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final PartRepository partRepository;
 
     /*
         Func : 프로젝트 모집글 생성
@@ -165,6 +168,31 @@ public class ProjectService {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
 
         return project.toDto();
+    }
+
+    /*
+        Func : 필터링 후 프로젝트 목록 반환
+        Parameter : List<String>,
+        Return : projectResponse
+    */
+    public List<ProjectListResponseDto> filterProjectList(FilterRequestDto filterRequestDto){
+
+
+        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(filterRequestDto.getSkills(), filterRequestDto.getPart());
+
+        List<Project> projects = projectRepository.findAllByRecruitIn(parts);
+
+        List<ProjectListResponseDto> response = projects.stream()
+                .map((project) -> ProjectListResponseDto.builder()
+                        .title(project.getTitle())
+                        .startDate(project.getStartDate())
+                        .endDate(project.getEndDate())
+                        .recruit(project.getRecruit())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return response;
     }
 
 }
