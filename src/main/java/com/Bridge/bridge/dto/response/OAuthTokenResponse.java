@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class OAuthTokenResponse {
 
+    private String grantType;
+
     private String accessToken;
 
     private String email;
@@ -14,6 +16,7 @@ public class OAuthTokenResponse {
     private String platformId;
 
     public OAuthTokenResponse(String accessToken, String email, boolean isRegistered, String platformId) {
+        this.grantType = "Bearer";
         this.accessToken = accessToken;
         this.email = email;
         this.isRegistered = isRegistered;
