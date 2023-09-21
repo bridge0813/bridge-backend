@@ -19,7 +19,7 @@ public class UserController {
     /**
      * 회원 가입시 관심 분야 등록
      */
-    @PostMapping("/users/signup")
+    @PostMapping("/signup")
     public ResponseEntity saveField(@RequestBody UserRegisterRequest request) {
         userService.signUpInfo(request);
         return new ResponseEntity(HttpStatus.OK);
