@@ -4,6 +4,9 @@ import lombok.Data;
 
 @Data
 public class AppleResponse {
+
+    private String name;
+
     private String code;
 
     private String idToken;

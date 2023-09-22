@@ -10,6 +10,7 @@ import com.Bridge.bridge.security.apple.AppleToken;
 import com.Bridge.bridge.security.apple.AppleUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +28,18 @@ public class AuthService {
         return generateOAuthTokenResponse(appleUser.getEmail(), appleUser.getSubject(), response.getCode());
     }
 
-    public OAuthTokenResponse generateOAuthTokenResponse(String email, String platformId, String code) throws Exception {
-        AppleTokenResponse accessToken = appleToken.getAccessToken(code);
-        if (userRepository.findByPlatformId(platformId).isPresent()) {
-            return new OAuthTokenResponse(accessToken.getAccessToken(), email, true, platformId);
-        }
-        User newUser = new User(email, platformId);
-
-        userRepository.save(newUser);
-        return new OAuthTokenResponse(accessToken.getAccessToken(), email, false, platformId);
+    @Transactional
+    public OAuthTokenResponse generateOAuthTokenResponse(String email, String platformId, String code) {
+        return userRepository.findByPlatformId(platformId)
+                .map(u -> {
+                    AppleTokenResponse accessToken = appleToken.getAccessToken(code);
+                    return new OAuthTokenResponse(accessToken.getAccessToken(), email, true, platformId);
+                })
+                .orElseGet(() -> {
+                    User user = new User(email, platformId);
+                    userRepository.save(user);
+                    AppleTokenResponse accessToken = appleToken.getAccessToken(code);
+                    return new OAuthTokenResponse(accessToken.getAccessToken(), email, false, platformId);
+                });
     }
 }
