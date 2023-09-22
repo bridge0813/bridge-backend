@@ -3,6 +3,7 @@ package com.Bridge.bridge.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.*;
@@ -26,8 +27,7 @@ public class Project {
 
     private String endDate;         // 프로젝트 종료일
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name =  "part", joinColumns = @JoinColumn(name = "project_id"))
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Part> recruit = new ArrayList<>(); // 모집 분야, 모집 인원
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -46,5 +46,24 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 해당 프로젝트 글을 북마크한 유저 목록
+
+    @Builder
+    public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
+        this.title = title;
+        this.overview = overview;
+        this.dueDate = dueDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.recruit = recruit;
+        this.tagLimit = tagLimit;
+        this.meetingWay = meetingWay;
+        this.stage = stage;
+        this.user = user;
+    }
+
+    public void setRecruit(List<Part> recruit) {
+        this.recruit = recruit;
+    }
+
 
 }

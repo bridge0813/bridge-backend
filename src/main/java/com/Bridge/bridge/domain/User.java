@@ -60,6 +60,11 @@ public class User {
         this.platformId = platformId;
     }
 
+
+    public void setProject(Project project){
+        this.projects.add(project);
+    }
+  
     public void registerName(String name) {
         this.name = name;
     }
