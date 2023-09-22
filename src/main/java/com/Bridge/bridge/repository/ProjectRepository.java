@@ -1,5 +1,6 @@
 package com.Bridge.bridge.repository;
 
+import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Override
     <S extends Project> S save(S entity);
+
+    List<Project> findAllByRecruitIn(List<Part> parts);
 }

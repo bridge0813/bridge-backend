@@ -1,16 +1,14 @@
-package com.Bridge.bridge.dto;
+package com.Bridge.bridge.dto.request;
 
-import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
-import lombok.AccessLevel;
+import com.Bridge.bridge.dto.request.PartRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor

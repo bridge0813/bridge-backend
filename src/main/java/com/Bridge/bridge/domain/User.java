@@ -61,11 +61,11 @@ public class User {
     }
 
 
-    public void setProject(Project project){
+    public void setProject(Project project) {
         this.projects.add(project);
     }
-  
-    public void registerName(String name) {
+      
+    public void registerName(String name){
         this.name = name;
     }
 
