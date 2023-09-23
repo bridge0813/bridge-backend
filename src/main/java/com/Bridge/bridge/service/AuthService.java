@@ -7,6 +7,7 @@ import com.Bridge.bridge.dto.response.apple.AppleResponse;
 import com.Bridge.bridge.dto.response.OAuthTokenResponse;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.dto.response.apple.AppleTokenResponse;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.Bridge.bridge.security.apple.AppleToken;
 import com.Bridge.bridge.security.apple.AppleUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    private final AppleToken appleToken;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     public OAuthTokenResponse appleOAuthLogin(AppleResponse response) throws Exception {
         // 1. 토큰을 통해 회원 정보 뺴기
@@ -37,16 +39,17 @@ public class AuthService {
                 .map(userId ->  {
                     User findUser = userRepository.findById(userId)
                             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
-                    //String token = createToken(findUser);
+                    String accessToken = jwtTokenProvider.createAccessToken(findUser.getId());
+                    String refreshToken = jwtTokenProvider.createRefreshToken();
 
-                    return new OAuthTokenResponse(null, email, true, platformId);
+                    return new OAuthTokenResponse(accessToken, refreshToken, email, true, platformId);
                 })
                 .orElseGet(() -> {
-                    User newUser = new User(name, email, platform, platformId);
-                    userRepository.save(newUser);
-                    //String token = createToken(newUser);
+                    User saveUser = userRepository.save(new User(name, email, platform, platformId));
+                    String accessToken = jwtTokenProvider.createAccessToken(saveUser.getId());
+                    String refreshToken = jwtTokenProvider.createRefreshToken();
 
-                    return new OAuthTokenResponse(null, email, false, platformId);
+                    return new OAuthTokenResponse(accessToken, refreshToken, email, false, platformId);
                 });
     }
 }
