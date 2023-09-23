@@ -24,6 +24,8 @@ public class User {
 
     private String platformId;          // 소셜 로그인 고유 아이디
 
+    private String refreshToken;
+
     @Enumerated(EnumType.STRING)
     private Platform platform;          // 플랫폼 구별 enum
 
@@ -72,5 +74,9 @@ public class User {
     public void updateProfile(Profile profile) {
         this.profile = profile;
         profile.updateUser(this);
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
