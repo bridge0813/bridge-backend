@@ -21,8 +21,22 @@ spring:
         format_sql: true
       show_sql: true
 
+  springdoc:
+    packages-to-scan: com.Bridge.bridge.controller
+    default-consumes-media-type: application/json
+    default-produces-media-type: application/json
+    swagger-ui:
+      path: /swagger-ui.html
+      disable-swagger-default-url: true
+      display-request-duration: true
+      operations-sorter: alpha
+      tags-sorter: alpha
+
 
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
 
+
+jwt :
+  secret-key : VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa

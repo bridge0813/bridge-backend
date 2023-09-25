@@ -36,6 +36,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+
 	implementation 'com.mysql:mysql-connector-j'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
