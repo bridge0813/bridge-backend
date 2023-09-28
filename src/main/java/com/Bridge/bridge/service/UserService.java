@@ -6,6 +6,7 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.request.UserRegisterRequest;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class UserService {
     public boolean saveField(Long userId, UserFieldRequest request) {
 
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         List<Field> fields = request.toEntity();
 
@@ -55,7 +56,7 @@ public class UserService {
         }
 
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         Profile profile = request.toEntity();
         findUser.updateProfile(profile);
@@ -67,6 +68,6 @@ public class UserService {
      */
     public User find(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
     }
 }
