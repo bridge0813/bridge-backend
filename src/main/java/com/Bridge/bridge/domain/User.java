@@ -70,6 +70,11 @@ public class User {
         this.platformId = platformId;
     }
 
+    public void setProject(Project project) {
+        this.projects.add(project);
+    }
+     
+
     //-- 연관관계 편의 메소드 --//
     public void updateProfile(Profile profile) {
         this.profile = profile;

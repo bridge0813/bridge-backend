@@ -1,37 +1,61 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.response.PartResponseDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Embeddable
+@Entity
 @Getter
 @NoArgsConstructor
 public class Part {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "part_id")
+    private Long id;
+
+    private String recruitPart;     // 모집 파트
+
     private int recruitNum;         //모집인원 수
 
-    private String recruitSkill;    //모집 분야
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> recruitSkill;    //모집 기술 스택
 
     private String requirement; // 모집 요건
 
-    public Part(int recruitNum, String recruitSkill, String requirement) {
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
+
+    @Builder
+    public Part(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement, Project project) {
+        this.recruitPart = recruitPart;
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;
         this.requirement = requirement;
+        this.project = project;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Part)) return false;
-        Part part = (Part) o;
-        return recruitNum == part.recruitNum && Objects.equals(recruitSkill, part.recruitSkill) && Objects.equals(requirement, part.requirement);
+    public void setProject(Project project) {
+        this.project = project;
+        project.getRecruit().add(this);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(recruitNum, recruitSkill, requirement);
+    public PartResponseDto toDto(){
+        return PartResponseDto.builder()
+                .recruitPart(this.getRecruitPart())
+                .recruitNum(this.getRecruitNum())
+                .recruitSkill(this.getRecruitSkill())
+                .requirement(this.getRequirement())
+                .build();
     }
+
+
+
 }
