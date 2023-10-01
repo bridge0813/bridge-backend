@@ -1,11 +1,16 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.PartResponseDto;
+import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -26,8 +31,8 @@ public class Project {
 
     private String endDate;         // 프로젝트 종료일
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name =  "part", joinColumns = @JoinColumn(name = "project_id"))
+    @JsonManagedReference
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Part> recruit = new ArrayList<>(); // 모집 분야, 모집 인원
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -46,5 +51,57 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 해당 프로젝트 글을 북마크한 유저 목록
+
+    @Builder
+    public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
+        this.title = title;
+        this.overview = overview;
+        this.dueDate = dueDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.recruit = recruit;
+        this.tagLimit = tagLimit;
+        this.meetingWay = meetingWay;
+        this.stage = stage;
+        this.user = user;
+    }
+
+    public void setRecruit(List<Part> recruit) {
+        this.recruit = recruit;
+    }
+
+    public ProjectResponseDto toDto(){
+        List<PartResponseDto> recruit = this.getRecruit().stream()
+                .map((part) -> part.toDto())
+                .collect(Collectors.toList());
+
+        return ProjectResponseDto.builder()
+                .title(this.getTitle())
+                .overview(this.getOverview())
+                .dueDate(this.getDueDate())
+                .startDate(this.getStartDate())
+                .endDate(this.getEndDate())
+                .recruit(recruit)
+                .tagLimit(this.getTagLimit())
+                .meetingWay(this.getMeetingWay())
+                .stage(this.getStage())
+                .userName(this.getUser().getName())
+                .build();
+    }
+
+    public Project update(User user,  ProjectRequestDto projectRequestDto, List<Part> recruit){
+        this.title = projectRequestDto.getTitle();
+        this.overview = projectRequestDto.getOverview();
+        this.dueDate = projectRequestDto.getDueDate();
+        this.startDate = projectRequestDto.getStartDate();
+        this.endDate = projectRequestDto.getEndDate();
+        this.recruit = recruit;
+        this.tagLimit = projectRequestDto.getTagLimit();
+        this.meetingWay = projectRequestDto.getMeetingWay();
+        this.stage = projectRequestDto.getStage();
+        this.user = user;
+
+        return this;
+    }
 
 }
