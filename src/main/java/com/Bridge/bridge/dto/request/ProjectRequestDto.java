@@ -1,16 +1,14 @@
-package com.Bridge.bridge.dto;
+package com.Bridge.bridge.dto.request;
 
-import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
-import lombok.AccessLevel;
+import com.Bridge.bridge.dto.request.PartRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -34,10 +32,10 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
 
     private String stage;           // 진행 단계
 
-    private String userEmail;        // 모집글을 작성한 유저 이메일
+    private Long userId;        // 모집글을 작성한 유저 이메일
 
     @Builder
-    public ProjectRequestDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequestDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userEmail) {
+    public ProjectRequestDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequestDto> recruit, List<String> tagLimit, String meetingWay, String stage, Long userId) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
@@ -47,7 +45,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
-        this.userEmail = userEmail;
+        this.userId= userId;
     }
 
     public Project toEntityOfProject(User user){

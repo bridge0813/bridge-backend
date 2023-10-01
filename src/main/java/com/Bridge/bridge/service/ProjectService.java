@@ -2,19 +2,22 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.ProjectListDto;
-import com.Bridge.bridge.dto.ProjectRequestDto;
+import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = false)
@@ -23,16 +26,18 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final PartRepository partRepository;
 
     /*
         Func : 프로젝트 모집글 생성
         Parameter : 프로젝트 입력 폼
-        Return : 생성 여부 -> HttpStatus
+        Return : 새로 생성된 프로젝트 ID
     */
-    public HttpStatus createProject(ProjectRequestDto projectRequestDto){
+    public Long createProject(ProjectRequestDto projectRequestDto){
         try {
             // 모집글 작성한 user 찾기
-            User user = userRepository.findByEmail(projectRequestDto.getUserEmail());
+            User user = userRepository.findById(projectRequestDto.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
 
             Project newProject = projectRequestDto.toEntityOfProject(user);
 
@@ -49,13 +54,13 @@ public class ProjectService {
             user.setProject(newProject);
 
             // 모집글 DB에 저장하기
-            projectRepository.save(newProject);
+            Project save = projectRepository.save(newProject);
 
-            return HttpStatus.OK;
+            return save.getId();
         }
         catch (Exception e){
             System.out.println(e);
-            return HttpStatus.NOT_ACCEPTABLE;
+            return null;
         }
 
     }
@@ -65,29 +70,77 @@ public class ProjectService {
         Parameter : 프로젝트 모집글 ID
         Return : 삭제 여부 -> HttpStatus
     */
-    public HttpStatus deleteProject(Long projectId, Long userId){
+    public Boolean deleteProject(Long projectId, Long userId){
         try {
             // 삭제할 프로젝트 모집글 찾기
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트 입니다."));
 
             // 삭제할 모집글을 작성한 유저 찾기
-            User user = userRepository.findById(userId).get();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
 
             // 해당 모집글 삭제하기
             if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
                 projectRepository.delete(project);
 
-                return HttpStatus.ACCEPTED;
+                return true;
             }
-            return HttpStatus.BAD_REQUEST;
+            return false;
         }
         catch (Exception e){
             System.out.println(e);
-            return HttpStatus.NOT_FOUND;
         }
+        return null;
+    }
+
+    /*
+        Func : 프로젝트 모집글 수정
+        Parameter : 프로젝트 모집글 수정폼
+        Return : PrjectResponseDto -> 수정본
+    */
+    @Transactional
+    public ProjectResponseDto updateProject(Long projectId, ProjectRequestDto projectRequestDto){
+        try {
+            // 모집글 작성한 user 찾기
+            User user = userRepository.findById(projectRequestDto.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+
+            // 모집글 찾기
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
 
 
+            // 모집글 작성자와 유저가 같은지 확인하기
+            if (user.getId().equals(project.getUser().getId())) {
+                // 모집 분야, 인원 -> Part entity화 하기
+                List<Part> recruit = projectRequestDto.getRecruit().stream()
+                        .map((p) -> p.toEntity())
+                        .collect(Collectors.toList());
+
+                // 모집분야, 인원 초기화
+                partRepository.deleteAll(project.getRecruit());
+
+                // Part- Project 매핑
+                Project finalProject = project;
+                recruit.stream()
+                        .forEach((part -> part.setProject(finalProject)));
+
+                project = project.update(user, projectRequestDto, recruit);
+
+                projectRepository.save(project);
+
+                return project.toDto();
+            }
+            else {
+                throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
+            }
+
+        }
+        catch (Exception e){
+            System.out.println(e + e.getMessage());
+        }
+        return null;
     }
 
     /*
@@ -95,7 +148,7 @@ public class ProjectService {
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
-    public List<ProjectListDto> findByTitleAndContent(String searchWord){
+    public List<ProjectListResponseDto> findByTitleAndContent(String searchWord){
 
         List<Project> allProject = projectRepository.findAll();
 
@@ -105,8 +158,47 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());
 
-        List<ProjectListDto> response = findProject.stream()
-                .map((project) -> ProjectListDto.builder()
+        List<ProjectListResponseDto> response = findProject.stream()
+                .map((project) -> ProjectListResponseDto.builder()
+                        .title(project.getTitle())
+                        .startDate(project.getStartDate())
+                        .endDate(project.getEndDate())
+                        .recruit(project.getRecruit())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return response;
+    }
+
+     /*
+        Func : 프로젝트 모집글 상세보기
+        Parameter : projectID - 모집글 ID
+        Return : projectResponse
+    */
+    public ProjectResponseDto getProject(Long projectId){
+
+        // 해당 모집글 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
+
+        return project.toDto();
+    }
+
+    /*
+        Func : 필터링 후 프로젝트 목록 반환
+        Parameter : List<String>,
+        Return : projectResponse
+    */
+    public List<ProjectListResponseDto> filterProjectList(FilterRequestDto filterRequestDto){
+
+
+        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(filterRequestDto.getSkills(), filterRequestDto.getPart());
+
+        List<Project> projects = projectRepository.findAllByRecruitIn(parts);
+
+        List<ProjectListResponseDto> response = projects.stream()
+                .map((project) -> ProjectListResponseDto.builder()
                         .title(project.getTitle())
                         .startDate(project.getStartDate())
                         .endDate(project.getEndDate())
