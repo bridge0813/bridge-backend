@@ -76,7 +76,7 @@ class ProjectControllerTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(newUser.getEmail())
+                .userId(newUser.getId())
                 .stage("Before Start")
                 .build();
 
@@ -119,11 +119,11 @@ class ProjectControllerTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject, user.getId());
+        projectService.createProject(newProject);
 
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -167,11 +167,11 @@ class ProjectControllerTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject, user.getId());
+        projectService.createProject(newProject);
 
 
 
@@ -197,7 +197,7 @@ class ProjectControllerTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
@@ -305,7 +305,7 @@ class ProjectControllerTest {
                 .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
@@ -318,12 +318,12 @@ class ProjectControllerTest {
                 .recruit(recruit2)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject1, user.getId());
-        projectService.createProject(newProject2, user.getId());
+        projectService.createProject(newProject1);
+        projectService.createProject(newProject2);
 
         List<String> findSkills = new ArrayList<>();
         findSkills.add("Java");

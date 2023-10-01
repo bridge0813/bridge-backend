@@ -73,12 +73,12 @@ class ProjectServiceTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
         // when
-        Long newProjectId = projectService.createProject(newProject, user.getId());
+        Long newProjectId = projectService.createProject(newProject);
 
         // then
         Assertions.assertThat(newProjectId).isNotEqualTo(null);
@@ -116,11 +116,11 @@ class ProjectServiceTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject, user.getId());
+        projectService.createProject(newProject);
 
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -166,11 +166,11 @@ class ProjectServiceTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user1.getEmail())
+                .userId(user1.getId())
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject, user1.getId());
+        projectService.createProject(newProject);
 
         Long userId = user1.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -207,6 +207,7 @@ class ProjectServiceTest {
                 .requirement("아무거나")
                 .build());
 
+
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
@@ -219,6 +220,8 @@ class ProjectServiceTest {
                 .user(user)
                 .stage("Before Start")
                 .build();
+
+        recruit.get(0).setProject(newProject);
         projectRepository.save(newProject);
 
 
@@ -243,20 +246,17 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user.getEmail())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
 
         // when
-        ProjectResponseDto result = projectService.updateProject(newProject.getId(), user.getId(), updateProject);
+        ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
 
         // then
         Assertions.assertThat(result.getTitle()).isEqualTo("Update project");
 
-        projectRepository.delete(newProject);
-
-        userRepository.delete(user);
     }
 
     @Test
@@ -314,14 +314,14 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user1.getEmail())
+                .userId(user1.getId())
                 .stage("Before Start")
                 .build();
 
         Long wrongId = Long.valueOf(123456789);
 
         // when
-        ProjectResponseDto result = projectService.updateProject(wrongId, user1.getId(), updateProject);
+        ProjectResponseDto result = projectService.updateProject(wrongId, updateProject);
 
         // then
         projectRepository.delete(newProject);
@@ -384,12 +384,12 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user1.getEmail())
+                .userId(user1.getId())
                 .stage("Before Start")
                 .build();
 
         // when
-        ProjectResponseDto result = projectService.updateProject(newProject.getId(), user1.getId()+Long.valueOf(123), updateProject);
+        ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
 
         // then
         projectRepository.delete(newProject);
@@ -455,12 +455,12 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userEmail(user1.getEmail())
+                .userId(user1.getId())
                 .stage("Before Start")
                 .build();
 
         // when
-         ProjectResponseDto result = projectService.updateProject(newProject.getId(), user2.getId(), updateProject);
+         ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
 
 
         // then

@@ -32,10 +32,10 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
 
     private String stage;           // 진행 단계
 
-    private String userEmail;        // 모집글을 작성한 유저 이메일
+    private Long userId;        // 모집글을 작성한 유저 이메일
 
     @Builder
-    public ProjectRequestDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequestDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userEmail) {
+    public ProjectRequestDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequestDto> recruit, List<String> tagLimit, String meetingWay, String stage, Long userId) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
@@ -45,7 +45,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
-        this.userEmail = userEmail;
+        this.userId= userId;
     }
 
     public Project toEntityOfProject(User user){

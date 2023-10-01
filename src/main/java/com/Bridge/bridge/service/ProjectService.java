@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = false)
@@ -32,10 +33,10 @@ public class ProjectService {
         Parameter : 프로젝트 입력 폼
         Return : 새로 생성된 프로젝트 ID
     */
-    public Long createProject(ProjectRequestDto projectRequestDto, Long userId){
+    public Long createProject(ProjectRequestDto projectRequestDto){
         try {
             // 모집글 작성한 user 찾기
-            User user = userRepository.findById(userId)
+            User user = userRepository.findById(projectRequestDto.getUserId())
                     .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
 
             Project newProject = projectRequestDto.toEntityOfProject(user);
@@ -99,23 +100,37 @@ public class ProjectService {
         Return : PrjectResponseDto -> 수정본
     */
     @Transactional
-    public ProjectResponseDto updateProject(Long projectId, Long userId, ProjectRequestDto projectRequestDto){
+    public ProjectResponseDto updateProject(Long projectId, ProjectRequestDto projectRequestDto){
         try {
             // 모집글 작성한 user 찾기
-            User user = userRepository.findById(userId)
+            User user = userRepository.findById(projectRequestDto.getUserId())
                     .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
 
             // 모집글 찾기
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
 
+
             // 모집글 작성자와 유저가 같은지 확인하기
             if (user.getId().equals(project.getUser().getId())) {
-                Project update = projectRequestDto.toEntityOfProject(user);
+                // 모집 분야, 인원 -> Part entity화 하기
+                List<Part> recruit = projectRequestDto.getRecruit().stream()
+                        .map((p) -> p.toEntity())
+                        .collect(Collectors.toList());
 
-                projectRepository.save(update);
+                // 모집분야, 인원 초기화
+                partRepository.deleteAll(project.getRecruit());
 
-                return update.toDto();
+                // Part- Project 매핑
+                Project finalProject = project;
+                recruit.stream()
+                        .forEach((part -> part.setProject(finalProject)));
+
+                project = project.update(user, projectRequestDto, recruit);
+
+                projectRepository.save(project);
+
+                return project.toDto();
             }
             else {
                 throw new NullPointerException("작성자와 요청자가 같지 않습니다.");

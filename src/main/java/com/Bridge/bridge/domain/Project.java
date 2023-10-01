@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.PartResponseDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -86,6 +87,21 @@ public class Project {
                 .stage(this.getStage())
                 .userName(this.getUser().getName())
                 .build();
+    }
+
+    public Project update(User user,  ProjectRequestDto projectRequestDto, List<Part> recruit){
+        this.title = projectRequestDto.getTitle();
+        this.overview = projectRequestDto.getOverview();
+        this.dueDate = projectRequestDto.getDueDate();
+        this.startDate = projectRequestDto.getStartDate();
+        this.endDate = projectRequestDto.getEndDate();
+        this.recruit = recruit;
+        this.tagLimit = projectRequestDto.getTagLimit();
+        this.meetingWay = projectRequestDto.getMeetingWay();
+        this.stage = projectRequestDto.getStage();
+        this.user = user;
+
+        return this;
     }
 
 }
