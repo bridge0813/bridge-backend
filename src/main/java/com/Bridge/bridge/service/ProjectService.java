@@ -302,4 +302,42 @@ public class ProjectService {
             return response;
         }
     }
+
+    /*
+        Func : 내 분야 모집글 리스트 보여주기
+        Parameter : String - 모집분야
+        Return : List<projectListResponseDto>
+    */
+    public List<ProjectListResponseDto> findMyPartProjects(String myPart){
+        List<Part> parts = partRepository.findAllByRecruitPart(myPart);
+
+        List<Project> myPartProjects = projectRepository.findAllByRecruitIn(parts);
+
+        // 작성글이 하나도 없다면
+        if(myPartProjects.isEmpty()){
+            throw new NullPointerException("해당 프로젝트가 없습니다.");
+        }
+        else {
+            // 총 모집인원
+            final int[] recruitTotal = {0};
+
+            // 총 모집인원 구하기
+            myPartProjects.stream()
+                    .forEach((project -> project.getRecruit().stream()
+                            .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                    ));
+
+            List<ProjectListResponseDto> response = myPartProjects.stream()
+                    .map((project -> ProjectListResponseDto.builder()
+                            .projectId(project.getId())
+                            .title(project.getTitle())
+                            .dueDate(project.getDueDate())
+                            .recruitTotalNum(recruitTotal[0])
+                            .build()
+                    ))
+                    .collect(Collectors.toList());
+
+            return response;
+        }
+    }
 }

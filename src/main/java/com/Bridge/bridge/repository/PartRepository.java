@@ -9,4 +9,6 @@ import java.util.List;
 public interface PartRepository extends JpaRepository<Part, Long> {
 
     List<Part> findAllByRecruitSkillInAndAndRecruitPart(List<String> skills, String part);
+
+    List<Part> findAllByRecruitPart(String part);
 }
