@@ -267,4 +267,39 @@ public class ProjectService {
             return response;
         }
     }
+
+    /*
+        Func : 모든 모집글 리스트 보여주기
+        Return : List<projectListResponseDto>
+    */
+    public List<ProjectListResponseDto> allProjects(){
+        List<Project> allProjects = projectRepository.findAll();
+
+        // 작성글이 하나도 없다면
+        if(allProjects.isEmpty()){
+            throw new NullPointerException("작성한 프로젝트가 없습니다.");
+        }
+        else {
+            // 총 모집인원
+            final int[] recruitTotal = {0};
+
+            // 총 모집인원 구하기
+            allProjects.stream()
+                    .forEach((project -> project.getRecruit().stream()
+                            .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                    ));
+
+            List<ProjectListResponseDto> response = allProjects.stream()
+                    .map((project -> ProjectListResponseDto.builder()
+                            .projectId(project.getId())
+                            .title(project.getTitle())
+                            .dueDate(project.getDueDate())
+                            .recruitTotalNum(recruitTotal[0])
+                            .build()
+                    ))
+                    .collect(Collectors.toList());
+
+            return response;
+        }
+    }
 }
