@@ -68,4 +68,10 @@ public class ProjectController {
         return projectService.findMyProjects(userId);
     }
 
+    // 모든 프로젝트 모집글 불러오기
+    @GetMapping("/projects/all")
+    public List<ProjectListResponseDto> allProjects(){
+        return projectService.allProjects();
+    }
+
 }
