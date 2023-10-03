@@ -26,7 +26,7 @@ public class ProjectController {
     }
 
     // 검색어 기준으로 프로젝트 모집글 조회
-    @GetMapping("/project/list")
+    @GetMapping("/projects/searchWord")
     public List<ProjectListResponseDto> searchProject(@RequestParam String searchWord){
         return projectService.findByTitleAndContent(searchWord);
     }
@@ -60,6 +60,12 @@ public class ProjectController {
     @PostMapping("/project/category")
     public List<ProjectListResponseDto> filterProjects(@RequestBody FilterRequestDto filterRequestDto){
         return projectService.filterProjectList(filterRequestDto);
+    }
+
+    // 내가 작성한 프로젝트 모집글 불러오기
+    @PostMapping("/projects/")
+    public List<ProjectListResponseDto> findMyProjects(@RequestBody Long userId){
+        return projectService.findMyProjects(userId);
     }
 
 }
