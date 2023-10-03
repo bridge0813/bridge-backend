@@ -74,4 +74,10 @@ public class ProjectController {
         return projectService.allProjects();
     }
 
+    // 내 분야 프로젝트 모집글 불러오기
+    @GetMapping("/projects/mypart")
+    public List<ProjectListResponseDto> findMyPartProjects(@RequestBody String part){
+        return projectService.findMyPartProjects(part);
+    }
+
 }
