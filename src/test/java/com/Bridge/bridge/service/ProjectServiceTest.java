@@ -650,6 +650,96 @@ class ProjectServiceTest {
         userRepository.delete(user);
     }
 
+    @DisplayName("내가 작성한 모집글")
+    @Test
+    void findMyProject() {
+        // given
+        User user = new User("myproject1@gmaill.com", "apple");
+        userRepository.save(user);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Javascript");
+        skill2.add("Spring boot");
+        skill2.add("NodeJS");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("아무거나")
+                .build());
+
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("skill2")
+                .build());
+
+        Project newProject1 = Project.builder()
+                .title("Find MyProject1")
+                .overview("This is My Project1")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(new ArrayList<>())
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.stream()
+                .forEach((part -> part.setProject(newProject1)));
+
+        Project newProject2 = Project.builder()
+                .title("Find MyProject2")
+                .overview("This is My Project2")
+                .dueDate("2023-09-17")
+                .startDate("2023-09-21")
+                .endDate("2023-09-30")
+                .recruit(new ArrayList<>())
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit2.stream()
+                .forEach((part -> part.setProject(newProject2)));
+
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
+
+        // when
+        List<ProjectListResponseDto> response = projectService.findMyProjects(user.getId());
+
+        // then
+        Assertions.assertThat(response.size()).isEqualTo(2);
+    }
+
+    @DisplayName("내가 작성한 모집글 불러오기 - 하나도 없을 때")
+    @Test
+    void NoProjects() {
+        // given
+        User user = new User("noProjects@gmail.com", "apple");
+        userRepository.save(user);
+
+        // when
+
+        assertThrows(NullPointerException.class, () -> projectService.findMyProjects(user.getId()));
+
+    }
+
+
+
 
 
 }
