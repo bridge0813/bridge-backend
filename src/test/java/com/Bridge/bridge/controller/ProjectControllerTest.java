@@ -421,6 +421,110 @@ class ProjectControllerTest {
 
     }
 
+    @DisplayName("모든 모집글들 불러오기")
+    @Test
+    void allProjects() throws Exception {
+        // given
+        User user1 = new User("C_allProjects1@gmaill.com", "apple");
+        userRepository.save(user1);
+
+        User user2 = new User("C_allProjects2@gmaill.com", "apple");
+        userRepository.save(user2);
+
+        User user3 = new User("C_allProjects3@gmaill.com", "apple");
+        userRepository.save(user3);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Spring boot");
+
+        List<String> skill3 = new ArrayList<>();
+        skill2.add("Python");
+        skill2.add("Django");
+
+        List<PartRequestDto> recruit1 = new ArrayList<>();
+        recruit1.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("backend")
+                .build());
+
+        List<PartRequestDto> recruit2 = new ArrayList<>();
+        recruit2.add(PartRequestDto.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("frontend")
+                .build());
+
+        List<PartRequestDto> recruit3 = new ArrayList<>();
+        recruit3.add(PartRequestDto.builder()
+                .recruitPart("backtend")
+                .recruitNum(5)
+                .recruitSkill(skill3)
+                .requirement("backend")
+                .build());
+
+        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
+                .title("Myproject1")
+                .overview("This is Myproject1")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit1)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .userId(user1.getId())
+                .stage("Before Start")
+                .build();
+
+        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
+                .title("Myproject2")
+                .overview("This is Myproject2")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit2)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .userId(user2.getId())
+                .stage("Before Start")
+                .build();
+
+        ProjectRequestDto newProject3 = ProjectRequestDto.builder()
+                .title("Myproject3")
+                .overview("This is Myproject3")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit3)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .userId(user3.getId())
+                .stage("Before Start")
+                .build();
+
+        projectService.createProject(newProject1);
+        projectService.createProject(newProject2);
+        projectService.createProject(newProject3);
+
+        // when
+        String expectByTitle = "$.[?(@.title == '%s')]";
+
+        mockMvc.perform(get("/projects/all")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath(expectByTitle, "Myproject3").exists())
+                .andDo(print());
+
+    }
+
 
 
 
