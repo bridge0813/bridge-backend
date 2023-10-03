@@ -267,6 +267,7 @@ class ProjectControllerTest {
     }
 
     @Test
+    @DisplayName("필터링")
     void filtering() throws Exception {
         // given
         User user = new User("test1@gmaill.com", "apple");
@@ -347,6 +348,81 @@ class ProjectControllerTest {
                 .andDo(print());
 
     }
+
+    @DisplayName("내가 작성한 모집글들 불러오기")
+    @Test
+    void findMyProjects() throws Exception {
+        // given
+        User user = new User("C_myProjects1@gmaill.com", "apple");
+        userRepository.save(user);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Spring boot");
+
+        List<PartRequestDto> recruit1 = new ArrayList<>();
+        recruit1.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("backend")
+                .build());
+
+        List<PartRequestDto> recruit2 = new ArrayList<>();
+        recruit2.add(PartRequestDto.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("frontend")
+                .build());
+
+        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
+                .title("Myproject1")
+                .overview("This is Myproject1")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit1)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .userId(user.getId())
+                .stage("Before Start")
+                .build();
+
+        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
+                .title("Myproject2")
+                .overview("This is Myproject2")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit2)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .userId(user.getId())
+                .stage("Before Start")
+                .build();
+
+        projectService.createProject(newProject1);
+        projectService.createProject(newProject2);
+
+        // when
+        String expectByTitle = "$.[?(@.title == '%s')]";
+
+        mockMvc.perform(post("/projects/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user.getId())))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath(expectByTitle, "Myproject2").exists())
+                .andDo(print());
+
+    }
+
+
+
 
 
 }
