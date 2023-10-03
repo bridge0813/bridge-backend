@@ -75,7 +75,7 @@ public class ProjectController {
     }
 
     // 내 분야 프로젝트 모집글 불러오기
-    @GetMapping("/projects/mypart")
+    @PostMapping("/projects/mypart")
     public List<ProjectListResponseDto> findMyPartProjects(@RequestBody String part){
         return projectService.findMyPartProjects(part);
     }

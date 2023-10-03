@@ -525,6 +525,100 @@ class ProjectControllerTest {
 
     }
 
+    @Test
+    @DisplayName("내 분야 모집글 불러오기")
+    void findMypartProjects() throws Exception {
+        // given
+        User user = new User("test1@gmaill.com", "apple");
+        userRepository.save(user);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Spring boot");
+
+        List<PartRequestDto> recruit1 = new ArrayList<>();
+        recruit1.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("backend")
+                .build());
+
+        List<PartRequestDto> recruit2 = new ArrayList<>();
+        recruit2.add(PartRequestDto.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("frontend")
+                .build());
+
+        List<PartRequestDto> recruit3 = new ArrayList<>();
+        recruit3.add(PartRequestDto.builder()
+                .recruitPart("backend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("backend")
+                .build());
+
+        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
+                .title("This is backend Project.")
+                .overview("This is backend Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit1)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .userId(user.getId())
+                .stage("Before Start")
+                .build();
+
+        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
+                .title("This is not what i find")
+                .overview("This is frontend Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit2)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .userId(user.getId())
+                .stage("Before Start")
+                .build();
+
+        ProjectRequestDto newProject3 = ProjectRequestDto.builder()
+                .title("This is backend Project.")
+                .overview("This is backend Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit3)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("ONline")
+                .userId(user.getId())
+                .stage("Before Start")
+                .build();
+
+        projectService.createProject(newProject1);
+        projectService.createProject(newProject2);
+        projectService.createProject(newProject3);
+
+        // when
+        String expectByTitle = "$.[?(@.title == '%s')]";
+
+        mockMvc.perform(post("/projects/mypart")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("backend"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath(expectByTitle, "This is backend Project.").exists())
+                .andDo(print());
+
+    }
+
 
 
 
