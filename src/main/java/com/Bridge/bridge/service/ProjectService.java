@@ -1,6 +1,7 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.StaticMessage;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
@@ -158,12 +159,19 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());
 
+        final int[] recruitTotal = {0};
+
+        findProject.stream()
+                .forEach((project -> project.getRecruit().stream()
+                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                ));
+
         List<ProjectListResponseDto> response = findProject.stream()
                 .map((project) -> ProjectListResponseDto.builder()
+                        .projectId(project.getId())
                         .title(project.getTitle())
-                        .startDate(project.getStartDate())
-                        .endDate(project.getEndDate())
-                        .recruit(project.getRecruit())
+                        .dueDate(project.getDueDate())
+                        .recruitTotalNum(recruitTotal[0])
                         .build()
                 )
                 .collect(Collectors.toList());
@@ -197,12 +205,19 @@ public class ProjectService {
 
         List<Project> projects = projectRepository.findAllByRecruitIn(parts);
 
+        final int[] recruitTotal = {0};
+
+        projects.stream()
+                .forEach((project -> project.getRecruit().stream()
+                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                ));
+
         List<ProjectListResponseDto> response = projects.stream()
                 .map((project) -> ProjectListResponseDto.builder()
+                        .projectId(project.getId())
                         .title(project.getTitle())
-                        .startDate(project.getStartDate())
-                        .endDate(project.getEndDate())
-                        .recruit(project.getRecruit())
+                        .dueDate(project.getDueDate())
+                        .recruitTotalNum(recruitTotal[0])
                         .build()
                 )
                 .collect(Collectors.toList());
@@ -210,4 +225,46 @@ public class ProjectService {
         return response;
     }
 
+    /*
+        Func : 자신이 작성한 모집글 리스트 보여주기
+        Parameter : userId
+        Return : List<projectListResponseDto>
+    */
+    public List<ProjectListResponseDto> findMyProjects(Long userId){
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+
+        // 요청자가 작성한 작성글 모두 불러오기
+        List<Project> myProjects = projectRepository.findAllByUser(user);
+
+        // 작성한 모집글이 없다면
+        if(myProjects.isEmpty()){
+            throw new NullPointerException("작성한 프로젝트가 없습니다.");
+        }
+        // 작성한 모집글이 존재한다면
+        else {
+
+            // 총 모집인원
+            final int[] recruitTotal = {0};
+
+            // 총 모집인원 구하기
+            myProjects.stream()
+                    .forEach((project -> project.getRecruit().stream()
+                            .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                    ));
+
+            List<ProjectListResponseDto> response = myProjects.stream()
+                    .map((project -> ProjectListResponseDto.builder()
+                            .projectId(project.getId())
+                            .title(project.getTitle())
+                            .dueDate(project.getDueDate())
+                            .recruitTotalNum(recruitTotal[0])
+                            .build()
+                    ))
+                    .collect(Collectors.toList());
+
+            return response;
+        }
+    }
 }

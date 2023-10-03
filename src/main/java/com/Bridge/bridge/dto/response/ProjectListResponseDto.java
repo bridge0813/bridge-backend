@@ -9,19 +9,19 @@ import java.util.List;
 @Data
 public class ProjectListResponseDto {
 
+    private Long projectId;                 // 프로젝트 아이디
+
     private String title;                   // 제목
 
-    private String startDate;               // 프로젝트 시작일
+    private String dueDate;                 // 프로젝트 종료일
 
-    private String endDate;                 // 프로젝트 종료일
-
-    private List<Part> recruit;             // 모집 분야, 모집 인원
+    private int recruitTotalNum;             // 총 모집 인원
 
     @Builder
-    public ProjectListResponseDto(String title, String startDate, String endDate, List<Part> recruit) {
+    public ProjectListResponseDto(Long projectId, String title, String dueDate, int recruitTotalNum) {
+        this.projectId = projectId;
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.recruit = recruit;
+        this.dueDate = dueDate;
+        this.recruitTotalNum = recruitTotalNum;
     }
 }
