@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @Controller
 public class AuthController {
@@ -21,7 +23,7 @@ public class AuthController {
      * @param appleResponse
      */
     @PostMapping("/login/apple")
-    public ResponseEntity<OAuthTokenResponse> appleLogin(@RequestBody AppleResponse appleResponse) throws Exception {
+    public ResponseEntity<OAuthTokenResponse> appleLogin(@RequestBody @Valid AppleResponse appleResponse) throws Exception {
         OAuthTokenResponse response = authService.appleOAuthLogin(appleResponse);
         return ResponseEntity.ok(response);
     }
