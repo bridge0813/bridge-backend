@@ -1,5 +1,6 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
@@ -37,42 +38,11 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("처음 로그인 시 이름 정보 등록")
-    void registerName() {
-        //given
-        User newUser = new User("kyukyu@apple.com", "3d");
-        userRepository.save(newUser);
-
-        UserSignUpRequest request = new UserSignUpRequest("3d", "브릿지");
-
-        //when
-        UserSignUpResponse response = userService.signUpName(request);
-
-        //then
-        assertEquals(1L, response.getUserId());
-        User user = userRepository.findAll().get(0);
-        assertEquals("브릿지", user.getName());
-    }
-
-    @Test
-    @DisplayName("처음 로그인 시 이름 정보 등록 - 예외 반환")
-    void registerNameEX() {
-        //given
-        User newUser = new User("kyukyu@apple.com", "3d");
-        userRepository.save(newUser);
-
-        UserSignUpRequest request = new UserSignUpRequest("3", "브릿지");
-
-        //expected
-        assertThrows(EntityNotFoundException.class, () -> userService.signUpName(request));
-    }
-
-    @Test
     @Transactional
     @DisplayName("처음 로그인 시 개인 관심분야 등록")
     void registerField() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
@@ -96,7 +66,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 관심분야 등록 - 아무것도 등록 안하는 경우")
     void registerFieldEmpty() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
@@ -115,7 +85,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 관심분야 등록 - 예외 반환")
     void registerFieldEX() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
@@ -135,7 +105,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 프로필 등록")
     void registerProfile() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -164,7 +134,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 프로필 등록 - 예외반환")
     void registerProfileEX() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -187,8 +157,7 @@ class UserServiceTest {
     @DisplayName("유저 등록")
     void register() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
-        newUser.registerName("bridge");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -224,8 +193,7 @@ class UserServiceTest {
     @DisplayName("유저 등록 시 필드가 빈값인 경우")
     void registerFieldNull() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
-        newUser.registerName("bridge");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         UserFieldRequest field = null;
@@ -245,8 +213,7 @@ class UserServiceTest {
     @DisplayName("유저 등록 시 프로필이 빈 값인 경우")
     void registerProfileNull() {
         //given
-        User newUser = new User("kyukyu@apple.com", "3d");
-        newUser.registerName("bridge");
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         UserProfileRequest profile = null;
