@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -339,5 +341,44 @@ public class ProjectService {
 
             return response;
         }
+    }
+
+    /*
+        Func : 모집글 마감 기능
+        Parameter : projectId
+        Return : Boolean - 마감 여부
+    */
+    public ProjectResponseDto closeProject(Long projectId, Long userId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+
+        // 마감하고자 하는 프로젝트 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 모집글을 찾을 수 없습니다."));
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        // 포맷
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+
+        int deadline = Integer.valueOf(project.getUploadTime());
+        int now = Integer.valueOf(formatedNow);
+
+        if (project.getUser().getId().equals(userId)){ // 프로젝트를 작성한 유저인가
+            if(deadline < now){ // 마감시간이 이미 지난 경우
+                throw new IllegalStateException("이미 마감이 된 모집글입니다.");
+            }
+            else {
+                project = project.updateDeadline();
+                projectRepository.save(project);
+
+                return project.toDto();
+            }
+        }
+        else {
+            throw new IllegalStateException("프로젝트 작성자가 아닙니다.");
+        }
+
     }
 }

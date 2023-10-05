@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,8 @@ public class Project {
     private String startDate;       // 프로젝트 시작일
 
     private String endDate;         // 프로젝트 종료일
+
+    private String uploadTime;      // 프로젝트 작성시간 -> 최신순
 
     @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
@@ -54,11 +59,17 @@ public class Project {
 
     @Builder
     public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        // 포맷
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYMMDDHHmmss");
+
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.uploadTime = formatter.toString();
         this.recruit = recruit;
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
@@ -100,6 +111,17 @@ public class Project {
         this.meetingWay = projectRequestDto.getMeetingWay();
         this.stage = projectRequestDto.getStage();
         this.user = user;
+
+        return this;
+    }
+
+    public Project updateDeadline(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        // 포맷
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+
+        this.dueDate = formatedNow;
 
         return this;
     }
