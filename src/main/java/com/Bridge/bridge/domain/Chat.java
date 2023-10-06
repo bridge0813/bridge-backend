@@ -33,4 +33,18 @@ public class Chat {
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();     // 해당 채팅방이 담고있는 메세지 목록
 
+    @Builder
+    public Chat(String chatRoomId, String roomName) {
+        this.chatRoomId = chatRoomId;
+        this.roomName = roomName;
+    }
+
+    //--연관관계 메소드--//
+    public void setChatUser(User maker, User receiver) {
+        this.makeUser = maker;
+        maker.getMadeChat().add(this);
+
+        this.receiveUser = receiver;
+        receiver.getJoinChat().add(this);
+    }
 }
