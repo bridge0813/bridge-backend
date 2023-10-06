@@ -1,6 +1,7 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
@@ -49,7 +50,7 @@ class ProjectServiceTest {
     @Test
     void createProject() {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "11");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -92,7 +93,7 @@ class ProjectServiceTest {
     @Test
     void deleteProject() {
         // given
-        User user = new User("test2@gmaill.com", "apple");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "11");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -139,10 +140,10 @@ class ProjectServiceTest {
     @Test
     void deleteProject_Wrong() {
         // given
-        User user1 = new User("ImUser@gmail.com", "apple");
+        User user1 = new User("bridge", "ImUser@gmail.com", Platform.APPLE, "apple");
         userRepository.save(user1);
 
-        User user2 = new User("NotUser@gmail.com", "google");
+        User user2 = new User("bridge2", "NotUser@gmail.com", Platform.APPLE, "google");
         userRepository.save(user2);
 
         List<String> skill = new ArrayList<>();
@@ -192,7 +193,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트")
     void updateProject() {
         // given
-        User user = new User("update@gmail.com", "updateTest");
+        User user = new User("bridge", "update@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -263,7 +264,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 잘못된 프로젝트ID")
     void updateProject_wrongProjectId() {
         // given
-        User user1 = new User("update@gmail.com", "updateTest");
+        User user1 = new User("brdige", "update@gmail.com", Platform.APPLE,"updateTest");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -333,7 +334,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 잘못된 유저ID")
     void updateProject_NotSameWriterandUser() {
         // given
-        User user1 = new User("wrongUserID@gmail.com", "updateTest");
+        User user1 = new User("bridge", "wrongUserID@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -401,10 +402,10 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 프로젝트 작성자 != 유저")
     void updateProject_wrongUserId() {
         // given
-        User user1 = new User("user1@gmail.com", "updateTest");
+        User user1 = new User("bridge", "user1@gmail.com", Platform.APPLE,"updateTest");
         userRepository.save(user1);
 
-        User user2 = new User("user2@gmail.com", "updateTest");
+        User user2 = new User("bridge2", "user2@gmail.com", Platform.APPLE,"updateTest");
         userRepository.save(user2);
 
         List<String> skill = new ArrayList<>();
@@ -474,7 +475,7 @@ class ProjectServiceTest {
     @Test
     void detailProject() {
         // given
-        User user1 = new User("user1@gmail.com", "detailTest");
+        User user1 = new User("bridge", "user1@gmail.com", Platform.APPLE, "detailTest");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -518,7 +519,7 @@ class ProjectServiceTest {
     @Test
     void detailProject_wrongProjectId() {
         // given
-        User user1 = new User("detail_Wrong@gmail.com", "detailTest_wrongProjectID");
+        User user1 = new User("bridge", "detail_Wrong@gmail.com", Platform.APPLE, "detailTest_wrongProjectID");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -566,7 +567,7 @@ class ProjectServiceTest {
     @Test
     void filtering() {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "apple");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
