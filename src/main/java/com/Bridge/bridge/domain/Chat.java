@@ -1,10 +1,10 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +18,9 @@ public class Chat {
     @Column(name = "chat_id")
     private Long id;
 
-    @OneToMany(mappedBy = "chat")
-    private List<JoinChat> joinChats = new ArrayList<>();
+    private String chatRoomId; // 채팅방 고유 ID
+
+    private String roomName; // 채팅방 이름
 
     @OneToMany(mappedBy = "chat")
     private List<Message> messages = new ArrayList<>();     // 해당 채팅방이 담고있는 메세지 목록
