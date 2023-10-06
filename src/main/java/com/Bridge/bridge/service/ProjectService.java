@@ -362,11 +362,8 @@ public class ProjectService {
         // 포맷
         String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
 
-        int deadline = Integer.valueOf(project.getUploadTime());
-        int now = Integer.valueOf(formatedNow);
-
         if (project.getUser().getId().equals(userId)){ // 프로젝트를 작성한 유저인가
-            if(deadline < now){ // 마감시간이 이미 지난 경우
+            if(project.getUploadTime().compareTo(formatedNow)<0){ // 마감시간이 이미 지난 경우
                 throw new IllegalStateException("이미 마감이 된 모집글입니다.");
             }
             else {

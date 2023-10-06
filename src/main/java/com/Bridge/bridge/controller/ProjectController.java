@@ -80,4 +80,10 @@ public class ProjectController {
         return projectService.findMyPartProjects(part);
     }
 
+//    // 모집글 마감하기
+//    @PostMapping("/project/deadline")
+//    public List<ProjectListResponseDto> findMyPartProjects(@RequestBody String part){
+//        return projectService.findMyPartProjects(part);
+//    }
+
 }

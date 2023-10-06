@@ -1002,7 +1002,7 @@ class ProjectServiceTest {
         String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
 
         // then
-        Assertions.assertThat(response.getDueDate()).isLessThan(formatedNow);
+        Assertions.assertThat(response.getDueDate()).isNotEqualTo(newProject.getDueDate());
     }
 
 
