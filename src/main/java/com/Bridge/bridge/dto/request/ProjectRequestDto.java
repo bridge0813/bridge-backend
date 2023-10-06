@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,12 +51,28 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
     }
 
     public Project toEntityOfProject(User user){
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        int year = Integer.valueOf(this.getDueDate().substring(0,2));
+        int month = Integer.valueOf(this.getDueDate().substring(2,4));
+        int date = Integer.valueOf(this.getDueDate().substring(4,6));
+
+        localDateTime.withYear(year);
+        localDateTime.withMonth(month);
+        localDateTime.withDayOfMonth(date);
+        localDateTime.withHour(23);
+        localDateTime.withMinute(59);
+        localDateTime.withSecond(59);
+
+        // 포맷
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+
         return Project.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
                 .dueDate(this.getDueDate())
                 .startDate(this.getStartDate())
-                .endDate(this.getEndDate())
+                .endDate(formatedNow)
                 .recruit(new ArrayList<>())
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())

@@ -62,14 +62,14 @@ public class Project {
         LocalDateTime localDateTime = LocalDateTime.now();
 
         // 포맷
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYMMDDHHmmss");
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
 
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.uploadTime = formatter.toString();
+        this.uploadTime = formatedNow;
         this.recruit = recruit;
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
@@ -119,7 +119,7 @@ public class Project {
         LocalDateTime localDateTime = LocalDateTime.now();
 
         // 포맷
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
 
         this.dueDate = formatedNow;
 

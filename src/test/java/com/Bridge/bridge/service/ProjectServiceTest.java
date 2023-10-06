@@ -982,7 +982,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("20240101235959")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -999,12 +999,52 @@ class ProjectServiceTest {
         ProjectResponseDto response = projectService.closeProject(newProject.getId(), user.getId());
 
         LocalDateTime localDateTime = LocalDateTime.now();
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
 
         // then
         Assertions.assertThat(response.getDueDate()).isNotEqualTo(newProject.getDueDate());
     }
 
+    @DisplayName("모집글 마감 기능_이미 마감된 모집글")
+    @Test
+    void alreadyClosed() {
+        // given
+        User user = new User("alreadyClosed", "alreadyClosed@gmail.com", Platform.APPLE, "alreadyClosedTest");
+        userRepository.save(user);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+
+        Project newProject = Project.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("20230101235959")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.get(0).setProject(newProject);
+        projectRepository.save(newProject);
+
+        // when
+        System.out.println(assertThrows(IllegalStateException.class, ()-> projectService.closeProject(newProject.getId(), user.getId()))
+                .getMessage());
+    }
 
 
 
