@@ -1,5 +1,6 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.ApplyProject;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
@@ -7,6 +8,7 @@ import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
@@ -225,6 +227,26 @@ public class ProjectService {
                 .collect(Collectors.toList());
 
         return applyProjects;
+    }
+
+    /**
+     * 프로젝트 지원하기
+     */
+    @Transactional
+    public boolean apply(Long userId, Long projectId) {
+        User findUser = userService.find(userId);
+
+        Project applyProject = projectRepository.findById(projectId)
+                        .orElseThrow(() -> new NotFoundProjectException());
+
+        ApplyProject project = new ApplyProject();
+        project.setUserAndProject(findUser, applyProject);
+
+        //TODO : DB에 두번 저장되는지 확인해봐야함
+        findUser.getApplyProjects().add(project);
+        applyProject.getApplyProjects().add(project);
+
+        return true;
     }
 
 }

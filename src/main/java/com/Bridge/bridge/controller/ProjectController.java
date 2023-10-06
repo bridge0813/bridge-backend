@@ -72,4 +72,14 @@ public class ProjectController {
         return ResponseEntity.ok(applyProjects);
     }
 
+    /**
+     * 프로젝트 지원하기
+     */
+    @PostMapping("/projects/apply")
+    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.apply(userId, projectId);
+        return ResponseEntity.ok(result);
+    }
+
+
 }

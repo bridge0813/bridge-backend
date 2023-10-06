@@ -23,5 +23,10 @@ public class ApplyProject {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    public void setUserAndProject(User user, Project project) {
+        this.user = user;
+        this.project = project;
+    }
+
     private boolean pass; // 수락 OR 거절 여부
 }
