@@ -3,6 +3,7 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -27,6 +28,9 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final PartRepository partRepository;
+
+    private final UserService userService;
+
 
     /*
         Func : 프로젝트 모집글 생성
@@ -208,6 +212,19 @@ public class ProjectService {
                 .collect(Collectors.toList());
 
         return response;
+    }
+
+    /**
+     * 지원한 프로젝트 목록 반환
+     */
+    public List<ApplyProjectResponse> getApplyProjects(Long userId) {
+        User findUser = userService.find(userId);
+
+        List<ApplyProjectResponse> applyProjects = findUser.getApplyProjects().stream()
+                .map(p -> new ApplyProjectResponse(p.getProject()))
+                .collect(Collectors.toList());
+
+        return applyProjects;
     }
 
 }
