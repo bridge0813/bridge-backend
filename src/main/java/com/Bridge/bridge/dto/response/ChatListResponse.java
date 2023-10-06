@@ -22,8 +22,10 @@ public class ChatListResponse {
     public ChatListResponse(Chat chat) {
         this.roomId = chat.getChatRoomId();
         this.roomName = chat.getRoomName();
-        Message message = chat.getMessages().get(chat.getMessages().size() - 1);
-        this.lastMessage = message.getContent();
-        this.lastTime = message.getSendTime();
+        if(!chat.getMessages().isEmpty()) {
+            Message message = chat.getMessages().get(chat.getMessages().size() - 1);
+            this.lastMessage = message.getContent();
+            this.lastTime = message.getSendTime();
+        }
     }
 }
