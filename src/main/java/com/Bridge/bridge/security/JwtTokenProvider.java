@@ -1,6 +1,7 @@
 package com.Bridge.bridge.security;
 
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.exception.unauthorized.InvalidTokenException;
 import com.Bridge.bridge.exception.unauthorized.TokenExpiredException;
 import com.Bridge.bridge.repository.UserRepository;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
@@ -75,7 +75,7 @@ public class JwtTokenProvider {
     @Transactional
     public void updateRefreshToken(Long userId, String refreshToken) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         findUser.updateRefreshToken(refreshToken);
     }
@@ -123,8 +123,7 @@ public class JwtTokenProvider {
     // 리프레쉬 토큰 일치 여부
     public Long matchRefreshToken(String refreshToken) {
         User findUser = userRepository.findByRefreshToken(refreshToken)
-                // TODO : NOT FOUND 예외 처리 만들기
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         return findUser.getId();
     }
