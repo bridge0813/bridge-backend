@@ -620,6 +620,53 @@ class ProjectControllerTest {
 
     }
 
+    @Test
+    @DisplayName("모집글 마감하기")
+    void closeProject() throws Exception {
+        // given
+        User user1 = new User("closeProject", "closeProject@gmail.com", Platform.APPLE, "closeProjectTest");
+        userRepository.save(user1);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject = Project.builder()
+                .title("Find project")
+                .overview("This is the project that i find")
+                .dueDate("20240101235959")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user1)
+                .stage("Before Start")
+                .build();
+
+        Project theProject = projectRepository.save(newProject);
+
+        Long projectId = theProject.getId();
+        Long userId = user1.getId();
+
+        // when
+        mockMvc.perform(post("/project/deadline")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("projectId", String.valueOf(projectId))
+                        .content(objectMapper.writeValueAsString(userId)))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.title").value(newProject.getTitle()))
+                .andDo(print());
+
+    }
 
 
 

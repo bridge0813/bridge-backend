@@ -82,7 +82,7 @@ public class ProjectController {
 
     // 모집글 마감하기
     @PostMapping("/project/deadline")
-    public ProjectResponseDto closeProject(@RequestBody Long projectId, Long userId){
+    public ProjectResponseDto closeProject(@RequestParam Long projectId, @RequestBody Long userId){
         return projectService.closeProject(projectId, userId);
     }
 
