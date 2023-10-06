@@ -81,5 +81,12 @@ public class ProjectController {
         return ResponseEntity.ok(result);
     }
 
-
+    /**
+     * 프로젝트 지원 취소하기
+     */
+    @PostMapping("/projects/apply/cancel")
+    public ResponseEntity<?> cancelApply(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.cancelApply(userId, projectId);
+        return ResponseEntity.ok(result);
+    }
 }

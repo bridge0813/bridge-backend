@@ -9,6 +9,7 @@ import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
+import com.Bridge.bridge.repository.ApplyProjectRepository;
 import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.domain.Project;
@@ -30,6 +31,8 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final PartRepository partRepository;
+
+    private final ApplyProjectRepository applyProjectRepository;
 
     private final UserService userService;
 
@@ -249,4 +252,23 @@ public class ProjectService {
         return true;
     }
 
+    /**
+     * 프로젝트 지원 취소하기
+     */
+    @Transactional
+    public boolean cancelApply(Long userId, Long projectId) {
+        User findUser = userService.find(userId);
+
+        Project applyProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        ApplyProject findProject = applyProjectRepository.findByUserAndProject(findUser, applyProject)
+                        .orElseThrow(() -> new NotFoundProjectException());
+
+        findUser.getApplyProjects().remove(findProject);
+        applyProject.getApplyProjects().remove(findProject);
+        applyProjectRepository.deleteByUserAndProject(findUser, applyProject);
+
+        return true;
+    }
 }
