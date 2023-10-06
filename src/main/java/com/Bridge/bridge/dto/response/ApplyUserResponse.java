@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ApplyUserResponse {
 
+    private Long userId;
+
     private String name;
 
     private List<String> fields; //관심 분야
@@ -19,7 +21,8 @@ public class ApplyUserResponse {
     private String career;  //경력 사항
 
     @Builder
-    public ApplyUserResponse(String name, List<String> fields, String career) {
+    public ApplyUserResponse(Long userId, String name, List<String> fields, String career) {
+        this.userId = userId;
         this.name = name;
         this.fields = fields;
         this.career = career;

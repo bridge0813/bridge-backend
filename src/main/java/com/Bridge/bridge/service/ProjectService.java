@@ -288,6 +288,7 @@ public class ProjectService {
                             .collect(Collectors.toList());
 
                     return ApplyUserResponse.builder()
+                            .userId(user.getId())
                             .name(user.getName())
                             .fields(fields)
                             .career(user.getProfile().getCareer())
