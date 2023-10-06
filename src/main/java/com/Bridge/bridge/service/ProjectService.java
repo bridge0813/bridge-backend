@@ -5,6 +5,7 @@ import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ApplyProjectResponse;
+import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -270,5 +271,30 @@ public class ProjectService {
         applyProjectRepository.deleteByUserAndProject(findUser, applyProject);
 
         return true;
+    }
+
+    /**
+     * 프로젝트 지원자 목록
+     */
+    public List<ApplyUserResponse> getApplyUsers(Long projectId) {
+        Project findProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        List<ApplyUserResponse> applyUsers = findProject.getApplyProjects().stream()
+                .map(p -> {
+                    User user = p.getUser();
+                    List<String> fields = user.getFields().stream()
+                            .map(f -> f.getFieldName())
+                            .collect(Collectors.toList());
+
+                    return ApplyUserResponse.builder()
+                            .name(user.getName())
+                            .fields(fields)
+                            .career(user.getProfile().getCareer())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return applyUsers;
     }
 }

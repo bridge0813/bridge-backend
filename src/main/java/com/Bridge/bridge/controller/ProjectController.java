@@ -2,6 +2,7 @@ package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ApplyProjectResponse;
+import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -88,5 +89,14 @@ public class ProjectController {
     public ResponseEntity<?> cancelApply(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
         boolean result = projectService.cancelApply(userId, projectId);
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 프로젝트 지원자 목록
+     */
+    @GetMapping("/projects/apply/users")
+    public ResponseEntity<?> applyUsers(@RequestParam("projectId") Long projectId) {
+        List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(projectId);
+        return ResponseEntity.ok(applyUsers);
     }
 }
