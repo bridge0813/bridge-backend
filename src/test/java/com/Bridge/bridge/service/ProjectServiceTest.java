@@ -1,6 +1,7 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +52,7 @@ class ProjectServiceTest {
     @Test
     void createProject() {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -92,7 +95,7 @@ class ProjectServiceTest {
     @Test
     void deleteProject() {
         // given
-        User user = new User("test2@gmaill.com", "apple");
+        User user = new User("delete", "delete@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -139,10 +142,10 @@ class ProjectServiceTest {
     @Test
     void deleteProject_Wrong() {
         // given
-        User user1 = new User("ImUser@gmail.com", "apple");
+        User user1 = new User("delete1", "delete1@gmail.com", Platform.APPLE, "delete1Test");
         userRepository.save(user1);
 
-        User user2 = new User("NotUser@gmail.com", "google");
+        User user2 = new User("delete2", "delete2@gmail.com", Platform.APPLE, "delete1Test");
         userRepository.save(user2);
 
         List<String> skill = new ArrayList<>();
@@ -192,7 +195,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트")
     void updateProject() {
         // given
-        User user = new User("update@gmail.com", "updateTest");
+        User user = new User("update", "update@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -263,7 +266,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 잘못된 프로젝트ID")
     void updateProject_wrongProjectId() {
         // given
-        User user1 = new User("update@gmail.com", "updateTest");
+        User user1 = new User("update", "update2@gmail.com", Platform.APPLE, "update1Test");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -333,7 +336,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 잘못된 유저ID")
     void updateProject_NotSameWriterandUser() {
         // given
-        User user1 = new User("wrongUserID@gmail.com", "updateTest");
+        User user1 = new User("update", "update2@gmail.com", Platform.APPLE, "update1Test");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -401,10 +404,10 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 프로젝트 작성자 != 유저")
     void updateProject_wrongUserId() {
         // given
-        User user1 = new User("user1@gmail.com", "updateTest");
+        User user1 = new User("update1", "update1@gmail.com", Platform.APPLE, "update1Test");
         userRepository.save(user1);
 
-        User user2 = new User("user2@gmail.com", "updateTest");
+        User user2 = new User("update2", "update2@gmail.com", Platform.APPLE, "update2Test");
         userRepository.save(user2);
 
         List<String> skill = new ArrayList<>();
@@ -474,7 +477,7 @@ class ProjectServiceTest {
     @Test
     void detailProject() {
         // given
-        User user1 = new User("user1@gmail.com", "detailTest");
+        User user1 = new User("find", "find@gmail.com", Platform.APPLE, "find1Test");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -518,7 +521,7 @@ class ProjectServiceTest {
     @Test
     void detailProject_wrongProjectId() {
         // given
-        User user1 = new User("detail_Wrong@gmail.com", "detailTest_wrongProjectID");
+        User user1 = new User("detail_wrong", "detail_wrong@gmail.com", Platform.APPLE, "detail_wrongTest");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -566,7 +569,7 @@ class ProjectServiceTest {
     @Test
     void filtering() {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
@@ -654,7 +657,7 @@ class ProjectServiceTest {
     @Test
     void findMyProject() {
         // given
-        User user = new User("myproject1@gmaill.com", "apple");
+        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
@@ -729,7 +732,7 @@ class ProjectServiceTest {
     @Test
     void NoProjects() {
         // given
-        User user = new User("noProjects@gmail.com", "apple");
+        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         // when
@@ -742,13 +745,13 @@ class ProjectServiceTest {
     @Test
     void findAllProject() {
         // given
-        User user1 = new User("allProject1@gmaill.com", "apple");
+        User user1 = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
-        User user2 = new User("allProject2@gmaill.com", "apple");
+        User user2 = new User("user2", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user2);
 
-        User user3 = new User("allProject3@gmaill.com", "apple");
+        User user3 = new User("user3", "user3@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user3);
 
         List<String> skill1 = new ArrayList<>();
@@ -854,7 +857,7 @@ class ProjectServiceTest {
     @Test
     void findMyPartProjects() {
         // given
-        User user1 = new User("allProject1@gmaill.com", "apple");
+        User user1 = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
         List<String> skill1 = new ArrayList<>();
@@ -955,6 +958,53 @@ class ProjectServiceTest {
         // then
         Assertions.assertThat(response.size()).isEqualTo(2);
     }
+
+    @DisplayName("모집글 마감 기능")
+    @Test
+    void deadline() {
+        // given
+        User user = new User("updateDeadline", "updateDeadline@gmail.com", Platform.APPLE, "updateDeadlineTest");
+        userRepository.save(user);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+
+        Project newProject = Project.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.get(0).setProject(newProject);
+        projectRepository.save(newProject);
+
+        // when
+        ProjectResponseDto response = projectService.closeProject(newProject.getId(), user.getId());
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+
+        // then
+        Assertions.assertThat(response.getDueDate()).isLessThan(formatedNow);
+    }
+
 
 
 

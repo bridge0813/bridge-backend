@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
@@ -52,7 +53,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 생성")
     void createProject() throws Exception {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
         User newUser = userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -95,7 +96,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 삭제")
     void deleteProject() throws Exception {
         // given
-        User user = new User("test3@gmaill.com", "apple");
+        User user =new User("user", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -143,7 +144,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 수정")
     void updateProject() throws Exception {
         // given
-        User user = new User("updateTest@gmaill.com", "update");
+        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -225,7 +226,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 상세보기")
     void detailProject() throws Exception {
         // given
-        User user1 = new User("detail_Wrong@gmail.com", "detailTest_wrongProjectID");
+        User user1 = new User("user", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -270,7 +271,7 @@ class ProjectControllerTest {
     @DisplayName("필터링")
     void filtering() throws Exception {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
@@ -353,7 +354,7 @@ class ProjectControllerTest {
     @Test
     void findMyProjects() throws Exception {
         // given
-        User user = new User("C_myProjects1@gmaill.com", "apple");
+        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
@@ -425,13 +426,13 @@ class ProjectControllerTest {
     @Test
     void allProjects() throws Exception {
         // given
-        User user1 = new User("C_allProjects1@gmaill.com", "apple");
+        User user1 = new User("user1", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
-        User user2 = new User("C_allProjects2@gmaill.com", "apple");
+        User user2 = new User("user2", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user2);
 
-        User user3 = new User("C_allProjects3@gmaill.com", "apple");
+        User user3 = new User("user3", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user3);
 
         List<String> skill1 = new ArrayList<>();
@@ -529,7 +530,7 @@ class ProjectControllerTest {
     @DisplayName("내 분야 모집글 불러오기")
     void findMypartProjects() throws Exception {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
