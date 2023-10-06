@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
@@ -52,7 +53,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 생성")
     void createProject() throws Exception {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "11");
         User newUser = userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -95,7 +96,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 삭제")
     void deleteProject() throws Exception {
         // given
-        User user = new User("test3@gmaill.com", "apple");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "11");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -143,7 +144,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 수정")
     void updateProject() throws Exception {
         // given
-        User user = new User("updateTest@gmaill.com", "update");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "11");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -225,7 +226,7 @@ class ProjectControllerTest {
     @DisplayName("모집글 상세보기")
     void detailProject() throws Exception {
         // given
-        User user1 = new User("detail_Wrong@gmail.com", "detailTest_wrongProjectID");
+        User user1 = new User("bridge", "detail_Wrong@gmail.com", Platform.APPLE, "detailTest_wrongProjectID");
         userRepository.save(user1);
 
         List<String> skill = new ArrayList<>();
@@ -269,7 +270,7 @@ class ProjectControllerTest {
     @Test
     void filtering() throws Exception {
         // given
-        User user = new User("test1@gmaill.com", "apple");
+        User user = new User("bridge", "test1@gmaill.com", Platform.APPLE, "11");
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -60,6 +61,15 @@ public class ProjectController {
     @PostMapping("/project/category")
     public List<ProjectListResponseDto> filterProjects(@RequestBody FilterRequestDto filterRequestDto){
         return projectService.filterProjectList(filterRequestDto);
+    }
+
+    /**
+     * 지원한 프로젝트 목록 조회
+     */
+    @GetMapping("/projects/apply")
+    public ResponseEntity<?> getApplyProjects(@RequestParam("userId") Long userId ) {
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(userId);
+        return ResponseEntity.ok(applyProjects);
     }
 
 }
