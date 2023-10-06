@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,8 @@ public class Message {
 
     private String content;         // 메세지 내용
 
+    private String writer;          // 메세지 보낸 사람
+
     private LocalDate sendDate;     // 메세지 보낸 날짜
 
     private LocalTime sendTime;     // 메세지 보낸 시간
@@ -31,4 +34,12 @@ public class Message {
     @JoinColumn(name = "chat_id")
     private Chat chat;              // 해당 메세지가 포함된 채팅방
 
+    @Builder
+    public Message(String content, String writer, LocalDate sendDate, LocalTime sendTime, Chat chat) {
+        this.content = content;
+        this.writer = writer;
+        this.sendDate = sendDate;
+        this.sendTime = sendTime;
+        this.chat = chat;
+    }
 }
