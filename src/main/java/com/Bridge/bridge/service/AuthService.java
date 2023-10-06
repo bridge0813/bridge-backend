@@ -5,6 +5,7 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.response.apple.AppleMemberResponse;
 import com.Bridge.bridge.dto.response.apple.AppleResponse;
 import com.Bridge.bridge.dto.response.OAuthTokenResponse;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.security.JwtTokenProvider;
 import com.Bridge.bridge.security.apple.AppleUtils;
@@ -36,7 +37,7 @@ public class AuthService {
         return userRepository.findIdByPlatformAndPlatformId(platform, platformId)
                 .map(userId ->  {
                     User findUser = userRepository.findById(userId)
-                            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                            .orElseThrow(() -> new NotFoundUserException());
                     String accessToken = jwtTokenProvider.createAccessToken(findUser.getId());
                     String refreshToken = jwtTokenProvider.createRefreshToken();
 
