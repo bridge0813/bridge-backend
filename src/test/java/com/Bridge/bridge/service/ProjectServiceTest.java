@@ -1,14 +1,12 @@
 package com.Bridge.bridge.service;
 
-import com.Bridge.bridge.domain.Part;
-import com.Bridge.bridge.domain.Platform;
-import com.Bridge.bridge.domain.Project;
-import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -34,6 +32,10 @@ class ProjectServiceTest {
     ProjectRepository projectRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    BookmarkRepository bookmarkRepository;
+
+
 
     @DisplayName("모집글 검색 기능 test")
     @Test
@@ -1044,6 +1046,103 @@ class ProjectServiceTest {
         // when
         System.out.println(assertThrows(IllegalStateException.class, ()-> projectService.closeProject(newProject.getId(), user.getId()))
                 .getMessage());
+    }
+
+    @DisplayName("모집글 스크랩 기능")
+    @Test
+    void scrap() {
+        // given
+        User user = new User("scrap", "scrap@gmail.com", Platform.APPLE, "scrapTest");
+        user = userRepository.save(user);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+
+        Project newProject = Project.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("20230101235959")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.get(0).setProject(newProject);
+        newProject = projectRepository.save(newProject);
+
+        // when
+        Boolean response = projectService.scrap(newProject.getId(), user.getId());
+        Assertions.assertThat(response).isEqualTo(true);
+    }
+
+    @DisplayName("모집글 스크랩 해제")
+    @Test
+    void unscrap() {
+        // given
+        User user = new User("unscrap", "unscrap@gmail.com", Platform.APPLE, "unscrapTest");
+        user = userRepository.save(user);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+
+        Project newProject = Project.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("20230101235959")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.get(0).setProject(newProject);
+        newProject = projectRepository.save(newProject);
+
+        Bookmark newBookmark = Bookmark.builder()
+                .user(user)
+                .project(newProject)
+                .build();
+
+        newBookmark = bookmarkRepository.save(newBookmark);
+
+        // user - bookmark 연관관계 맵핑
+        user.setBookmarks(newBookmark);
+        userRepository.save(user);
+
+        // project - bookmark 연관관계 맵핑
+        newProject.setBookmarks(newBookmark);
+        projectRepository.save(newProject);
+
+        // when
+        Boolean response = projectService.scrap(newProject.getId(), user.getId());
+        Assertions.assertThat(response).isEqualTo(false);
     }
 
 
