@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.awt.print.Book;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -79,6 +80,10 @@ public class Project {
 
     public void setRecruit(List<Part> recruit) {
         this.recruit = recruit;
+    }
+
+    public void setBookmarks(Bookmark bookmark){
+        this.bookmarks.add(bookmark);
     }
 
     public ProjectResponseDto toDto(){

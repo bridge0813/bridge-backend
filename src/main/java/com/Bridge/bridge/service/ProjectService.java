@@ -1,15 +1,13 @@
 package com.Bridge.bridge.service;
 
-import com.Bridge.bridge.domain.Part;
-import com.Bridge.bridge.domain.StaticMessage;
-import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
-import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +28,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final PartRepository partRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     /*
         Func : 프로젝트 모집글 생성
@@ -346,7 +345,7 @@ public class ProjectService {
     /*
         Func : 모집글 마감 기능
         Parameter : projectId
-        Return : Boolean - 마감 여부
+        Return : ProjectResponseDto
     */
     public ProjectResponseDto closeProject(Long projectId, Long userId){
         // 해당 유저 찾기
@@ -378,4 +377,46 @@ public class ProjectService {
         }
 
     }
+
+    /*
+        Func : 모집글 스크랩 기능
+        Parameter : projectId, userId
+        Return : Boolean - 스크랩 여부
+    */
+    public Boolean scrap(Long projectId, Long userId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+
+        // 스크랩 하고자 하는 프로젝트 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 모집글을 찾을 수 없습니다."));
+
+        Bookmark bookmark = bookmarkRepository.findByProjectAndUser(project, user);
+
+        if (bookmark == null){ // 스크랩 되어 있지 않다면
+            Bookmark newBookmark = Bookmark.builder()
+                    .user(user)
+                    .project(project)
+                    .build();
+
+            newBookmark = bookmarkRepository.save(newBookmark);
+
+            // user - bookmark 연관관계 맵핑
+            user.setBookmarks(newBookmark);
+            userRepository.save(user);
+
+            // project - bookmark 연관관계 맵핑
+            project.setBookmarks(newBookmark);
+            projectRepository.save(project);
+        }
+        else {
+            bookmarkRepository.delete(bookmark); // 스크랩 해제
+        }
+
+
+
+    }
+
+
 }
