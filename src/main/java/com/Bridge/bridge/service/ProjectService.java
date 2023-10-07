@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Tuple;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -409,9 +410,12 @@ public class ProjectService {
             // project - bookmark 연관관계 맵핑
             project.setBookmarks(newBookmark);
             projectRepository.save(project);
+
+            return true;
         }
         else {
             bookmarkRepository.delete(bookmark); // 스크랩 해제
+            return false;
         }
 
 
