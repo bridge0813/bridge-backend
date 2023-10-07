@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.BookmarkResponseDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -84,6 +85,28 @@ public class ProjectController {
     @PostMapping("/project/deadline")
     public ProjectResponseDto closeProject(@RequestParam Long projectId, @RequestBody Long userId){
         return projectService.closeProject(projectId, userId);
+    }
+
+    // 모집글 스크랩하기
+    @PostMapping("/project/scrap")
+    public BookmarkResponseDto scrap(@RequestParam Long projectId, @RequestBody Long userId){
+
+        Boolean result =  projectService.scrap(projectId, userId);
+
+        if(result.equals(true)){
+            return BookmarkResponseDto.builder()
+                    .projectId(projectId)
+                    .userId(userId)
+                    .scrap("스크랩이 설정되었습니다.")
+                    .build();
+        }
+        else{
+            return BookmarkResponseDto.builder()
+                    .projectId(projectId)
+                    .userId(userId)
+                    .scrap("스크랩이 해제되었습니다.")
+                    .build();
+        }
     }
 
 }
