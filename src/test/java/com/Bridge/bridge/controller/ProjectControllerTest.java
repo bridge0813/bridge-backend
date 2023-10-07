@@ -668,6 +668,56 @@ class ProjectControllerTest {
 
     }
 
+    @Test
+    @DisplayName("모집글 스크랩")
+    void scrap() throws Exception {
+        // given
+        User user = new User("scrap", "scrap@gmail.com", Platform.APPLE, "scrapTest");
+        user = userRepository.save(user);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+
+        Project newProject = Project.builder()
+                .title("New project")
+                .overview("This is new Project.")
+                .dueDate("20230101235959")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.get(0).setProject(newProject);
+        newProject = projectRepository.save(newProject);
+
+        Long projectId = newProject.getId();
+        Long userId = user.getId();
+
+        // when
+        mockMvc.perform(post("/project/scrap")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("projectId", String.valueOf(projectId))
+                        .content(objectMapper.writeValueAsString(userId)))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.scrap").value("스크랩이 설정되었습니다."))
+                .andDo(print());
+
+    }
+
 
 
 
