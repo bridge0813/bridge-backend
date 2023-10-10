@@ -1,10 +1,12 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.ApplyProject;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
@@ -651,6 +653,43 @@ class ProjectServiceTest {
         userRepository.delete(user);
     }
 
+    @Test
+    @DisplayName("지원한 프로젝트 목록 반환")
+    void getApplyProjects() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "1");
+        User saveUser = userRepository.save(user1);
 
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .user(user1)
+                .build();
+
+        Project project2 = Project.builder()
+                .title("title2")
+                .overview("overview2")
+                .user(user1)
+                .build();
+
+        projectRepository.save(project1);
+        projectRepository.save(project2);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user2, project1);
+        ApplyProject applyProject2 = new ApplyProject();
+        applyProject2.setUserAndProject(user2, project2);
+
+        user2.getApplyProjects().add(applyProject1);
+        user2.getApplyProjects().add(applyProject2);
+        userRepository.save(user2);
+
+        //when
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(saveUser.getId());
+
+        //then
+
+    }
 
 }
