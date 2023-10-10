@@ -27,6 +27,4 @@ public class ApplyProject {
         this.user = user;
         this.project = project;
     }
-
-    private boolean pass; // 수락 OR 거절 여부
 }
