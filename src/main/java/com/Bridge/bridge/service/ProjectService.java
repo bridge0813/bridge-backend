@@ -10,6 +10,7 @@ import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
 import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 @Transactional(readOnly = false)
@@ -34,8 +35,6 @@ public class ProjectService {
     private final PartRepository partRepository;
 
     private final ApplyProjectRepository applyProjectRepository;
-
-    private final UserService userService;
 
 
     /*
@@ -224,7 +223,8 @@ public class ProjectService {
      * 지원한 프로젝트 목록 반환
      */
     public List<ApplyProjectResponse> getApplyProjects(Long userId) {
-        User findUser = userService.find(userId);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
 
         List<ApplyProjectResponse> applyProjects = findUser.getApplyProjects().stream()
                 .map(p -> new ApplyProjectResponse(p.getProject()))
@@ -238,7 +238,8 @@ public class ProjectService {
      */
     @Transactional
     public boolean apply(Long userId, Long projectId) {
-        User findUser = userService.find(userId);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
 
         Project applyProject = projectRepository.findById(projectId)
                         .orElseThrow(() -> new NotFoundProjectException());
@@ -258,7 +259,8 @@ public class ProjectService {
      */
     @Transactional
     public boolean cancelApply(Long userId, Long projectId) {
-        User findUser = userService.find(userId);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
 
         Project applyProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
