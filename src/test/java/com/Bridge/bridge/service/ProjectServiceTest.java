@@ -1,28 +1,34 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.ApplyProject;
+import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
+import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ApplyProjectResponse;
+import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
+import com.Bridge.bridge.repository.ApplyProjectRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -34,6 +40,15 @@ class ProjectServiceTest {
     ProjectRepository projectRepository;
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private ApplyProjectRepository applyProjectRepository;
+
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+        projectRepository.deleteAll();
+    }
 
     @DisplayName("모집글 검색 기능 test")
     @Test
@@ -84,11 +99,7 @@ class ProjectServiceTest {
         Long newProjectId = projectService.createProject(newProject);
 
         // then
-        Assertions.assertThat(newProjectId).isNotEqualTo(null);
-
-        Project project = projectRepository.findByUser_Id(user.getId()).get();
-        projectRepository.delete(project);
-        userRepository.delete(user);
+        assertThat(newProjectId).isNotEqualTo(null);
     }
 
     @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 있을 때(올바른 접근)")
@@ -128,14 +139,11 @@ class ProjectServiceTest {
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
 
-
         // when
         Boolean result = projectService.deleteProject(projectId, userId);
 
         // then
-        Assertions.assertThat(result).isEqualTo(true);
-        userRepository.delete(user);
-
+        assertThat(result).isEqualTo(true);
     }
 
     @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 없을 때(올바르지 못한 접근)")
@@ -182,13 +190,7 @@ class ProjectServiceTest {
         Boolean result = projectService.deleteProject(projectId, user2.getId());
 
         // then
-        Assertions.assertThat(result).isEqualTo(false);
-
-        Project project = projectRepository.findByUser_Id(user1.getId()).get();
-        projectRepository.delete(project);
-
-        userRepository.delete(user1);
-        userRepository.delete(user2);
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -258,8 +260,7 @@ class ProjectServiceTest {
         ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
 
         // then
-        Assertions.assertThat(result.getTitle()).isEqualTo("Update project");
-
+        assertThat(result.getTitle()).isEqualTo("Update project");
     }
 
     @Test
@@ -328,8 +329,6 @@ class ProjectServiceTest {
 
         // then
         projectRepository.delete(newProject);
-
-        userRepository.delete(user1);
     }
 
     @Test
@@ -396,8 +395,6 @@ class ProjectServiceTest {
 
         // then
         projectRepository.delete(newProject);
-
-        userRepository.delete(user1);
     }
 
     @Test
@@ -468,9 +465,6 @@ class ProjectServiceTest {
 
         // then
         projectRepository.delete(newProject);
-
-        userRepository.delete(user1);
-        userRepository.delete(user2);
     }
 
     @DisplayName("모집글 상세보기 기능")
@@ -511,10 +505,7 @@ class ProjectServiceTest {
         ProjectResponseDto result = projectService.getProject(theProject.getId());
 
         // then
-        Assertions.assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
-
-        projectRepository.delete(theProject);
-        userRepository.delete(user1);
+        assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
     }
 
     @DisplayName("모집글 상세보기 기능 - 잘못된 모집글 Id")
@@ -551,18 +542,11 @@ class ProjectServiceTest {
 
         Project theProject = projectRepository.save(newProject);
 
-        // when
-
-
-
-        // then
-        assertThrows(EntityNotFoundException.class,
+        // expected
+        assertThrows(NotFoundProjectException.class,
                 () -> {
                     ProjectResponseDto result = projectService.getProject(theProject.getId() + Long.valueOf(123));
                 });
-
-        projectRepository.delete(theProject);
-        userRepository.delete(user1);
     }
     
     @DisplayName("모집글 필터링")
@@ -646,11 +630,7 @@ class ProjectServiceTest {
         int result = projectService.filterProjectList(filterRequestDto).size();
 
         // then
-        Assertions.assertThat(result).isEqualTo(1);
-
-        projectRepository.delete(newProject1);
-        projectRepository.delete(newProject2);
-        userRepository.delete(user);
+        assertThat(result).isEqualTo(1);
     }
 
     @Test
