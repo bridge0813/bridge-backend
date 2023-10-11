@@ -5,6 +5,8 @@ import com.Bridge.bridge.domain.Message;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -17,6 +19,8 @@ public class ChatListResponse {
 
     private String lastMessage;
 
+    private LocalDate lastDate;
+
     private LocalTime lastTime;
 
     public ChatListResponse(Chat chat) {
@@ -25,6 +29,7 @@ public class ChatListResponse {
         if(!chat.getMessages().isEmpty()) {
             Message message = chat.getMessages().get(chat.getMessages().size() - 1);
             this.lastMessage = message.getContent();
+            this.lastDate = message.getSendDate();
             this.lastTime = message.getSendTime();
         }
     }
