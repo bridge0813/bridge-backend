@@ -119,7 +119,6 @@ public class ProjectService {
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new NotFoundProjectException());
 
-
             // 모집글 작성자와 유저가 같은지 확인하기
             if (user.getId().equals(project.getUser().getId())) {
                 // 모집 분야, 인원 -> Part entity화 하기
@@ -227,7 +226,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundUserException());
 
         List<ApplyProjectResponse> applyProjects = findUser.getApplyProjects().stream()
-                .map(p -> new ApplyProjectResponse(p.getProject()))
+                .map(p -> new ApplyProjectResponse(p.getProject(), p.getStage()))
                 .collect(Collectors.toList());
 
         return applyProjects;

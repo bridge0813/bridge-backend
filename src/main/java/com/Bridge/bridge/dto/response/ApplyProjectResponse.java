@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApplyProjectResponse {
 
-    private String stage;   //진행 단계
+    private String stage;   // 지원 상태
 
     private String title;   // 제목
 
@@ -16,10 +16,10 @@ public class ApplyProjectResponse {
 
     private String dueDate;    // 모집 마감
 
-    public ApplyProjectResponse(Project project) {
-        this.stage = project.getStage();
+    public ApplyProjectResponse(Project project, String stage) {
         this.title = project.getTitle();
         this.overview = project.getOverview();
         this.dueDate = project.getDueDate();
+        this.stage = stage;
     }
 }

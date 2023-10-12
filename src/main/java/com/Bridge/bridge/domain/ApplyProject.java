@@ -15,6 +15,7 @@ public class ApplyProject {
     @Column(name = "joinProject_id")
     private Long id;
 
+    private String stage;  // 지원 상태
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
