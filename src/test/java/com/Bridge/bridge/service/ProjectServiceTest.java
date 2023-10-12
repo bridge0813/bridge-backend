@@ -705,7 +705,7 @@ class ProjectServiceTest {
 
         //then
         ApplyProjectResponse response = applyProjects.get(0);
-        assertEquals("stage1", response.getStage());
+        assertEquals("결과 대기중", response.getStage());
         assertEquals("title1", response.getTitle());
         assertEquals("overview1", response.getOverview());
         assertEquals("23-10-10", response.getDueDate());
