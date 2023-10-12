@@ -62,7 +62,6 @@ class ChatServiceTest {
         //then
         assertEquals(1L, chatRepository.count());
         Chat chat = chatRepository.findAll().get(0);
-        assertEquals("bridge2", chat.getRoomName());
         assertNotNull(chatRoomId);
     }
 
@@ -79,12 +78,10 @@ class ChatServiceTest {
         User saveUser3 = userRepository.save(user3);
 
         Chat room1 = Chat.builder()
-                .roomName("bridge2")
                 .chatRoomId("1")
                 .build();
 
         Chat room2 = Chat.builder()
-                .roomName("bridge")
                 .chatRoomId("2")
                 .build();
 
@@ -100,7 +97,7 @@ class ChatServiceTest {
         assertEquals("1", allChat.get(0).getRoomId());
         assertEquals("2", allChat.get(1).getRoomId());
         assertEquals("bridge2", allChat.get(0).getRoomName());
-        assertEquals("bridge", allChat.get(1).getRoomName());
+        assertEquals("bridge3", allChat.get(1).getRoomName());
     }
 
     @Test
@@ -116,7 +113,6 @@ class ChatServiceTest {
 
         Chat room1 = Chat.builder()
                 .chatRoomId("1")
-                .roomName("bridge")
                 .build();
 
         room1.setChatUser(saveUser1, saveUser2);
@@ -159,7 +155,6 @@ class ChatServiceTest {
         //given
         Chat room1 = Chat.builder()
                 .chatRoomId("1")
-                .roomName("bridge")
                 .build();
 
         chatRepository.save(room1);
@@ -186,7 +181,6 @@ class ChatServiceTest {
         //given
         Chat room1 = Chat.builder()
                 .chatRoomId("1")
-                .roomName("bridge")
                 .build();
 
         chatRepository.save(room1);
