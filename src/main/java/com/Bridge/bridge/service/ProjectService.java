@@ -458,5 +458,31 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    /*
+        Func : 최근 검색어 삭제 기능
+        Parameter : userId, searchWordId
+        Return : List<SearchWordResponseDto>
+    */
+    @Transactional
+    public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+
+        // 해당 검색어 찾기
+        SearchWord theSearchWord = searchWordRepository.findById(searchWordId)
+                .orElseThrow(()-> new EntityNotFoundException("해당 검색어가 존재하지 않습니다."));
+
+        user.getSearchWords().remove(theSearchWord);
+        searchWordRepository.delete(theSearchWord);
+
+        return user.getSearchWords().stream()
+                .map((searchWord -> SearchWordResponseDto.builder()
+                        .searchWordId(searchWord.getId())
+                        .searchWord(searchWord.getContent())
+                        .build()))
+                .collect(Collectors.toList());
+    }
+
 
 }
