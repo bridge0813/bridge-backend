@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 public class TopProjectResponseDto {
 
     int rank; // 인기 순위
+
     String title; // 모집글 제목
-    LocalDateTime uploadTime; // 모집글 작성 날짜, 시간
-//    String uploadTime;
-//    int dDay;
+
+    String dueDate; // 모집글 작성 날짜, 시간
 
     @Builder
-    public TopProjectResponseDto(int rank, String title, LocalDateTime uploadTime) {
+    public TopProjectResponseDto(int rank, String title, String dueDate) {
         this.rank = rank;
         this.title = title;
-        this.uploadTime = uploadTime;
+        this.dueDate = dueDate;
     }
 }

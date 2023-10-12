@@ -423,6 +423,7 @@ public class ProjectService {
 
             // project - bookmark 연관관계 맵핑
             project.setBookmarks(newBookmark);
+            project.increaseBookmarksNum();
 
             return BookmarkResponseDto.builder()
                     .projectId(projectId)
@@ -431,7 +432,11 @@ public class ProjectService {
                     .build();
         }
         else {
+            user.getBookmarks().remove(bookmark);
             bookmarkRepository.delete(bookmark); // 스크랩 해제
+
+            project.decreaseBookmarksNum();
+
             return BookmarkResponseDto.builder()
                     .projectId(projectId)
                     .userId(userId)
@@ -487,8 +492,23 @@ public class ProjectService {
     /*
         Func : 인기글 조회
         Parameter :
-        Return : List<SearchWordResponseDto>
+        Return : List<TopProjectResponseDto>
     */
+    public List<TopProjectResponseDto> topProjects(){
+
+        List<Project> top20 = projectRepository.findTop20ByOrderByBookmarkNum();
+
+        List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
+
+        for (int i=0; i<20; i++){
+            topProjectResponseDtos.add(TopProjectResponseDto.builder()
+                    .rank(i+1)
+                    .title(top20.get(i).getTitle())
+                    .dueDate(top20.get(i).getDueDate())
+                    .build());
+        }
+        return topProjectResponseDtos;
+    }
 
 
 }
