@@ -28,9 +28,9 @@ public class ProjectController {
     }
 
     // 검색어 기준으로 프로젝트 모집글 조회
-    @GetMapping("/projects/searchWord")
-    public List<ProjectListResponseDto> searchProject(@RequestParam String searchWord){
-        return projectService.findByTitleAndContent(searchWord);
+    @PostMapping("/projects/searchWord")
+    public List<ProjectListResponseDto> searchProject(@RequestParam Long userId ,@RequestBody String searchWord){
+        return projectService.findByTitleAndContent(userId, searchWord);
     }
 
     // 프로젝트 모집글 삭제
