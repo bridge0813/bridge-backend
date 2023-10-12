@@ -2,6 +2,8 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.BookmarkResponseDto;
+import com.Bridge.bridge.dto.response.MyProjectResponseDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -10,6 +12,7 @@ import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.Tuple;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -232,7 +236,7 @@ public class ProjectService {
         Parameter : userId
         Return : List<projectListResponseDto>
     */
-    public List<ProjectListResponseDto> findMyProjects(Long userId){
+    public List<MyProjectResponseDto> findMyProjects(Long userId){
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
@@ -244,30 +248,30 @@ public class ProjectService {
         if(myProjects.isEmpty()){
             throw new NullPointerException("작성한 프로젝트가 없습니다.");
         }
-        // 작성한 모집글이 존재한다면
-        else {
 
-            // 총 모집인원
-            final int[] recruitTotal = {0};
+        // 총 모집인원
+        final int[] recruitTotal = {0};
 
-            // 총 모집인원 구하기
-            myProjects.stream()
-                    .forEach((project -> project.getRecruit().stream()
-                            .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                    ));
+        // 총 모집인원 구하기
+        myProjects.stream()
+                .forEach((project -> project.getRecruit().stream()
+                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                ));
 
-            List<ProjectListResponseDto> response = myProjects.stream()
-                    .map((project -> ProjectListResponseDto.builder()
-                            .projectId(project.getId())
-                            .title(project.getTitle())
-                            .dueDate(project.getDueDate())
-                            .recruitTotalNum(recruitTotal[0])
-                            .build()
-                    ))
-                    .collect(Collectors.toList());
 
-            return response;
-        }
+        List<MyProjectResponseDto> response = new ArrayList<>();
+
+       myProjects.stream()
+            .forEach((project -> project.getRecruit().stream()
+                        .forEach((part -> response.add(MyProjectResponseDto.builder()
+                                    .recruitPart(part.getRecruitPart())
+                                    .requirement(part.getRequirement())
+                                    .recruitSkill(part.getRecruitSkill())
+                                    .recruitNum(part.getRecruitNum())
+                                    .build())
+                        ))));
+
+        return response;
     }
 
     /*
@@ -281,28 +285,28 @@ public class ProjectService {
         if(allProjects.isEmpty()){
             throw new NullPointerException("작성한 프로젝트가 없습니다.");
         }
-        else {
-            // 총 모집인원
-            final int[] recruitTotal = {0};
 
-            // 총 모집인원 구하기
-            allProjects.stream()
-                    .forEach((project -> project.getRecruit().stream()
-                            .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                    ));
+        // 총 모집인원
+        final int[] recruitTotal = {0};
 
-            List<ProjectListResponseDto> response = allProjects.stream()
-                    .map((project -> ProjectListResponseDto.builder()
-                            .projectId(project.getId())
-                            .title(project.getTitle())
-                            .dueDate(project.getDueDate())
-                            .recruitTotalNum(recruitTotal[0])
-                            .build()
-                    ))
-                    .collect(Collectors.toList());
+        // 총 모집인원 구하기
+        allProjects.stream()
+                .forEach((project -> project.getRecruit().stream()
+                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                ));
 
-            return response;
-        }
+        List<ProjectListResponseDto> response = allProjects.stream()
+                .map((project -> ProjectListResponseDto.builder()
+                        .projectId(project.getId())
+                        .title(project.getTitle())
+                        .dueDate(project.getDueDate())
+                        .recruitTotalNum(recruitTotal[0])
+                        .build()
+                ))
+                .collect(Collectors.toList());
+
+        return response;
+
     }
 
     /*
@@ -319,28 +323,28 @@ public class ProjectService {
         if(myPartProjects.isEmpty()){
             throw new NullPointerException("해당 프로젝트가 없습니다.");
         }
-        else {
-            // 총 모집인원
-            final int[] recruitTotal = {0};
 
-            // 총 모집인원 구하기
-            myPartProjects.stream()
-                    .forEach((project -> project.getRecruit().stream()
-                            .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                    ));
+        // 총 모집인원
+        final int[] recruitTotal = {0};
 
-            List<ProjectListResponseDto> response = myPartProjects.stream()
-                    .map((project -> ProjectListResponseDto.builder()
-                            .projectId(project.getId())
-                            .title(project.getTitle())
-                            .dueDate(project.getDueDate())
-                            .recruitTotalNum(recruitTotal[0])
-                            .build()
-                    ))
-                    .collect(Collectors.toList());
+        // 총 모집인원 구하기
+        myPartProjects.stream()
+                .forEach((project -> project.getRecruit().stream()
+                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+                ));
 
-            return response;
-        }
+        List<ProjectListResponseDto> response = myPartProjects.stream()
+                .map((project -> ProjectListResponseDto.builder()
+                        .projectId(project.getId())
+                        .title(project.getTitle())
+                        .dueDate(project.getDueDate())
+                        .recruitTotalNum(recruitTotal[0])
+                        .build()
+                ))
+                .collect(Collectors.toList());
+
+        return response;
+
     }
 
     /*
@@ -384,7 +388,8 @@ public class ProjectService {
         Parameter : projectId, userId
         Return : Boolean - 스크랩 여부
     */
-    public Boolean scrap(Long projectId, Long userId){
+    @Transactional
+    public BookmarkResponseDto scrap(Long projectId, Long userId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
@@ -405,17 +410,23 @@ public class ProjectService {
 
             // user - bookmark 연관관계 맵핑
             user.setBookmarks(newBookmark);
-            userRepository.save(user);
 
             // project - bookmark 연관관계 맵핑
             project.setBookmarks(newBookmark);
-            projectRepository.save(project);
 
-            return true;
+            return BookmarkResponseDto.builder()
+                    .projectId(projectId)
+                    .userId(userId)
+                    .scrap("스크랩이 설정되었습니다.")
+                    .build();
         }
         else {
             bookmarkRepository.delete(bookmark); // 스크랩 해제
-            return false;
+            return BookmarkResponseDto.builder()
+                    .projectId(projectId)
+                    .userId(userId)
+                    .scrap("스크랩이 해제되었습니다.")
+                    .build();
         }
 
 

@@ -2,6 +2,7 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.MyProjectResponseDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
@@ -724,7 +725,7 @@ class ProjectServiceTest {
         projectRepository.save(newProject2);
 
         // when
-        List<ProjectListResponseDto> response = projectService.findMyProjects(user.getId());
+        List<MyProjectResponseDto> response = projectService.findMyProjects(user.getId());
 
         // then
         Assertions.assertThat(response.size()).isEqualTo(2);
