@@ -2,14 +2,12 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
+import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +34,8 @@ class ProjectServiceTest {
     UserRepository userRepository;
     @Autowired
     BookmarkRepository bookmarkRepository;
+    @Autowired
+    SearchWordRepository searchWordRepository;
 
 
 
@@ -1147,6 +1147,44 @@ class ProjectServiceTest {
         // when
         BookmarkResponseDto bookmarkResponseDto = projectService.scrap(newProject.getId(), user.getId());
         Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
+    }
+
+    @DisplayName("최근 검색어 조회")
+    @Test
+    void resentSearchWord() {
+        // given
+        User user = new User("scrap", "scrap@gmail.com", Platform.APPLE, "scrapTest");
+        user = userRepository.save(user);
+
+        SearchWord newSearch1 = SearchWord.builder()
+                .content("검색어1")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch2 = SearchWord.builder()
+                .content("검색어2")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch3 = SearchWord.builder()
+                .content("검색어3")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+
+        searchWordRepository.save(newSearch1);
+        searchWordRepository.save(newSearch2);
+        searchWordRepository.save(newSearch3);
+
+        user.getSearchWords().add(newSearch1);
+        user.getSearchWords().add(newSearch2);
+        user.getSearchWords().add(newSearch3);
+
+        // when
+        List<SearchWordResponseDto> searchWordResponseDto = projectService.resentSearchWord(user.getId());
+        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어1");
+        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어2");
+        Assertions.assertThat(searchWordResponseDto.get(2).getSearchWord()).isEqualTo("검색어3");
     }
 
 
