@@ -484,5 +484,11 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    /*
+        Func : 인기글 조회
+        Parameter :
+        Return : List<SearchWordResponseDto>
+    */
+
 
 }
