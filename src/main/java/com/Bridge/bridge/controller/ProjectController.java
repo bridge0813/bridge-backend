@@ -1,11 +1,8 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -94,6 +91,12 @@ public class ProjectController {
 
         return projectService.scrap(projectId, userId);
 
+    }
+
+    // 최근 검색어 불러오기 기능
+    @GetMapping("/searchWords")
+    public List<SearchWordResponseDto> resentSearchWord(@RequestParam("userId") Long userId){
+        return projectService.resentSearchWord(userId);
     }
 
 }
