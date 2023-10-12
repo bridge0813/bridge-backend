@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class ApplyProject {
 
     @Id
@@ -23,6 +22,10 @@ public class ApplyProject {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
+
+    public ApplyProject() {
+        this.stage = "결과 대기중";
+    }
 
     public void setUserAndProject(User user, Project project) {
         this.user = user;
