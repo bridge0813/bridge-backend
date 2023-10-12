@@ -99,4 +99,10 @@ public class ProjectController {
         return projectService.resentSearchWord(userId);
     }
 
+    // 최근 검색어 불러오기 기능
+    @DeleteMapping("/searchWords")
+    public List<SearchWordResponseDto> deleteSearchWord(@RequestParam("userId") Long userId, @RequestBody Long searchWordId){
+        return projectService.deleteSearchWord(userId, searchWordId);
+    }
+
 }
