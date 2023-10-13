@@ -136,13 +136,13 @@ public class Project {
     }
 
     public int increaseBookmarksNum(){
-        this.bookmarkNum += 1;
+        this.bookmarkNum = this.bookmarkNum + 1;
 
         return this.bookmarkNum;
     }
 
     public int decreaseBookmarksNum(){
-        this.bookmarkNum -= 1;
+        this.bookmarkNum = this.bookmarkNum - 1;
 
         return this.bookmarkNum;
     }

@@ -519,11 +519,11 @@ public class ProjectService {
 
         String now = LocalDateTime.of(year, month, day, 0,0,0).toString();
 
-        List<Project> top20 = projectRepository.findTop20ByDueDateLessThanOrderByBookmarkNum(now);
+        List<Project> top20 = projectRepository.findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(now);
 
         List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
 
-        for (int i=0; i<20; i++){
+        for (int i=0; i<top20.size(); i++){
             topProjectResponseDtos.add(TopProjectResponseDto.builder()
                     .rank(i+1)
                     .title(top20.get(i).getTitle())

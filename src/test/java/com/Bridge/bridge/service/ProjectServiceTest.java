@@ -1459,4 +1459,52 @@ class ProjectServiceTest {
         assertEquals("career1", response.getCareer());
     }
 
+    @DisplayName("인기글 조회")
+    @Test
+    void topProjects() {
+        // given
+        for(int i=1; i<26; i++){
+            Project project = projectRepository.save(Project.builder()
+                    .title("제목"+i)
+                    .dueDate(LocalDateTime.of(2023, 11, i,0,0,0).toString())
+                    .build());
+            for(int j=i; j<21; j++){
+                project.increaseBookmarksNum();
+            }
+        }
+        // when
+        List<TopProjectResponseDto> result = projectService.topProjects();
+
+        // then
+
+        Assertions.assertThat(result.size()).isEqualTo(20);
+        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목1");
+        Assertions.assertThat(result.get(19).getTitle()).isEqualTo("제목20");
+    }
+
+    @DisplayName("인기글 조회_마감 지난 게시글은 제외")
+    @Test
+    void topProjects_dateOption() {
+        // given
+        for(int i=1; i<26; i++){
+            Project project = projectRepository.save(Project.builder()
+                    .title("제목"+i)
+                    .dueDate(LocalDateTime.of(2023, 10, i,0,0,0).toString())
+                    .build());
+            for(int j=i; j<21; j++){
+                project.increaseBookmarksNum();
+            }
+            projectRepository.save(project);
+        }
+        // when
+        List<TopProjectResponseDto> result = projectService.topProjects();
+
+        // then
+
+        Assertions.assertThat(result.size()).isEqualTo(13);
+        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목13");
+        Assertions.assertThat(result.get(12).getTitle()).isEqualTo("제목25");
+    }
+
+
 }

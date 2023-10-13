@@ -22,5 +22,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> findAllByUser(User user);
 
-    List<Project> findTop20ByDueDateLessThanOrderByBookmarkNum(String dueDate);
+    List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(String dueDate);
 }
