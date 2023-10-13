@@ -1486,24 +1486,31 @@ class ProjectServiceTest {
     @Test
     void topProjects_dateOption() {
         // given
-        for(int i=1; i<26; i++){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int year = localDateTime.getYear();;
+        int month = localDateTime.getMonthValue();
+        int day = localDateTime.getDayOfMonth();
+
+        for(int i=1; i<32; i++){
             Project project = projectRepository.save(Project.builder()
                     .title("제목"+i)
-                    .dueDate(LocalDateTime.of(2023, 10, i,0,0,0).toString())
+                    .dueDate(LocalDateTime.of(year, month, i,0,0,0).toString())
                     .build());
-            for(int j=i; j<21; j++){
+            for(int j=i; j<31; j++){
                 project.increaseBookmarksNum();
             }
             projectRepository.save(project);
         }
+
+
         // when
         List<TopProjectResponseDto> result = projectService.topProjects();
 
         // then
 
-        Assertions.assertThat(result.size()).isEqualTo(13);
-        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목13");
-        Assertions.assertThat(result.get(12).getTitle()).isEqualTo("제목25");
+        Assertions.assertThat(result.size()).isEqualTo(32-day);
+        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목"+day);
+        Assertions.assertThat(result.get(31-day).getTitle()).isEqualTo("제목31");
     }
 
 
