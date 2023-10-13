@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -20,14 +21,11 @@ public class ChatMessageResponse {
 
     private SenderType senderType;  //모집자인지, 지원자인지 구분
 
-    private LocalDate sendDate;     // 메세지 보낸 날짜
-
-    private LocalTime sendTime;     // 메세지 보낸 시간
+    private LocalDateTime sendTime;  // 메세지 보낸 날짜
 
     public ChatMessageResponse(Message message, SenderType senderType) {
         this.content = message.getContent();
         this.senderType = senderType;
-        this.sendDate = message.getSendDate();
-        this.sendTime = message.getSendTime();
+        this.sendTime = LocalDateTime.of(message.getSendDate(), message.getSendTime());
     }
 }

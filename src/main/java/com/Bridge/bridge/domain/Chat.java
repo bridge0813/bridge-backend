@@ -20,7 +20,6 @@ public class Chat {
 
     private String chatRoomId; // 채팅방 고유 ID
 
-    private String roomName; // 채팅방 이름
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "user_id", name = "make_user_id")
@@ -34,9 +33,8 @@ public class Chat {
     private List<Message> messages = new ArrayList<>();     // 해당 채팅방이 담고있는 메세지 목록
 
     @Builder
-    public Chat(String chatRoomId, String roomName) {
+    public Chat(String chatRoomId) {
         this.chatRoomId = chatRoomId;
-        this.roomName = roomName;
     }
 
     //--연관관계 메소드--//

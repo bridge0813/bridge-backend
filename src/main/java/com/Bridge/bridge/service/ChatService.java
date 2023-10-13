@@ -57,11 +57,11 @@ public class ChatService {
         User findUser = userService.find(userId);
 
         List<ChatListResponse> chatList = findUser.getMadeChat().stream()
-                .map(ChatListResponse::new)
+                .map(c -> new ChatListResponse(c, true))
                 .collect(Collectors.toList());
 
         chatList.addAll(findUser.getJoinChat().stream()
-                .map(ChatListResponse::new)
+                .map(c -> new ChatListResponse(c, false))
                 .collect(Collectors.toList()));
 
         return chatList;
@@ -72,6 +72,8 @@ public class ChatService {
      * 채팅방 조회
      */
     public List<ChatMessageResponse> findChat(String chatRoomId) {
+        //TODO : 채팅방 이름 설정해야함
+
         Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new NotFoundChatException());
 

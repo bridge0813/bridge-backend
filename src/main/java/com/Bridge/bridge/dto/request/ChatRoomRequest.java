@@ -17,7 +17,6 @@ public class ChatRoomRequest {
     public Chat toEntity(User receiveUser) {
         return Chat.builder()
                 .chatRoomId(randomUUID().toString())
-                .roomName(receiveUser.getName())
                 .build();
     }
 

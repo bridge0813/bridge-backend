@@ -86,12 +86,10 @@ class ChatControllerTest {
         User saveUser3 = userRepository.save(user3);
 
         Chat room1 = Chat.builder()
-                .roomName("bridge2")
                 .chatRoomId("1")
                 .build();
 
         Chat room2 = Chat.builder()
-                .roomName("bridge")
                 .chatRoomId("2")
                 .build();
 
@@ -105,7 +103,7 @@ class ChatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].roomName").value("bridge2"))
-                .andExpect(jsonPath("$[1].roomName").value("bridge"))
+                .andExpect(jsonPath("$[1].roomName").value("bridge3"))
                 .andDo(print());
     }
 
@@ -122,7 +120,6 @@ class ChatControllerTest {
 
         Chat room1 = Chat.builder()
                 .chatRoomId("1")
-                .roomName("bridge")
                 .build();
 
         room1.setChatUser(saveUser1, saveUser2);
@@ -162,7 +159,6 @@ class ChatControllerTest {
         //given
         Chat room1 = Chat.builder()
                 .chatRoomId("1")
-                .roomName("bridge")
                 .build();
 
         chatRepository.save(room1);

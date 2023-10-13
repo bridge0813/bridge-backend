@@ -1,6 +1,8 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ApplyProjectResponse;
+import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
@@ -62,4 +64,39 @@ public class ProjectController {
         return projectService.filterProjectList(filterRequestDto);
     }
 
+    /**
+     * 지원한 프로젝트 목록 조회
+     */
+    @GetMapping("/projects/apply")
+    public ResponseEntity<?> getApplyProjects(@RequestParam("userId") Long userId ) {
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(userId);
+        return ResponseEntity.ok(applyProjects);
+    }
+
+    /**
+     * 프로젝트 지원하기
+     */
+    @PostMapping("/projects/apply")
+    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.apply(userId, projectId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 프로젝트 지원 취소하기
+     */
+    @PostMapping("/projects/apply/cancel")
+    public ResponseEntity<?> cancelApply(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.cancelApply(userId, projectId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 프로젝트 지원자 목록
+     */
+    @GetMapping("/projects/apply/users")
+    public ResponseEntity<?> applyUsers(@RequestParam("projectId") Long projectId) {
+        List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(projectId);
+        return ResponseEntity.ok(applyUsers);
+    }
 }

@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class ApplyProject {
 
     @Id
@@ -15,6 +14,7 @@ public class ApplyProject {
     @Column(name = "joinProject_id")
     private Long id;
 
+    private String stage;  // 지원 상태
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -23,5 +23,12 @@ public class ApplyProject {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    private boolean pass; // 수락 OR 거절 여부
+    public ApplyProject() {
+        this.stage = "결과 대기중";
+    }
+
+    public void setUserAndProject(User user, Project project) {
+        this.user = user;
+        this.project = project;
+    }
 }
