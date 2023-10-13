@@ -4,25 +4,40 @@ import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.BookmarkResponseDto;
 import com.Bridge.bridge.dto.response.MyProjectResponseDto;
+import com.Bridge.bridge.domain.ApplyProject;
+import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.Platform;
+import com.Bridge.bridge.domain.Profile;
+import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ApplyProjectResponse;
+import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
+import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
+import com.Bridge.bridge.repository.ApplyProjectRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -38,6 +53,15 @@ class ProjectServiceTest {
     BookmarkRepository bookmarkRepository;
 
 
+
+    @Autowired
+    private ApplyProjectRepository applyProjectRepository;
+
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+        projectRepository.deleteAll();
+    }
 
     @DisplayName("모집글 검색 기능 test")
     @Test
@@ -56,6 +80,7 @@ class ProjectServiceTest {
     @Test
     void createProject() {
         // given
+
         User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
@@ -88,17 +113,14 @@ class ProjectServiceTest {
         Long newProjectId = projectService.createProject(newProject);
 
         // then
-        Assertions.assertThat(newProjectId).isNotEqualTo(null);
-
-        Project project = projectRepository.findByUser_Id(user.getId()).get();
-        projectRepository.delete(project);
-        userRepository.delete(user);
+        assertThat(newProjectId).isNotEqualTo(null);
     }
 
     @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 있을 때(올바른 접근)")
     @Test
     void deleteProject() {
         // given
+
         User user = new User("delete", "delete@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
@@ -132,14 +154,11 @@ class ProjectServiceTest {
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
 
-
         // when
         Boolean result = projectService.deleteProject(projectId, userId);
 
         // then
-        Assertions.assertThat(result).isEqualTo(true);
-        userRepository.delete(user);
-
+        assertThat(result).isEqualTo(true);
     }
 
     @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 없을 때(올바르지 못한 접근)")
@@ -186,13 +205,7 @@ class ProjectServiceTest {
         Boolean result = projectService.deleteProject(projectId, user2.getId());
 
         // then
-        Assertions.assertThat(result).isEqualTo(false);
-
-        Project project = projectRepository.findByUser_Id(user1.getId()).get();
-        projectRepository.delete(project);
-
-        userRepository.delete(user1);
-        userRepository.delete(user2);
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -262,8 +275,7 @@ class ProjectServiceTest {
         ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
 
         // then
-        Assertions.assertThat(result.getTitle()).isEqualTo("Update project");
-
+        assertThat(result.getTitle()).isEqualTo("Update project");
     }
 
     @Test
@@ -332,8 +344,6 @@ class ProjectServiceTest {
 
         // then
         projectRepository.delete(newProject);
-
-        userRepository.delete(user1);
     }
 
     @Test
@@ -400,8 +410,6 @@ class ProjectServiceTest {
 
         // then
         projectRepository.delete(newProject);
-
-        userRepository.delete(user1);
     }
 
     @Test
@@ -472,9 +480,6 @@ class ProjectServiceTest {
 
         // then
         projectRepository.delete(newProject);
-
-        userRepository.delete(user1);
-        userRepository.delete(user2);
     }
 
     @DisplayName("모집글 상세보기 기능")
@@ -515,10 +520,7 @@ class ProjectServiceTest {
         ProjectResponseDto result = projectService.getProject(theProject.getId());
 
         // then
-        Assertions.assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
-
-        projectRepository.delete(theProject);
-        userRepository.delete(user1);
+        assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
     }
 
     @DisplayName("모집글 상세보기 기능 - 잘못된 모집글 Id")
@@ -555,18 +557,11 @@ class ProjectServiceTest {
 
         Project theProject = projectRepository.save(newProject);
 
-        // when
-
-
-
-        // then
-        assertThrows(EntityNotFoundException.class,
+        // expected
+        assertThrows(NotFoundProjectException.class,
                 () -> {
                     ProjectResponseDto result = projectService.getProject(theProject.getId() + Long.valueOf(123));
                 });
-
-        projectRepository.delete(theProject);
-        userRepository.delete(user1);
     }
     
     @DisplayName("모집글 필터링")
@@ -650,11 +645,114 @@ class ProjectServiceTest {
         int result = projectService.filterProjectList(filterRequestDto).size();
 
         // then
-        Assertions.assertThat(result).isEqualTo(1);
+        assertThat(result).isEqualTo(1);
+    }
 
-        projectRepository.delete(newProject1);
-        projectRepository.delete(newProject2);
-        userRepository.delete(user);
+    @Test
+    @DisplayName("지원한 프로젝트 목록 반환 - 개수 확인")
+    void getApplyProjectsNum() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "1");
+        userRepository.save(user1);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .user(user1)
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project project2 = Project.builder()
+                .title("title2")
+                .overview("overview2")
+                .user(user1)
+                .stage("stage2")
+                .dueDate("23-10-11")
+                .build();
+
+        projectRepository.save(project1);
+        projectRepository.save(project2);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user2, project1);
+        ApplyProject applyProject2 = new ApplyProject();
+        applyProject2.setUserAndProject(user2, project2);
+
+        user2.getApplyProjects().add(applyProject1);
+        user2.getApplyProjects().add(applyProject2);
+        User saveUser2 = userRepository.save(user2);
+
+        //when
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(saveUser2.getId());
+
+        //then
+        assertEquals(2, applyProjectRepository.count());
+        assertEquals(2, saveUser2.getApplyProjects().size());
+        assertEquals(2, applyProjects.size());
+    }
+
+    @Test
+    @DisplayName("지원한 프로젝트 목록 반환 - 내용 확인")
+    void getApplyProjectsDetail() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //when
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(saveUser1.getId());
+
+        //then
+        ApplyProjectResponse response = applyProjects.get(0);
+        assertEquals("결과 대기중", response.getStage());
+        assertEquals("title1", response.getTitle());
+        assertEquals("overview1", response.getOverview());
+        assertEquals("23-10-10", response.getDueDate());
+    }
+    @Test
+    @Transactional
+    @DisplayName("프로젝트 지원하기")
+    void apply() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "1");
+        userRepository.save(user1);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .user(user1)
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+        User saveUser2 = userRepository.save(user2);
+
+        //when
+        boolean apply = projectService.apply(saveUser2.getId(), saveProject.getId());
+
+        //then
+        assertEquals(1, applyProjectRepository.count());
+        assertEquals(1, saveUser2.getApplyProjects().size());
+        assertEquals(1, saveProject.getApplyProjects().size());
+        assertTrue(apply);
     }
 
     @DisplayName("내가 작성한 모집글")
@@ -1147,7 +1245,137 @@ class ProjectServiceTest {
         Assertions.assertThat(response.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
     }
 
+    @Test
+    @DisplayName("프로젝트 지원 취소하기")
+    @Transactional
+    void cancelApply() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
 
 
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //when
+        boolean cancelApply = projectService.cancelApply(saveUser1.getId(), saveProject.getId());
+
+        //then
+        assertEquals(0, applyProjectRepository.count());
+        assertEquals(0, saveUser1.getApplyProjects().size());
+        assertEquals(0, saveProject.getApplyProjects().size());
+        assertTrue(cancelApply);
+    }
+
+    @Test
+    @DisplayName("프로젝트 지원자 목록 - 지원자 수 확인")
+    void getApplyUsersNum() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "2");
+        User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "3");
+
+        Field field1 = new Field("Backend");
+        field1.updateFieldUser(user1);
+
+        Field field2 = new Field("Frontend");
+        field2.updateFieldUser(user2);
+
+        user1.getFields().add(field1);
+        user2.getFields().add(field2);
+
+        Profile profile1 = Profile.builder()
+                .career("career1")
+                .build();
+
+        Profile profile2 = Profile.builder()
+                .career("career2")
+                .build();
+
+        user1.updateProfile(profile1);
+        user2.updateProfile(profile2);
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+        userRepository.save(user3);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .user(user3)
+                .dueDate("23-10-10")
+                .build();
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+        ApplyProject applyProject2 = new ApplyProject();
+        applyProject2.setUserAndProject(user2, project1);
+
+        project1.getApplyProjects().add(applyProject1);
+        project1.getApplyProjects().add(applyProject2);
+        Project saveProject = projectRepository.save(project1);
+
+
+        //when
+        List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(saveProject.getId());
+
+        //then
+        assertEquals(2, applyUsers.size());
+    }
+
+    @Test
+    @DisplayName("프로젝트 지원자 목록 - 지원자 내용 확인")
+    void getApplyUsersDetail() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+
+        Field field1 = new Field("Backend");
+        field1.updateFieldUser(user1);
+
+        user1.getFields().add(field1);
+
+        Profile profile1 = Profile.builder()
+                .career("career1")
+                .build();
+
+        user1.updateProfile(profile1);
+
+        userRepository.save(user1);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+        project1.getApplyProjects().add(applyProject1);
+        Project saveProject = projectRepository.save(project1);
+
+
+        //when
+        List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(saveProject.getId());
+
+        //then
+        ApplyUserResponse response = applyUsers.get(0);
+        assertEquals("bridge1", response.getName());
+        assertEquals("Backend", response.getFields().get(0));
+        assertEquals("career1", response.getCareer());
+    }
 
 }

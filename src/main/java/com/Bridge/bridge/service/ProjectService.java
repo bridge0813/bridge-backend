@@ -8,6 +8,18 @@ import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
+import com.Bridge.bridge.domain.ApplyProject;
+import com.Bridge.bridge.domain.Part;
+import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.ApplyProjectResponse;
+import com.Bridge.bridge.dto.response.ApplyUserResponse;
+import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
+import com.Bridge.bridge.repository.ApplyProjectRepository;
 import com.Bridge.bridge.repository.PartRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
@@ -23,7 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 @Transactional(readOnly = false)
@@ -35,6 +47,9 @@ public class ProjectService {
     private final PartRepository partRepository;
     private final BookmarkRepository bookmarkRepository;
 
+    private final ApplyProjectRepository applyProjectRepository;
+
+
     /*
         Func : 프로젝트 모집글 생성
         Parameter : 프로젝트 입력 폼
@@ -44,7 +59,7 @@ public class ProjectService {
         try {
             // 모집글 작성한 user 찾기
             User user = userRepository.findById(projectRequestDto.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                    .orElseThrow(() -> new NotFoundUserException());
 
             Project newProject = projectRequestDto.toEntityOfProject(user);
 
@@ -60,7 +75,7 @@ public class ProjectService {
             // User - Project 매핑
             user.setProject(newProject);
 
-            // 모집글 DB에 저장하기
+            // 모집글 DB에 저장하기정
             Project save = projectRepository.save(newProject);
 
             return save.getId();
@@ -81,11 +96,11 @@ public class ProjectService {
         try {
             // 삭제할 프로젝트 모집글 찾기
             Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트 입니다."));
+                    .orElseThrow(() -> new NotFoundProjectException());
 
             // 삭제할 모집글을 작성한 유저 찾기
             User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                    .orElseThrow(() -> new NotFoundUserException());
 
             // 해당 모집글 삭제하기
             if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
@@ -111,12 +126,11 @@ public class ProjectService {
         try {
             // 모집글 작성한 user 찾기
             User user = userRepository.findById(projectRequestDto.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                    .orElseThrow(() -> new NotFoundUserException());
 
             // 모집글 찾기
             Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
-
+                    .orElseThrow(() -> new NotFoundProjectException());
 
             // 모집글 작성자와 유저가 같은지 확인하기
             if (user.getId().equals(project.getUser().getId())) {
@@ -194,7 +208,7 @@ public class ProjectService {
 
         // 해당 모집글 찾기
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 프로젝트입니다."));
+                .orElseThrow(() -> new NotFoundProjectException());
 
         return project.toDto();
     }
@@ -433,5 +447,84 @@ public class ProjectService {
 
     }
 
+    /**
+     * 지원한 프로젝트 목록 반환
+     */
+    public List<ApplyProjectResponse> getApplyProjects(Long userId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
 
+        List<ApplyProjectResponse> applyProjects = findUser.getApplyProjects().stream()
+                .map(p -> new ApplyProjectResponse(p.getProject(), p.getStage()))
+                .collect(Collectors.toList());
+
+        return applyProjects;
+    }
+
+    /**
+     * 프로젝트 지원하기
+     */
+    @Transactional
+    public boolean apply(Long userId, Long projectId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        Project applyProject = projectRepository.findById(projectId)
+                        .orElseThrow(() -> new NotFoundProjectException());
+
+        ApplyProject project = new ApplyProject();
+        project.setUserAndProject(findUser, applyProject);
+
+        findUser.getApplyProjects().add(project);
+        applyProject.getApplyProjects().add(project);
+
+        return true;
+    }
+
+    /**
+     * 프로젝트 지원 취소하기
+     */
+    @Transactional
+    public boolean cancelApply(Long userId, Long projectId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        Project applyProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        ApplyProject findProject = applyProjectRepository.findByUserAndProject(findUser, applyProject)
+                        .orElseThrow(() -> new NotFoundProjectException());
+
+        findUser.getApplyProjects().remove(findProject);
+        applyProject.getApplyProjects().remove(findProject);
+        applyProjectRepository.deleteByUserAndProject(findUser, applyProject);
+
+        return true;
+    }
+
+    /**
+     * 프로젝트 지원자 목록
+     */
+    public List<ApplyUserResponse> getApplyUsers(Long projectId) {
+        Project findProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        List<ApplyUserResponse> applyUsers = findProject.getApplyProjects().stream()
+                .map(p -> {
+                    User user = p.getUser();
+                    List<String> fields = user.getFields().stream()
+                            .map(f -> f.getFieldName())
+                            .collect(Collectors.toList());
+
+                    return ApplyUserResponse.builder()
+                            .userId(user.getId())
+                            .name(user.getName())
+                            .fields(fields)
+                            .career(user.getProfile().getCareer())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return applyUsers;
+    }
 }
