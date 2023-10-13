@@ -873,4 +873,62 @@ class ProjectServiceTest {
         assertEquals("career1", response.getCareer());
     }
 
+    @Test
+    @DisplayName("프로젝트 수락하기")
+    void acceptApply() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //when
+        projectService.acceptApply(saveProject.getId(), saveUser1.getId());
+
+        //then
+        assertEquals("수락", applyProjectRepository.findAll().get(0).getStage());
+    }
+
+    @Test
+    @DisplayName("프로젝트 거절하기")
+    void rejectApply() {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //when
+        projectService.rejectApply(saveProject.getId(), saveUser1.getId());
+
+        //then
+        assertEquals("거절", applyProjectRepository.findAll().get(0).getStage());
+    }
+
 }
