@@ -141,4 +141,10 @@ public class ProjectController {
         List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(projectId);
         return ResponseEntity.ok(applyUsers);
     }
+
+    // 인기글 조회 기능
+    @GetMapping("/projects/top")
+    public List<TopProjectResponseDto> topProjects(){
+        return projectService.topProjects();
+    }
 }
