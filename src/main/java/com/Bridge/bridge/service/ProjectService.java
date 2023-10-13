@@ -4,6 +4,7 @@ import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.exception.notfound.NotFoundSearchWordException;
 import com.Bridge.bridge.repository.*;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
@@ -169,7 +170,8 @@ public class ProjectService {
 
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
+
 
         // 최근 검색어 저장하기
         SearchWord searchWord1 = SearchWord.builder()
@@ -264,14 +266,14 @@ public class ProjectService {
     public List<MyProjectResponseDto> findMyProjects(Long userId){
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 요청자가 작성한 작성글 모두 불러오기
         List<Project> myProjects = projectRepository.findAllByUser(user);
 
         // 작성한 모집글이 없다면
         if(myProjects.isEmpty()){
-            throw new NullPointerException("작성한 프로젝트가 없습니다.");
+            throw new NotFoundProjectException();
         }
 
         // 총 모집인원
@@ -308,7 +310,7 @@ public class ProjectService {
 
         // 작성글이 하나도 없다면
         if(allProjects.isEmpty()){
-            throw new NullPointerException("작성한 프로젝트가 없습니다.");
+            throw new NotFoundProjectException();
         }
 
         // 총 모집인원
@@ -346,7 +348,7 @@ public class ProjectService {
 
         // 작성글이 하나도 없다면
         if(myPartProjects.isEmpty()){
-            throw new NullPointerException("해당 프로젝트가 없습니다.");
+            throw new NotFoundProjectException();
         }
 
         // 총 모집인원
@@ -380,11 +382,11 @@ public class ProjectService {
     public ProjectResponseDto closeProject(Long projectId, Long userId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 마감하고자 하는 프로젝트 찾기
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 모집글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundProjectException());
 
         LocalDateTime localDateTime = LocalDateTime.now();
 
@@ -417,11 +419,11 @@ public class ProjectService {
     public BookmarkResponseDto scrap(Long projectId, Long userId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 스크랩 하고자 하는 프로젝트 찾기
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 모집글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundProjectException());
 
         Bookmark bookmark = bookmarkRepository.findByProjectAndUser(project, user);
 
@@ -468,7 +470,7 @@ public class ProjectService {
     public List<SearchWordResponseDto> resentSearchWord(Long userId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         return user.getSearchWords().stream()
                 .map((searchWord -> SearchWordResponseDto.builder()
@@ -487,11 +489,11 @@ public class ProjectService {
     public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 해당 검색어 찾기
         SearchWord theSearchWord = searchWordRepository.findById(searchWordId)
-                .orElseThrow(()-> new EntityNotFoundException("해당 검색어가 존재하지 않습니다."));
+                .orElseThrow(()-> new NotFoundSearchWordException());
 
         user.getSearchWords().remove(theSearchWord);
         searchWordRepository.delete(theSearchWord);
