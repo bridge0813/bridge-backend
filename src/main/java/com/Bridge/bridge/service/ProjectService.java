@@ -261,18 +261,18 @@ public class ProjectService {
 
         List<MyProjectResponseDto> response = new ArrayList<>();
 
-       myProjects.stream()
-            .forEach((project -> project.getRecruit().stream()
-                        .forEach((part -> response.add(MyProjectResponseDto.builder()
-                                    .recruitPart(part.getRecruitPart())
-                                    .requirement(part.getRequirement())
-                                    .recruitSkill(part.getRecruitSkill())
-                                    .recruitNum(part.getRecruitNum())
-                                    .build())
-                        ))));
-
-        return response;
+        return myProjects.stream()
+                .map((project -> MyProjectResponseDto.builder()
+                        .projectId(project.getId())
+                        .overview(project.getOverview())
+                        .dueDate(project.getDueDate())
+                        .recruitTotalNum(recruitTotal[0])
+                        .build()))
+                .collect(Collectors.toList());
     }
+
+
+
 
     /*
         Func : 모든 모집글 리스트 보여주기

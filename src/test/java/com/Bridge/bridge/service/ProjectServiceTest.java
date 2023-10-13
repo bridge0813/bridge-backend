@@ -2,6 +2,7 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.BookmarkResponseDto;
 import com.Bridge.bridge.dto.response.MyProjectResponseDto;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
@@ -1086,8 +1087,8 @@ class ProjectServiceTest {
         newProject = projectRepository.save(newProject);
 
         // when
-        Boolean response = projectService.scrap(newProject.getId(), user.getId());
-        Assertions.assertThat(response).isEqualTo(true);
+        BookmarkResponseDto response = projectService.scrap(newProject.getId(), user.getId());
+        Assertions.assertThat(response.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
     }
 
     @DisplayName("모집글 스크랩 해제")
@@ -1142,8 +1143,8 @@ class ProjectServiceTest {
         projectRepository.save(newProject);
 
         // when
-        Boolean response = projectService.scrap(newProject.getId(), user.getId());
-        Assertions.assertThat(response).isEqualTo(false);
+        BookmarkResponseDto response = projectService.scrap(newProject.getId(), user.getId());
+        Assertions.assertThat(response.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
     }
 
 
