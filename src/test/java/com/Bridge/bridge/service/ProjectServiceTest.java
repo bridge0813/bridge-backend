@@ -16,6 +16,7 @@ import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
@@ -72,11 +73,65 @@ class ProjectServiceTest {
         User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Spring boot");
+
+        List<Part> recruit1 = new ArrayList<>();
+        recruit1.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("아무거나")
+                .build());
+
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("frontend")
+                .recruitNum(2)
+                .recruitSkill(skill2)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject1 = Project.builder()
+                .title("어플 프로젝트")
+                .overview("This is new Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit1)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        Project newProject2 = Project.builder()
+                .title("New project")
+                .overview("This is 맛집 어프")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit2)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
+
+
         // When
         List<ProjectListResponseDto> result = projectService.findByTitleAndContent(user.getId(),"어플");
 
         // Then
-        assertEquals(result.size(), 4);
+        assertEquals(result.get(0).getTitle(),"어플 프로젝트" );
 
     }
 
@@ -103,7 +158,7 @@ class ProjectServiceTest {
         ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -128,32 +183,33 @@ class ProjectServiceTest {
         User user = new User("delete", "delete@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<Part> recruit1 = new ArrayList<>();
+        recruit1.add(Part.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
-                .recruitSkill(skill)
+                .recruitSkill(skill1)
                 .requirement("아무거나")
                 .build());
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
-                .title("New project")
+        Project newProject1 = Project.builder()
+                .title("어플 프로젝트")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
-                .recruit(recruit)
+                .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectRepository.save(newProject1);
+
 
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -175,32 +231,33 @@ class ProjectServiceTest {
         User user2 = new User("delete2", "delete2@gmail.com", Platform.APPLE, "delete1Test");
         userRepository.save(user2);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<Part> recruit1 = new ArrayList<>();
+        recruit1.add(Part.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
-                .recruitSkill(skill)
+                .recruitSkill(skill1)
                 .requirement("아무거나")
                 .build());
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
-                .title("New project")
+        Project newProject1 = Project.builder()
+                .title("어플 프로젝트")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
-                .recruit(recruit)
+                .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .user(user1)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectRepository.save(newProject1);
+
 
         Long userId = user1.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -235,7 +292,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -304,7 +361,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -343,11 +400,8 @@ class ProjectServiceTest {
 
         Long wrongId = Long.valueOf(123456789);
 
-        // when
-        ProjectResponseDto result = projectService.updateProject(wrongId, updateProject);
-
-        // then
-        projectRepository.delete(newProject);
+        // expected
+        assertThrows(NotFoundProjectException.class, () -> projectService.updateProject(wrongId, updateProject));
     }
 
     @Test
@@ -396,6 +450,8 @@ class ProjectServiceTest {
                 .requirement("화이팅")
                 .build());
 
+        Long wrongId = Long.valueOf(123456789);
+
         ProjectRequestDto updateProject = ProjectRequestDto.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
@@ -405,15 +461,12 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .userId(wrongId)
                 .stage("Before Start")
                 .build();
 
-        // when
-        ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
-
-        // then
-        projectRepository.delete(newProject);
+        // expected
+        assertThrows(NotFoundUserException.class, () -> projectService.updateProject(newProject.getId(), updateProject));
     }
 
     @Test
@@ -474,16 +527,12 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .userId(user2.getId())
                 .stage("Before Start")
                 .build();
 
-        // when
-         ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
-
-
-        // then
-        projectRepository.delete(newProject);
+        // expected
+         assertThrows(NullPointerException.class, () -> projectService.updateProject(newProject.getId(), updateProject));
     }
 
     @DisplayName("모집글 상세보기 기능")
@@ -843,7 +892,7 @@ class ProjectServiceTest {
 
         // when
 
-        assertThrows(NullPointerException.class, () -> projectService.findMyProjects(user.getId()));
+        assertThrows(NotFoundProjectException.class, () -> projectService.findMyProjects(user.getId()));
 
     }
 

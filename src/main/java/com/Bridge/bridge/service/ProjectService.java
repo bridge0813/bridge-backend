@@ -120,45 +120,39 @@ public class ProjectService {
     */
     @Transactional
     public ProjectResponseDto updateProject(Long projectId, ProjectRequestDto projectRequestDto){
-        try {
-            // 모집글 작성한 user 찾기
-            User user = userRepository.findById(projectRequestDto.getUserId())
-                    .orElseThrow(() -> new NotFoundUserException());
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(projectRequestDto.getUserId())
+                .orElseThrow(() -> new NotFoundUserException());
 
-            // 모집글 찾기
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new NotFoundProjectException());
+        // 모집글 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
 
-            // 모집글 작성자와 유저가 같은지 확인하기
-            if (user.getId().equals(project.getUser().getId())) {
-                // 모집 분야, 인원 -> Part entity화 하기
-                List<Part> recruit = projectRequestDto.getRecruit().stream()
-                        .map((p) -> p.toEntity())
-                        .collect(Collectors.toList());
+        // 모집글 작성자와 유저가 같은지 확인하기
+        if (user.getId().equals(project.getUser().getId())) {
+            // 모집 분야, 인원 -> Part entity화 하기
+            List<Part> recruit = projectRequestDto.getRecruit().stream()
+                    .map((p) -> p.toEntity())
+                    .collect(Collectors.toList());
 
-                // 모집분야, 인원 초기화
-                partRepository.deleteAll(project.getRecruit());
+            // 모집분야, 인원 초기화
+            partRepository.deleteAll(project.getRecruit());
 
-                // Part- Project 매핑
-                Project finalProject = project;
-                recruit.stream()
-                        .forEach((part -> part.setProject(finalProject)));
+            // Part- Project 매핑
+            Project finalProject = project;
+            recruit.stream()
+                    .forEach((part -> part.setProject(finalProject)));
 
-                project = project.update(user, projectRequestDto, recruit);
+            project = project.update(user, projectRequestDto, recruit);
 
-                projectRepository.save(project);
+            projectRepository.save(project);
 
-                return project.toDto();
-            }
-            else {
-                throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
-            }
-
+            return project.toDto();
         }
-        catch (Exception e){
-            System.out.println(e + e.getMessage());
+        else {
+            throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
         }
-        return null;
+
     }
 
     /*
