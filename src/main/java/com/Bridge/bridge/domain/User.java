@@ -45,7 +45,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 내가 북마크한 프로젝트 글 목록
 
-    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "makeUser", cascade = CascadeType.ALL)
     private List<Chat> madeChat = new ArrayList<>();           // 내가 만든 채팅방 목록
 
     @OneToMany(mappedBy = "receiveUser", cascade = CascadeType.ALL)
