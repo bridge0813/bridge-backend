@@ -61,6 +61,7 @@ public class ProjectController {
         return projectService.filterProjectList(filterRequestDto);
     }
 
+
     // 내가 작성한 프로젝트 모집글 불러오기
     @PostMapping("/projects/")
     public List<MyProjectResponseDto> findMyProjects(@RequestBody Long userId){
@@ -92,6 +93,15 @@ public class ProjectController {
         return projectService.scrap(projectId, userId);
 
     }
+  
+    /**
+     * 지원한 프로젝트 목록 조회
+     */
+    @GetMapping("/projects/apply")
+    public ResponseEntity<?> getApplyProjects(@RequestParam("userId") Long userId ) {
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(userId);
+        return ResponseEntity.ok(applyProjects);
+    }
 
     // 최근 검색어 불러오기 기능
     @GetMapping("/searchWords")
@@ -105,4 +115,30 @@ public class ProjectController {
         return projectService.deleteSearchWord(userId, searchWordId);
     }
 
+    /**
+     * 프로젝트 지원하기
+     */
+    @PostMapping("/projects/apply")
+    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.apply(userId, projectId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 프로젝트 지원 취소하기
+     */
+    @PostMapping("/projects/apply/cancel")
+    public ResponseEntity<?> cancelApply(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.cancelApply(userId, projectId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 프로젝트 지원자 목록
+     */
+    @GetMapping("/projects/apply/users")
+    public ResponseEntity<?> applyUsers(@RequestParam("projectId") Long projectId) {
+        List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(projectId);
+        return ResponseEntity.ok(applyUsers);
+    }
 }

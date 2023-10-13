@@ -1,6 +1,9 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.domain.*;
+import com.Bridge.bridge.domain.Profile;
+import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
@@ -11,6 +14,7 @@ import com.Bridge.bridge.service.ProjectService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -50,6 +55,12 @@ class ProjectControllerTest {
 
     @Autowired
     private ProjectService projectService;
+
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+        projectRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("모집글 생성")
@@ -176,9 +187,6 @@ class ProjectControllerTest {
 
         projectService.createProject(newProject);
 
-
-
-
         List<String> updateSkill = new ArrayList<>();
         updateSkill.add("Javascript");
         updateSkill.add("React");
@@ -204,11 +212,8 @@ class ProjectControllerTest {
                 .stage("Before Start")
                 .build();
 
-
-
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
-
 
         // when
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
@@ -221,7 +226,6 @@ class ProjectControllerTest {
                         .content(objectMapper.writeValueAsString(data)))
                 .andExpect(status().is(202)) // 응답 status를 ok로 테스트
                 .andDo(print());
-
     }
 
     @Test
@@ -805,6 +809,138 @@ class ProjectControllerTest {
     }
 
 
+    @Test
+    @DisplayName("지원한 프로젝트 목록 조회")
+    void getApplyProjects() throws Exception {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
 
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
 
+        projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //expected
+        mockMvc.perform(get("/projects/apply")
+                    .param("userId", saveUser1.getId().toString())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].stage").value("stage1"))
+                .andExpect(jsonPath("$[0].title").value("title1"))
+                .andExpect(jsonPath("$[0].overview").value("overview1"))
+                .andExpect(jsonPath("$[0].dueDate").value("23-10-10"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("프로젝트 지원하기")
+    void applyProjects() throws Exception {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        userRepository.save(user1);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+        User saveUser1 = userRepository.save(user1);
+
+        //expected
+        mockMvc.perform(post("/projects/apply")
+                        .param("userId", saveUser1.getId().toString())
+                        .param("projectId", saveProject.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("프로젝트 지원 취소하기")
+    void cancelApply() throws Exception {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //expected
+        mockMvc.perform(post("/projects/apply/cancel")
+                        .param("userId", saveUser1.getId().toString())
+                        .param("projectId", saveProject.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("프로젝트 지원자 목록")
+    void getApplyUsersDetail() throws Exception {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+
+        Field field1 = new Field("Backend");
+        field1.updateFieldUser(user1);
+
+        user1.getFields().add(field1);
+
+        Profile profile1 = Profile.builder()
+                .career("career1")
+                .build();
+
+        user1.updateProfile(profile1);
+
+        userRepository.save(user1);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+        project1.getApplyProjects().add(applyProject1);
+        Project saveProject = projectRepository.save(project1);
+
+        //expected
+        mockMvc.perform(get("/projects/apply/users")
+                        .param("projectId", saveProject.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].userId").value(user1.getId()))
+                .andExpect(jsonPath("$[0].name").value("bridge1"))
+                .andExpect(jsonPath("$[0].fields[0]").value("Backend"))
+                .andExpect(jsonPath("$[0].career").value("career1"))
+                .andDo(print());
+    }
 }

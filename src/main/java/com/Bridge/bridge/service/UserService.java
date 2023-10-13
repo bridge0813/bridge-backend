@@ -64,6 +64,15 @@ public class UserService {
     }
 
     /**
+     * 유저 개인 프로필 확인
+     */
+    public void getProfile(Long userId) {
+        User findUser = find(userId);
+        //TODO : 유저 개인 프로필 확인
+    }
+
+
+    /**
      * 유저 찾기 메소드
      */
     public User find(Long id) {
