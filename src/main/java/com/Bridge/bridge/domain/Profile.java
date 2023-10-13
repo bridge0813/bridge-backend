@@ -19,8 +19,6 @@ public class Profile {
 
     private String refLink;         // 참고 링크
 
-    private String refFile;         // 첨부 파일
-
     private String selfIntro;       // 자기소개서
 
     private String career;          // 경력 사항
@@ -35,7 +33,8 @@ public class Profile {
     private List<File> files = new ArrayList<>();
 
     @Builder
-    public Profile(String selfIntro, String career, List<String> skill) {
+    public Profile(String refLink, String selfIntro, String career, List<String> skill) {
+        this.refLink = refLink;
         this.selfIntro = selfIntro;
         this.career = career;
         this.skill = skill;
