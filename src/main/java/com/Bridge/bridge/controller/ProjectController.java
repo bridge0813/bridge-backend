@@ -99,4 +99,24 @@ public class ProjectController {
         List<ApplyUserResponse> applyUsers = projectService.getApplyUsers(projectId);
         return ResponseEntity.ok(applyUsers);
     }
+
+    /**
+     * 프로젝트 수락하기
+     */
+    @PutMapping("/projects/accept")
+    public ResponseEntity<?> acceptApply(@RequestParam("projectId") Long projectId,
+                                         @RequestParam("userId") Long userId) {
+        projectService.acceptApply(projectId, userId);
+        return ResponseEntity.ok(true);
+    }
+
+    /**
+     * 프로젝트 거절하기
+     */
+    @PutMapping("/projects/reject")
+    public ResponseEntity<?> rejectApply(@RequestParam("projectId") Long projectId,
+                                         @RequestParam("userId") Long userId) {
+        projectService.rejectApply(projectId, userId);
+        return ResponseEntity.ok(true);
+    }
 }

@@ -297,4 +297,46 @@ public class ProjectService {
 
         return applyUsers;
     }
+
+    /**
+     * 프로젝트 수락하기
+     */
+    @Transactional
+    public void acceptApply(Long projectId, Long userId) {
+        //TODO : 수락할 권한이 있는지?
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        //지원한 유저
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        ApplyProject applyProject = applyProjectRepository.findByUserAndProject(findUser, project)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        applyProject.changeStage("수락");
+
+        //TODO : 이후 지원자 목록에서 처리
+    }
+
+    /**
+     * 프로젝트 거절하기
+     */
+    @Transactional
+    public void rejectApply(Long projectId, Long userId) {
+        //TODO : 거절할 권한이 있는지?
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        //지원한 유저
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        ApplyProject applyProject = applyProjectRepository.findByUserAndProject(findUser, project)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        applyProject.changeStage("거절");
+
+        //TODO : 이후 지원자 목록에서 처리
+    }
 }
