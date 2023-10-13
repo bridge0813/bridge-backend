@@ -2,15 +2,9 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
-import com.Bridge.bridge.repository.BookmarkRepository;
-import com.Bridge.bridge.repository.PartRepository;
-import com.Bridge.bridge.repository.ProjectRepository;
-import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
@@ -34,6 +28,7 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final PartRepository partRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final SearchWordRepository searchWordRepository;
 
     /*
         Func : 프로젝트 모집글 생성
@@ -155,7 +150,22 @@ public class ProjectService {
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
-    public List<ProjectListResponseDto> findByTitleAndContent(String searchWord){
+    public List<ProjectListResponseDto> findByTitleAndContent(Long userId, String searchWord){
+
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+
+        // 최근 검색어 저장하기
+        SearchWord searchWord1 = SearchWord.builder()
+                .content(searchWord)
+                .history(LocalDateTime.now())
+                .user(user)
+                .build();
+        searchWordRepository.save(searchWord1);
+
+        user.getSearchWords().add(searchWord1);
+        userRepository.save(user);
 
         List<Project> allProject = projectRepository.findAll();
 
@@ -413,6 +423,7 @@ public class ProjectService {
 
             // project - bookmark 연관관계 맵핑
             project.setBookmarks(newBookmark);
+            project.increaseBookmarksNum();
 
             return BookmarkResponseDto.builder()
                     .projectId(projectId)
@@ -421,16 +432,82 @@ public class ProjectService {
                     .build();
         }
         else {
+            user.getBookmarks().remove(bookmark);
             bookmarkRepository.delete(bookmark); // 스크랩 해제
+
+            project.decreaseBookmarksNum();
+
             return BookmarkResponseDto.builder()
                     .projectId(projectId)
                     .userId(userId)
                     .scrap("스크랩이 해제되었습니다.")
                     .build();
         }
+    }
 
+    /*
+        Func : 최근 검색어 조회 기능
+        Parameter : userId
+        Return : List<SearchWordResponseDto>
+    */
+    public List<SearchWordResponseDto> resentSearchWord(Long userId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
 
+        return user.getSearchWords().stream()
+                .map((searchWord -> SearchWordResponseDto.builder()
+                        .searchWordId(searchWord.getId())
+                        .searchWord(searchWord.getContent())
+                        .build()))
+                .collect(Collectors.toList());
+    }
 
+    /*
+        Func : 최근 검색어 삭제 기능
+        Parameter : userId, searchWordId
+        Return : List<SearchWordResponseDto>
+    */
+    @Transactional
+    public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+
+        // 해당 검색어 찾기
+        SearchWord theSearchWord = searchWordRepository.findById(searchWordId)
+                .orElseThrow(()-> new EntityNotFoundException("해당 검색어가 존재하지 않습니다."));
+
+        user.getSearchWords().remove(theSearchWord);
+        searchWordRepository.delete(theSearchWord);
+
+        return user.getSearchWords().stream()
+                .map((searchWord -> SearchWordResponseDto.builder()
+                        .searchWordId(searchWord.getId())
+                        .searchWord(searchWord.getContent())
+                        .build()))
+                .collect(Collectors.toList());
+    }
+
+    /*
+        Func : 인기글 조회
+        Parameter :
+        Return : List<TopProjectResponseDto>
+    */
+    public List<TopProjectResponseDto> topProjects(){
+
+        List<Project> top20 = projectRepository.findTop20ByOrderByBookmarkNum();
+
+        List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
+
+        for (int i=0; i<20; i++){
+            topProjectResponseDtos.add(TopProjectResponseDto.builder()
+                    .rank(i+1)
+                    .title(top20.get(i).getTitle())
+                    .dueDate(top20.get(i).getDueDate())
+                    .build());
+        }
+        return topProjectResponseDtos;
     }
 
 

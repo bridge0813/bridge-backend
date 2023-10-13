@@ -1,11 +1,8 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,9 +25,9 @@ public class ProjectController {
     }
 
     // 검색어 기준으로 프로젝트 모집글 조회
-    @GetMapping("/projects/searchWord")
-    public List<ProjectListResponseDto> searchProject(@RequestParam String searchWord){
-        return projectService.findByTitleAndContent(searchWord);
+    @PostMapping("/projects/searchWord")
+    public List<ProjectListResponseDto> searchProject(@RequestParam Long userId ,@RequestBody String searchWord){
+        return projectService.findByTitleAndContent(userId, searchWord);
     }
 
     // 프로젝트 모집글 삭제
@@ -94,6 +91,18 @@ public class ProjectController {
 
         return projectService.scrap(projectId, userId);
 
+    }
+
+    // 최근 검색어 불러오기 기능
+    @GetMapping("/searchWords")
+    public List<SearchWordResponseDto> resentSearchWord(@RequestParam("userId") Long userId){
+        return projectService.resentSearchWord(userId);
+    }
+
+    // 최근 검색어 불러오기 기능
+    @DeleteMapping("/searchWords")
+    public List<SearchWordResponseDto> deleteSearchWord(@RequestParam("userId") Long userId, @RequestBody Long searchWordId){
+        return projectService.deleteSearchWord(userId, searchWordId);
     }
 
 }

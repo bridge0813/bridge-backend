@@ -21,4 +21,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAllByRecruitIn(List<Part> parts);
 
     List<Project> findAllByUser(User user);
+
+    List<Project> findTop20ByOrderByBookmarkNum();
 }
