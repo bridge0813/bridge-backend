@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,9 @@ public class Bookmark {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Builder
+    public Bookmark(User user, Project project) {
+        this.user = user;
+        this.project = project;
+    }
 }

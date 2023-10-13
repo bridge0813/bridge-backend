@@ -20,7 +20,6 @@ public class Chat {
 
     private String chatRoomId; // 채팅방 고유 ID
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "user_id", name = "make_user_id")
     private User makeUser;      // 채팅방 만든 사람

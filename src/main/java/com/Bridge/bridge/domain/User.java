@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +73,10 @@ public class User {
 
     public void setProject(Project project) {
         this.projects.add(project);
+    }
+
+    public void setBookmarks(Bookmark bookmark){
+        this.bookmarks.add(bookmark);
     }
      
 

@@ -1,6 +1,8 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.response.BookmarkResponseDto;
+import com.Bridge.bridge.dto.response.MyProjectResponseDto;
 import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
@@ -28,7 +30,7 @@ public class ProjectController {
     }
 
     // 검색어 기준으로 프로젝트 모집글 조회
-    @GetMapping("/project/list")
+    @GetMapping("/projects/searchWord")
     public List<ProjectListResponseDto> searchProject(@RequestParam String searchWord){
         return projectService.findByTitleAndContent(searchWord);
     }
@@ -64,6 +66,39 @@ public class ProjectController {
         return projectService.filterProjectList(filterRequestDto);
     }
 
+
+    // 내가 작성한 프로젝트 모집글 불러오기
+    @PostMapping("/projects/")
+    public List<MyProjectResponseDto> findMyProjects(@RequestBody Long userId){
+        return projectService.findMyProjects(userId);
+    }
+
+    // 모든 프로젝트 모집글 불러오기
+    @GetMapping("/projects/all")
+    public List<ProjectListResponseDto> allProjects(){
+        return projectService.allProjects();
+    }
+
+    // 내 분야 프로젝트 모집글 불러오기
+    @PostMapping("/projects/mypart")
+    public List<ProjectListResponseDto> findMyPartProjects(@RequestBody String part){
+        return projectService.findMyPartProjects(part);
+    }
+
+    // 모집글 마감하기
+    @PostMapping("/project/deadline")
+    public ProjectResponseDto closeProject(@RequestParam Long projectId, @RequestBody Long userId){
+        return projectService.closeProject(projectId, userId);
+    }
+
+    // 모집글 스크랩하기
+    @PostMapping("/project/scrap")
+    public BookmarkResponseDto scrap(@RequestParam Long projectId, @RequestBody Long userId){
+
+        return projectService.scrap(projectId, userId);
+
+    }
+  
     /**
      * 지원한 프로젝트 목록 조회
      */
