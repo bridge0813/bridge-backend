@@ -943,4 +943,28 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].career").value("career1"))
                 .andDo(print());
     }
+
+    @DisplayName("인기글 조회 기능")
+    @Test
+    void topProjects() throws Exception{
+        // given
+        for(int i=1; i<26; i++){
+            Project project = projectRepository.save(Project.builder()
+                    .title("제목"+i)
+                    .dueDate(LocalDateTime.of(2023, 10, i,0,0,0).toString())
+                    .build());
+            for(int j=i; j<21; j++){
+                project.increaseBookmarksNum();
+            }
+            projectRepository.save(project);
+        }
+
+        //expected
+        mockMvc.perform(get("/projects/top")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("제목1"))
+                .andDo(print());
+    }
+
 }
