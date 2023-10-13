@@ -1,6 +1,8 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Platform;
+import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
@@ -14,12 +16,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -67,6 +72,40 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("개인 프로필 확인")
+    void getProfile() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        Field field = new Field("backend");
+
+        List<String> skills = new ArrayList<>();
+        skills.add("spring");
+        skills.add("redis");
+
+        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+
+        newUser.getFields().add(field);
+        newUser.updateProfile(profile);
+
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(get("/users/profile")
+                        .param("userId", saveUser.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("bridge"))
+                .andExpect(jsonPath("$.selfIntro").value("selfIntro"))
+                .andExpect(jsonPath("$.fields[0]").value("backend"))
+                .andExpect(jsonPath("$.stacks[0]").value("spring"))
+                .andExpect(jsonPath("$.career").value("career"))
+                .andExpect(jsonPath("$.refLink").value("testLink"))
                 .andDo(print());
     }
 }
