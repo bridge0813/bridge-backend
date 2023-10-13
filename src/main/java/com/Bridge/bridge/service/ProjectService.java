@@ -512,8 +512,14 @@ public class ProjectService {
         Return : List<TopProjectResponseDto>
     */
     public List<TopProjectResponseDto> topProjects(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int year = localDateTime.getYear();;
+        int month = localDateTime.getMonthValue();
+        int day = localDateTime.getDayOfMonth();
 
-        List<Project> top20 = projectRepository.findTop20ByOrderByBookmarkNum();
+        String now = LocalDateTime.of(year, month, day, 0,0,0).toString();
+
+        List<Project> top20 = projectRepository.findTop20ByDueDateLessThanOrderByBookmarkNum(now);
 
         List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
 
