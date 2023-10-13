@@ -1089,13 +1089,10 @@ class ProjectServiceTest {
         newProject = projectRepository.save(newProject);
 
         // when
-<<<<<<< HEAD
-        BookmarkResponseDto response = projectService.scrap(newProject.getId(), user.getId());
-        Assertions.assertThat(response.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
-=======
+
         BookmarkResponseDto bookmarkResponseDto = projectService.scrap(newProject.getId(), user.getId());
         Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
->>>>>>> backup3
+
     }
 
     @DisplayName("모집글 스크랩 해제")
