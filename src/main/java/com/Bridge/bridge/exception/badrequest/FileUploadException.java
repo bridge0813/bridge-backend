@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class FileUploadException extends BridgeException {
 
     public FileUploadException() {
-        super(HttpStatus.BAD_REQUEST, "파일 업로드에 실패하였습니다.", 401);
+        super(HttpStatus.BAD_REQUEST, "파일 업로드에 실패하였습니다.", 400);
     }
 }
