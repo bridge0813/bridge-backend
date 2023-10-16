@@ -26,12 +26,10 @@ public class ProjectResponseDto {
 
     private String stage;           // 진행 단계
 
-    private int bookmarksNum;       // 스크랩 횟수
-
     private String userName;        // 모집글을 작성한 유저 이름
 
     @Builder
-    public ProjectResponseDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponseDto> recruit, List<String> tagLimit, String meetingWay, String stage, int bookmarksNum, String userName) {
+    public ProjectResponseDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponseDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userName) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
@@ -41,7 +39,6 @@ public class ProjectResponseDto {
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
-        this.bookmarksNum = bookmarksNum;
         this.userName = userName;
     }
 }

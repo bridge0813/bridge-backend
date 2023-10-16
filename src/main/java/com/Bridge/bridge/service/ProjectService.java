@@ -160,7 +160,8 @@ public class ProjectService {
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
-    public List<ProjectListResponseDto> findByTitleAndContent(Long userId, String searchWord){
+    @Transactional
+    public List<ProjectListResponseDto> findByTitleAndContent(Long userId, String theSearchWord){
 
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
@@ -168,21 +169,20 @@ public class ProjectService {
 
 
         // 최근 검색어 저장하기
-        SearchWord searchWord1 = SearchWord.builder()
-                .content(searchWord)
+        SearchWord searchWord = SearchWord.builder()
+                .content(theSearchWord)
                 .history(LocalDateTime.now())
                 .user(user)
                 .build();
-        searchWordRepository.save(searchWord1);
+        searchWordRepository.save(searchWord);
 
-        user.getSearchWords().add(searchWord1);
-        userRepository.save(user);
+        user.getSearchWords().add(searchWord);
 
         List<Project> allProject = projectRepository.findAll();
 
         List<Project> findProject = allProject.stream()
                 .filter((project) ->
-                { return project.getOverview().contains(searchWord) || project.getTitle().contains(searchWord);
+                { return project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord);
                 })
                 .collect(Collectors.toList());
 

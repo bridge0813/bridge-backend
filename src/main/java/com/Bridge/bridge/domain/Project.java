@@ -104,7 +104,6 @@ public class Project {
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
                 .stage(this.getStage())
-                .bookmarksNum(this.bookmarkNum)
                 .userName(this.getUser().getName())
                 .build();
     }
