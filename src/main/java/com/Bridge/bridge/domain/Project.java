@@ -58,6 +58,8 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 해당 프로젝트 글을 북마크한 유저 목록
 
+    private int bookmarkNum; // 스크랩 횟수
+
     @Builder
     public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
         LocalDateTime localDateTime = LocalDateTime.now();
@@ -75,6 +77,7 @@ public class Project {
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
+        this.bookmarkNum = 0;
         this.user = user;
     }
 
@@ -129,6 +132,18 @@ public class Project {
         this.dueDate = formatedNow;
 
         return this;
+    }
+
+    public int increaseBookmarksNum(){
+        this.bookmarkNum = this.bookmarkNum + 1;
+
+        return this.bookmarkNum;
+    }
+
+    public int decreaseBookmarksNum(){
+        this.bookmarkNum = this.bookmarkNum - 1;
+
+        return this.bookmarkNum;
     }
 
 }

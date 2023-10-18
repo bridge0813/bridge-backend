@@ -2,8 +2,7 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.domain.ApplyProject;
 import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Part;
@@ -17,12 +16,14 @@ import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
+import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,8 @@ class ProjectServiceTest {
     UserRepository userRepository;
     @Autowired
     BookmarkRepository bookmarkRepository;
+    @Autowired
+    SearchWordRepository searchWordRepository;
 
 
 
@@ -67,12 +70,68 @@ class ProjectServiceTest {
     @Test
     public void findProjects() {
         // given
+        User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
+        userRepository.save(user);
+
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
+
+        List<String> skill2 = new ArrayList<>();
+        skill2.add("Java");
+        skill2.add("Spring boot");
+
+        List<Part> recruit1 = new ArrayList<>();
+        recruit1.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill1)
+                .requirement("아무거나")
+                .build());
+
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("frontend")
+                .recruitNum(2)
+                .recruitSkill(skill2)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject1 = Project.builder()
+                .title("어플 프로젝트")
+                .overview("This is new Project.")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit1)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        Project newProject2 = Project.builder()
+                .title("New project")
+                .overview("This is 맛집 어프")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit2)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
+
 
         // When
-        List<ProjectListResponseDto> result = projectService.findByTitleAndContent("어플");
+        List<ProjectListResponseDto> result = projectService.findByTitleAndContent(user.getId(),"어플");
 
         // Then
-        assertEquals(result.size(), 4);
+        assertEquals(result.get(0).getTitle(),"어플 프로젝트" );
 
     }
 
@@ -99,7 +158,7 @@ class ProjectServiceTest {
         ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -124,32 +183,33 @@ class ProjectServiceTest {
         User user = new User("delete", "delete@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<Part> recruit1 = new ArrayList<>();
+        recruit1.add(Part.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
-                .recruitSkill(skill)
+                .recruitSkill(skill1)
                 .requirement("아무거나")
                 .build());
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
-                .title("New project")
+        Project newProject1 = Project.builder()
+                .title("어플 프로젝트")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
-                .recruit(recruit)
+                .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectRepository.save(newProject1);
+
 
         Long userId = user.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -171,32 +231,33 @@ class ProjectServiceTest {
         User user2 = new User("delete2", "delete2@gmail.com", Platform.APPLE, "delete1Test");
         userRepository.save(user2);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<String> skill1 = new ArrayList<>();
+        skill1.add("Java");
+        skill1.add("Spring boot");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<Part> recruit1 = new ArrayList<>();
+        recruit1.add(Part.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
-                .recruitSkill(skill)
+                .recruitSkill(skill1)
                 .requirement("아무거나")
                 .build());
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
-                .title("New project")
+        Project newProject1 = Project.builder()
+                .title("어플 프로젝트")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
-                .recruit(recruit)
+                .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .user(user1)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        projectRepository.save(newProject1);
+
 
         Long userId = user1.getId();
         Long projectId = projectRepository.findByUser_Id(userId).get().getId();
@@ -231,7 +292,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -300,7 +361,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
+                .dueDate("230907")
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit)
@@ -339,11 +400,8 @@ class ProjectServiceTest {
 
         Long wrongId = Long.valueOf(123456789);
 
-        // when
-        ProjectResponseDto result = projectService.updateProject(wrongId, updateProject);
-
-        // then
-        projectRepository.delete(newProject);
+        // expected
+        assertThrows(NotFoundProjectException.class, () -> projectService.updateProject(wrongId, updateProject));
     }
 
     @Test
@@ -392,6 +450,8 @@ class ProjectServiceTest {
                 .requirement("화이팅")
                 .build());
 
+        Long wrongId = Long.valueOf(123456789);
+
         ProjectRequestDto updateProject = ProjectRequestDto.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
@@ -401,15 +461,12 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .userId(wrongId)
                 .stage("Before Start")
                 .build();
 
-        // when
-        ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
-
-        // then
-        projectRepository.delete(newProject);
+        // expected
+        assertThrows(NotFoundUserException.class, () -> projectService.updateProject(newProject.getId(), updateProject));
     }
 
     @Test
@@ -470,16 +527,12 @@ class ProjectServiceTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .userId(user2.getId())
                 .stage("Before Start")
                 .build();
 
-        // when
-         ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
-
-
-        // then
-        projectRepository.delete(newProject);
+        // expected
+         assertThrows(NullPointerException.class, () -> projectService.updateProject(newProject.getId(), updateProject));
     }
 
     @DisplayName("모집글 상세보기 기능")
@@ -839,7 +892,7 @@ class ProjectServiceTest {
 
         // when
 
-        assertThrows(NullPointerException.class, () -> projectService.findMyProjects(user.getId()));
+        assertThrows(NotFoundProjectException.class, () -> projectService.findMyProjects(user.getId()));
 
     }
 
@@ -1185,15 +1238,17 @@ class ProjectServiceTest {
         newProject = projectRepository.save(newProject);
 
         // when
-        BookmarkResponseDto response = projectService.scrap(newProject.getId(), user.getId());
-        Assertions.assertThat(response.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
+
+        BookmarkResponseDto bookmarkResponseDto = projectService.scrap(newProject.getId(), user.getId());
+        Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
+
     }
 
     @DisplayName("모집글 스크랩 해제")
     @Test
     void unscrap() {
         // given
-        User user = new User("unscrap", "unscrap@gmail.com", Platform.APPLE, "unscrapTest");
+        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -1241,8 +1296,83 @@ class ProjectServiceTest {
         projectRepository.save(newProject);
 
         // when
-        BookmarkResponseDto response = projectService.scrap(newProject.getId(), user.getId());
-        Assertions.assertThat(response.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
+        BookmarkResponseDto bookmarkResponseDto = projectService.scrap(newProject.getId(), user.getId());
+        Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
+    }
+
+    @DisplayName("최근 검색어 조회")
+    @Test
+    void resentSearchWord() {
+        // given
+        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        user = userRepository.save(user);
+
+        SearchWord newSearch1 = SearchWord.builder()
+                .content("검색어1")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch2 = SearchWord.builder()
+                .content("검색어2")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch3 = SearchWord.builder()
+                .content("검색어3")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+
+        searchWordRepository.save(newSearch1);
+        searchWordRepository.save(newSearch2);
+        searchWordRepository.save(newSearch3);
+
+        user.getSearchWords().add(newSearch1);
+        user.getSearchWords().add(newSearch2);
+        user.getSearchWords().add(newSearch3);
+
+        // when
+        List<SearchWordResponseDto> searchWordResponseDto = projectService.resentSearchWord(user.getId());
+        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어1");
+        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어2");
+        Assertions.assertThat(searchWordResponseDto.get(2).getSearchWord()).isEqualTo("검색어3");
+    }
+
+    @DisplayName("최근 검색어 삭제")
+    @Test
+    void deleteSearchWord() {
+        // given
+        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        user = userRepository.save(user);
+
+        SearchWord newSearch1 = SearchWord.builder()
+                .content("검색어1")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch2 = SearchWord.builder()
+                .content("검색어2")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch3 = SearchWord.builder()
+                .content("검색어3")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+
+        searchWordRepository.save(newSearch1);
+        searchWordRepository.save(newSearch2);
+        searchWordRepository.save(newSearch3);
+
+        user.getSearchWords().add(newSearch1);
+        user.getSearchWords().add(newSearch2);
+        user.getSearchWords().add(newSearch3);
+
+        // when
+        List<SearchWordResponseDto> searchWordResponseDto = projectService.deleteSearchWord(user.getId(), newSearch1.getId());
+        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어2");
+        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어3");
     }
 
     @Test
@@ -1377,5 +1507,60 @@ class ProjectServiceTest {
         assertEquals("Backend", response.getFields().get(0));
         assertEquals("career1", response.getCareer());
     }
+
+    @DisplayName("인기글 조회")
+    @Test
+    void topProjects() {
+        // given
+        for(int i=1; i<26; i++){
+            Project project = projectRepository.save(Project.builder()
+                    .title("제목"+i)
+                    .dueDate(LocalDateTime.of(2023, 11, i,0,0,0).toString())
+                    .build());
+            for(int j=i; j<21; j++){
+                project.increaseBookmarksNum();
+            }
+        }
+        // when
+        List<TopProjectResponseDto> result = projectService.topProjects();
+
+        // then
+
+        Assertions.assertThat(result.size()).isEqualTo(20);
+        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목1");
+        Assertions.assertThat(result.get(19).getTitle()).isEqualTo("제목20");
+    }
+
+    @DisplayName("인기글 조회_마감 지난 게시글은 제외")
+    @Test
+    void topProjects_dateOption() {
+        // given
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int year = localDateTime.getYear();;
+        int month = localDateTime.getMonthValue();
+        int day = localDateTime.getDayOfMonth();
+
+        for(int i=1; i<32; i++){
+            Project project = projectRepository.save(Project.builder()
+                    .title("제목"+i)
+                    .dueDate(LocalDateTime.of(year, month, i,0,0,0).toString())
+                    .build());
+            for(int j=i; j<31; j++){
+                project.increaseBookmarksNum();
+            }
+            projectRepository.save(project);
+        }
+
+
+        // when
+        List<TopProjectResponseDto> result = projectService.topProjects();
+
+        // then
+
+        Assertions.assertThat(result.size()).isEqualTo(32-day);
+        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목"+day);
+        Assertions.assertThat(result.get(31-day).getTitle()).isEqualTo("제목31");
+    }
+
 
 }

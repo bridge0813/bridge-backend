@@ -2,10 +2,10 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.exception.notfound.NotFoundSearchWordException;
+import com.Bridge.bridge.repository.*;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.domain.ApplyProject;
@@ -19,10 +19,6 @@ import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
-import com.Bridge.bridge.repository.ApplyProjectRepository;
-import com.Bridge.bridge.repository.PartRepository;
-import com.Bridge.bridge.repository.ProjectRepository;
-import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
@@ -46,6 +42,7 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final PartRepository partRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final SearchWordRepository searchWordRepository;
 
     private final ApplyProjectRepository applyProjectRepository;
 
@@ -123,45 +120,39 @@ public class ProjectService {
     */
     @Transactional
     public ProjectResponseDto updateProject(Long projectId, ProjectRequestDto projectRequestDto){
-        try {
-            // 모집글 작성한 user 찾기
-            User user = userRepository.findById(projectRequestDto.getUserId())
-                    .orElseThrow(() -> new NotFoundUserException());
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(projectRequestDto.getUserId())
+                .orElseThrow(() -> new NotFoundUserException());
 
-            // 모집글 찾기
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new NotFoundProjectException());
+        // 모집글 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
 
-            // 모집글 작성자와 유저가 같은지 확인하기
-            if (user.getId().equals(project.getUser().getId())) {
-                // 모집 분야, 인원 -> Part entity화 하기
-                List<Part> recruit = projectRequestDto.getRecruit().stream()
-                        .map((p) -> p.toEntity())
-                        .collect(Collectors.toList());
+        // 모집글 작성자와 유저가 같은지 확인하기
+        if (user.getId().equals(project.getUser().getId())) {
+            // 모집 분야, 인원 -> Part entity화 하기
+            List<Part> recruit = projectRequestDto.getRecruit().stream()
+                    .map((p) -> p.toEntity())
+                    .collect(Collectors.toList());
 
-                // 모집분야, 인원 초기화
-                partRepository.deleteAll(project.getRecruit());
+            // 모집분야, 인원 초기화
+            partRepository.deleteAll(project.getRecruit());
 
-                // Part- Project 매핑
-                Project finalProject = project;
-                recruit.stream()
-                        .forEach((part -> part.setProject(finalProject)));
+            // Part- Project 매핑
+            Project finalProject = project;
+            recruit.stream()
+                    .forEach((part -> part.setProject(finalProject)));
 
-                project = project.update(user, projectRequestDto, recruit);
+            project = project.update(user, projectRequestDto, recruit);
 
-                projectRepository.save(project);
+            projectRepository.save(project);
 
-                return project.toDto();
-            }
-            else {
-                throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
-            }
-
+            return project.toDto();
         }
-        catch (Exception e){
-            System.out.println(e + e.getMessage());
+        else {
+            throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
         }
-        return null;
+
     }
 
     /*
@@ -169,13 +160,29 @@ public class ProjectService {
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
-    public List<ProjectListResponseDto> findByTitleAndContent(String searchWord){
+    @Transactional
+    public List<ProjectListResponseDto> findByTitleAndContent(Long userId, String theSearchWord){
+
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+
+        // 최근 검색어 저장하기
+        SearchWord searchWord = SearchWord.builder()
+                .content(theSearchWord)
+                .history(LocalDateTime.now())
+                .user(user)
+                .build();
+        searchWordRepository.save(searchWord);
+
+        user.getSearchWords().add(searchWord);
 
         List<Project> allProject = projectRepository.findAll();
 
         List<Project> findProject = allProject.stream()
                 .filter((project) ->
-                { return project.getOverview().contains(searchWord) || project.getTitle().contains(searchWord);
+                { return project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord);
                 })
                 .collect(Collectors.toList());
 
@@ -253,14 +260,14 @@ public class ProjectService {
     public List<MyProjectResponseDto> findMyProjects(Long userId){
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 요청자가 작성한 작성글 모두 불러오기
         List<Project> myProjects = projectRepository.findAllByUser(user);
 
         // 작성한 모집글이 없다면
         if(myProjects.isEmpty()){
-            throw new NullPointerException("작성한 프로젝트가 없습니다.");
+            throw new NotFoundProjectException();
         }
 
         // 총 모집인원
@@ -297,7 +304,7 @@ public class ProjectService {
 
         // 작성글이 하나도 없다면
         if(allProjects.isEmpty()){
-            throw new NullPointerException("작성한 프로젝트가 없습니다.");
+            throw new NotFoundProjectException();
         }
 
         // 총 모집인원
@@ -335,7 +342,7 @@ public class ProjectService {
 
         // 작성글이 하나도 없다면
         if(myPartProjects.isEmpty()){
-            throw new NullPointerException("해당 프로젝트가 없습니다.");
+            throw new NotFoundProjectException();
         }
 
         // 총 모집인원
@@ -369,11 +376,11 @@ public class ProjectService {
     public ProjectResponseDto closeProject(Long projectId, Long userId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 마감하고자 하는 프로젝트 찾기
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 모집글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundProjectException());
 
         LocalDateTime localDateTime = LocalDateTime.now();
 
@@ -406,11 +413,11 @@ public class ProjectService {
     public BookmarkResponseDto scrap(Long projectId, Long userId){
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundUserException());
 
         // 스크랩 하고자 하는 프로젝트 찾기
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 모집글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundProjectException());
 
         Bookmark bookmark = bookmarkRepository.findByProjectAndUser(project, user);
 
@@ -427,6 +434,7 @@ public class ProjectService {
 
             // project - bookmark 연관관계 맵핑
             project.setBookmarks(newBookmark);
+            project.increaseBookmarksNum();
 
             return BookmarkResponseDto.builder()
                     .projectId(projectId)
@@ -435,16 +443,88 @@ public class ProjectService {
                     .build();
         }
         else {
+            user.getBookmarks().remove(bookmark);
             bookmarkRepository.delete(bookmark); // 스크랩 해제
+
+            project.decreaseBookmarksNum();
+
             return BookmarkResponseDto.builder()
                     .projectId(projectId)
                     .userId(userId)
                     .scrap("스크랩이 해제되었습니다.")
                     .build();
         }
+    }
 
+    /*
+        Func : 최근 검색어 조회 기능
+        Parameter : userId
+        Return : List<SearchWordResponseDto>
+    */
+    public List<SearchWordResponseDto> resentSearchWord(Long userId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
 
+        return user.getSearchWords().stream()
+                .map((searchWord -> SearchWordResponseDto.builder()
+                        .searchWordId(searchWord.getId())
+                        .searchWord(searchWord.getContent())
+                        .build()))
+                .collect(Collectors.toList());
+    }
 
+    /*
+        Func : 최근 검색어 삭제 기능
+        Parameter : userId, searchWordId
+        Return : List<SearchWordResponseDto>
+    */
+    @Transactional
+    public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        // 해당 검색어 찾기
+        SearchWord theSearchWord = searchWordRepository.findById(searchWordId)
+                .orElseThrow(()-> new NotFoundSearchWordException());
+
+        user.getSearchWords().remove(theSearchWord);
+        searchWordRepository.delete(theSearchWord);
+
+        return user.getSearchWords().stream()
+                .map((searchWord -> SearchWordResponseDto.builder()
+                        .searchWordId(searchWord.getId())
+                        .searchWord(searchWord.getContent())
+                        .build()))
+                .collect(Collectors.toList());
+    }
+
+    /*
+        Func : 인기글 조회
+        Parameter :
+        Return : List<TopProjectResponseDto>
+    */
+    public List<TopProjectResponseDto> topProjects(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int year = localDateTime.getYear();;
+        int month = localDateTime.getMonthValue();
+        int day = localDateTime.getDayOfMonth();
+
+        String now = LocalDateTime.of(year, month, day, 0,0,0).toString();
+
+        List<Project> top20 = projectRepository.findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(now);
+
+        List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
+
+        for (int i=0; i<top20.size(); i++){
+            topProjectResponseDtos.add(TopProjectResponseDto.builder()
+                    .rank(i+1)
+                    .title(top20.get(i).getTitle())
+                    .dueDate(top20.get(i).getDueDate())
+                    .build());
+        }
+        return topProjectResponseDtos;
     }
 
     /**

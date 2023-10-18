@@ -1,10 +1,6 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.domain.ApplyProject;
-import com.Bridge.bridge.domain.Field;
-import com.Bridge.bridge.domain.Part;
-import com.Bridge.bridge.domain.Platform;
-
+import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
@@ -12,6 +8,7 @@ import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.repository.ProjectRepository;
+import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.service.ProjectService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,9 @@ class ProjectControllerTest {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    SearchWordRepository searchWordRepository;
 
     @Autowired
     private ProjectService projectService;
@@ -723,6 +724,90 @@ class ProjectControllerTest {
 
     }
 
+    @Test
+    @DisplayName("최근 검색어 조회")
+    void resentSearch() throws Exception {
+        // given
+        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        user = userRepository.save(user);
+
+        SearchWord newSearch1 = SearchWord.builder()
+                .content("검색어1")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch2 = SearchWord.builder()
+                .content("검색어2")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch3 = SearchWord.builder()
+                .content("검색어3")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+
+        searchWordRepository.save(newSearch1);
+        searchWordRepository.save(newSearch2);
+        searchWordRepository.save(newSearch3);
+
+        user.getSearchWords().add(newSearch1);
+        user.getSearchWords().add(newSearch2);
+        user.getSearchWords().add(newSearch3);
+
+        // when
+        mockMvc.perform(get("/searchWords")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("userId", String.valueOf(user.getId())))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].searchWord").value("검색어1"))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("최근 검색어 삭제")
+    void deleteSearchWord() throws Exception {
+        // given
+        User user = new User("searchWord", "searchWord@gmail.com", Platform.APPLE, "searchWordTest");
+        user = userRepository.save(user);
+
+        SearchWord newSearch1 = SearchWord.builder()
+                .content("검색어1")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch2 = SearchWord.builder()
+                .content("검색어2")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+        SearchWord newSearch3 = SearchWord.builder()
+                .content("검색어3")
+                .user(user)
+                .history(LocalDateTime.now())
+                .build();
+
+        searchWordRepository.save(newSearch1);
+        searchWordRepository.save(newSearch2);
+        searchWordRepository.save(newSearch3);
+
+        user.getSearchWords().add(newSearch1);
+        user.getSearchWords().add(newSearch2);
+        user.getSearchWords().add(newSearch3);
+
+        // when
+        mockMvc.perform(delete("/searchWords")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("userId", String.valueOf(user.getId()))
+                        .content(objectMapper.writeValueAsString(newSearch1.getId())))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].searchWord").value("검색어2"))
+                .andExpect(jsonPath("$[1].searchWord").value("검색어3"))
+                .andDo(print());
+
+    }
+
 
     @Test
     @DisplayName("지원한 프로젝트 목록 조회")
@@ -858,4 +943,33 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].career").value("career1"))
                 .andDo(print());
     }
+
+    @DisplayName("인기글 조회 기능")
+    @Test
+    void topProjects() throws Exception{
+        // given
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int year = localDateTime.getYear();;
+        int month = localDateTime.getMonthValue();
+        int day = localDateTime.getDayOfMonth();
+
+        for(int i=1; i<32; i++){
+            Project project = projectRepository.save(Project.builder()
+                    .title("제목"+i)
+                    .dueDate(LocalDateTime.of(year, month, i,0,0,0).toString())
+                    .build());
+            for(int j=i; j<31; j++){
+                project.increaseBookmarksNum();
+            }
+            projectRepository.save(project);
+        }
+
+        //expected
+        mockMvc.perform(get("/projects/top")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("제목"+day))
+                .andDo(print());
+    }
+
 }
