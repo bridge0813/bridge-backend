@@ -41,6 +41,4 @@ public class ProjectResponseDto {
         this.stage = stage;
         this.userName = userName;
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,11 @@ public class SearchWord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
+
+    @Builder
+    public SearchWord(String content, LocalDateTime history, User user) {
+        this.content = content;
+        this.history = history;
+        this.user = user;
+    }
 }

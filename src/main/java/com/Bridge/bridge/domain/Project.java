@@ -9,6 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.awt.print.Book;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,8 @@ public class Project {
 
     private String endDate;         // 프로젝트 종료일
 
+    private String uploadTime;      // 프로젝트 작성시간 -> 최신순
+
     @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Part> recruit = new ArrayList<>(); // 모집 분야, 모집 인원
@@ -52,22 +58,35 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();           // 해당 프로젝트 글을 북마크한 유저 목록
 
+    private int bookmarkNum; // 스크랩 횟수
+
     @Builder
     public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        // 포맷
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.uploadTime = formatedNow;
         this.recruit = recruit;
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
+        this.bookmarkNum = 0;
         this.user = user;
     }
 
     public void setRecruit(List<Part> recruit) {
         this.recruit = recruit;
+    }
+
+    public void setBookmarks(Bookmark bookmark){
+        this.bookmarks.add(bookmark);
     }
 
     public ProjectResponseDto toDto(){
@@ -102,6 +121,29 @@ public class Project {
         this.user = user;
 
         return this;
+    }
+
+    public Project updateDeadline(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        // 포맷
+        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
+
+        this.dueDate = formatedNow;
+
+        return this;
+    }
+
+    public int increaseBookmarksNum(){
+        this.bookmarkNum = this.bookmarkNum + 1;
+
+        return this.bookmarkNum;
+    }
+
+    public int decreaseBookmarksNum(){
+        this.bookmarkNum = this.bookmarkNum - 1;
+
+        return this.bookmarkNum;
     }
 
 }
