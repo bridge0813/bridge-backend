@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,11 +16,11 @@ public class File {
     @Column(name = "file_id")
     private Long id;
 
-    private String fileName;            // 고유 경로 -> 만약 저장한 파일의 이름이 같은경우 중복되기 때문에 고유 경로가 필요
+    private String uploadFileUrl;            // 저장 경로
+
+    private String keyName;                 //  업로드 시 키
 
     private String originName;          // 파일 원래 이름
-
-    private String ext;                 // 파일 확장자
 
     private Long fileSize;              // 파일 사이즈
 
@@ -30,6 +31,11 @@ public class File {
     @JoinColumn(name = "profile_id")
     private Profile profile;            // 해당 파일이 저장된 프로필
 
-
-
+    @Builder
+    public File(String uploadFileUrl, String keyName, String originName, Long fileSize) {
+        this.uploadFileUrl = uploadFileUrl;
+        this.keyName = keyName;
+        this.originName = originName;
+        this.fileSize = fileSize;
+    }
 }

@@ -1,12 +1,16 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Platform;
+import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.request.UserRegisterRequest;
 import com.Bridge.bridge.dto.request.UserSignUpRequest;
+import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.dto.response.UserSignUpResponse;
+import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -228,5 +232,49 @@ class UserServiceTest {
 
         //then
         assertEquals(false, b);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("개인 프로필 확인 - 등록되어 있는 경우")
+    void getProfile() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        Field field = new Field("backend");
+
+        List<String> skills = new ArrayList<>();
+        skills.add("spring");
+        skills.add("redis");
+
+        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+
+        newUser.getFields().add(field);
+        newUser.updateProfile(profile);
+
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        UserProfileResponse profileResponse = userService.getProfile(saveUser.getId());
+
+        //then
+        assertEquals("bridge", profileResponse.getName());
+        assertEquals("selfIntro", profileResponse.getSelfIntro());
+        assertEquals("backend", profileResponse.getFields().get(0));
+        assertEquals("spring", profileResponse.getStacks().get(0));
+        assertEquals("redis", profileResponse.getStacks().get(1));
+        assertEquals("career", profileResponse.getCareer());
+        assertEquals("testLink", profileResponse.getRefLink());
+    }
+
+    @Test
+    @DisplayName("개인 프로필 확인 - 예외반환")
+    void getProfileEX() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        assertThrows(NotFoundProfileException.class, () -> userService.getProfile(saveUser.getId()));
     }
 }

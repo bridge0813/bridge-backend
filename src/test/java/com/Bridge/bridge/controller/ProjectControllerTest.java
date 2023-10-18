@@ -835,7 +835,7 @@ class ProjectControllerTest {
                     .param("userId", saveUser1.getId().toString())
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].stage").value("stage1"))
+                .andExpect(jsonPath("$[0].stage").value("결과 대기중"))
                 .andExpect(jsonPath("$[0].title").value("title1"))
                 .andExpect(jsonPath("$[0].overview").value("overview1"))
                 .andExpect(jsonPath("$[0].dueDate").value("23-10-10"))
@@ -944,6 +944,70 @@ class ProjectControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("프로젝트 수락하기")
+    void acceptApply() throws Exception {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //expected
+        mockMvc.perform(put("/projects/accept")
+                        .param("projectId", saveProject.getId().toString())
+                        .param("userId", saveUser1.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("프로젝트 수락하기")
+    void rejectApply() throws Exception {
+        //given
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .stage("stage1")
+                .dueDate("23-10-10")
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+
+        ApplyProject applyProject1 = new ApplyProject();
+        applyProject1.setUserAndProject(user1, project1);
+
+
+        user1.getApplyProjects().add(applyProject1);
+        User saveUser1 = userRepository.save(user1);
+
+        //expected
+        mockMvc.perform(put("/projects/reject")
+                        .param("projectId", saveProject.getId().toString())
+                        .param("userId", saveUser1.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+  
     @DisplayName("인기글 조회 기능")
     @Test
     void topProjects() throws Exception{
@@ -971,5 +1035,4 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].title").value("제목"+day))
                 .andDo(print());
     }
-
 }

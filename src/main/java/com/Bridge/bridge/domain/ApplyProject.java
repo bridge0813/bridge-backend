@@ -31,4 +31,8 @@ public class ApplyProject {
         this.user = user;
         this.project = project;
     }
+
+    public void changeStage(String stage) {
+        this.stage = stage;
+    }
 }

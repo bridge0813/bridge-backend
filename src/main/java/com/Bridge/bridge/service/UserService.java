@@ -6,6 +6,8 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.request.UserRegisterRequest;
+import com.Bridge.bridge.dto.response.UserProfileResponse;
+import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,9 +69,27 @@ public class UserService {
     /**
      * 유저 개인 프로필 확인
      */
-    public void getProfile(Long userId) {
+    public UserProfileResponse getProfile(Long userId) {
         User findUser = find(userId);
-        //TODO : 유저 개인 프로필 확인
+
+        //TODO : 파일 처리
+
+        Profile profile = findUser.getProfile();
+        if (profile == null) {
+            throw new NotFoundProfileException();
+        }
+
+        return UserProfileResponse.builder()
+                .name(findUser.getName())
+                .selfIntro(profile.getSelfIntro())
+                .fields(findUser.getFields().stream()
+                        .map(f -> f.getFieldName())
+                        .collect(Collectors.toList()))
+                .stacks(profile.getSkill())
+                .career(profile.getCareer())
+                .refLink(profile.getRefLink())
+                .refFile("임시 파일명")
+                .build();
     }
 
 
