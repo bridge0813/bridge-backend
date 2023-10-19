@@ -160,6 +160,7 @@ public class ProjectController {
                                          @RequestParam("userId") Long userId) {
         projectService.rejectApply(projectId, userId);
         return ResponseEntity.ok(true);
+    }
 
     // 인기글 조회 기능
     @GetMapping("/projects/top")
