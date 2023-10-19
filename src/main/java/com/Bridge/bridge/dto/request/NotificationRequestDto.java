@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 public class NotificationRequestDto {
-    String deviceToken;         // 디바이스를 구분짓는 토큰
+    Long userID;                // 유저 아이디
 
     String title;               // 알림 제목
 
     String body;                // 알림 내용
 
     @Builder
-    public NotificationRequestDto(String deviceToken, String title, String body) {
-        this.deviceToken = deviceToken;
+    public NotificationRequestDto(Long userID, String title, String body) {
+        this.userID = userID;
         this.title = title;
         this.body = body;
     }

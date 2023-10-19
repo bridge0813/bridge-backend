@@ -27,6 +27,8 @@ public class User {
 
     private String refreshToken;
 
+    private String deviceToken;         // 디바이스를 구분짓는 토큰
+
     @Enumerated(EnumType.STRING)
     private Platform platform;          // 플랫폼 구별 enum
 
