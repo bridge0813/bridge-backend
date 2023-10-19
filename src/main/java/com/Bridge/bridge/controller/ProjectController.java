@@ -1,9 +1,12 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.request.NotificationRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.service.FCMService;
 import com.Bridge.bridge.service.ProjectService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final FCMService fcmService;
 
 
     // 프로젝트 모집글 작성
@@ -147,8 +151,18 @@ public class ProjectController {
      */
     @PutMapping("/projects/accept")
     public ResponseEntity<?> acceptApply(@RequestParam("projectId") Long projectId,
-                                         @RequestParam("userId") Long userId) {
+                                         @RequestParam("userId") Long userId) throws FirebaseMessagingException {
         projectService.acceptApply(projectId, userId);
+
+        // 알림보내기
+        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+                .userID(userId)
+                .title("지원 결과 도착")
+                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .build();
+
+        fcmService.sendNotification(notificationRequestDto);
+
         return ResponseEntity.ok(true);
     }
 
@@ -157,8 +171,18 @@ public class ProjectController {
      */
     @PutMapping("/projects/reject")
     public ResponseEntity<?> rejectApply(@RequestParam("projectId") Long projectId,
-                                         @RequestParam("userId") Long userId) {
+                                         @RequestParam("userId") Long userId) throws FirebaseMessagingException {
         projectService.rejectApply(projectId, userId);
+
+        // 알림보내기
+        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+                .userID(userId)
+                .title("지원 결과 도착")
+                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .build();
+
+        fcmService.sendNotification(notificationRequestDto);
+
         return ResponseEntity.ok(true);
     }
 
