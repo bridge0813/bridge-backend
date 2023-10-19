@@ -73,6 +73,10 @@ public class User {
         this.platformId = platformId;
     }
 
+    public User(String deviceToken){
+        this.deviceToken = deviceToken;
+    }
+
     public void setProject(Project project) {
         this.projects.add(project);
     }
@@ -90,5 +94,9 @@ public class User {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateDeviceToken(String deviceToken){
+        this.deviceToken = deviceToken;
     }
 }

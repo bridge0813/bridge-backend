@@ -12,6 +12,7 @@ import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
@@ -21,6 +22,22 @@ public class FCMService {
 
     private final FirebaseMessaging firebaseMessaging;
     private final UserRepository userRepository;
+
+    @Transactional
+    public void saveDeviceToken(String deviceToken){
+
+        User user = userRepository.findByDeviceToken(deviceToken);
+
+        if(user != null){ // 이미 등록된 유저라면
+            user.updateDeviceToken(deviceToken);
+            return;
+        }
+
+        // 새로운 유저라면 등록하기
+        User newUser = new User(deviceToken);
+        userRepository.save(newUser);
+        return;
+    }
 
     public void sendNotification(NotificationRequestDto notificationRequestDto) throws FirebaseMessagingException {
 
