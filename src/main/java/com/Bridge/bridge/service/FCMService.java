@@ -28,6 +28,10 @@ public class FCMService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
 
+    /*
+       Func : 알림 받을 디바이스 토큰 저장하기
+       Parameter: deviceToken
+    */
     @Transactional
     public void saveDeviceToken(String deviceToken){
 
@@ -44,6 +48,10 @@ public class FCMService {
         return;
     }
 
+    /*
+       Func : FCM 서버로 알림 보내기 -> 실질적으로 알림보내는 함수
+       Parameter: NotificationRequestDto -> 알림 수신자, 알림 제목, 알림 내용
+    */
     public void sendNotification(NotificationRequestDto notificationRequestDto) throws FirebaseMessagingException {
 
         // 알림 받을 유저 찾기
@@ -72,7 +80,28 @@ public class FCMService {
 
     }
 
-    // 채팅 받을 시 알림 보내기
+    /*
+       Func : 지원 결과 알림 생성
+       Parameter: userId -> 알림 받을 유저ID
+    */
+    public void getApplyAlarm(Long userId) throws FirebaseMessagingException {
+
+        // TODO : 알람 객체 생성하고 저장
+
+        // 알림보내기
+        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+                .userID(userId)
+                .title("지원 결과 도착")
+                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .build();
+
+        sendNotification(notificationRequestDto);
+    }
+
+    /*
+       Func : 채팅 받을 시 알림 생성
+       Parameter: ChatMessageRequest -> 채팅방ID, 발신자, 채팅 내용, 메세지 타입
+    */
     public void getChatAlarm(ChatMessageRequest chatMessageRequest) throws FirebaseMessagingException {
         Chat chat = chatRepository.findByChatRoomId(chatMessageRequest.getChatRoomId())
                 .orElseThrow(() -> new NotFoundChatException());

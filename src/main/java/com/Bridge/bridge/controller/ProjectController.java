@@ -154,15 +154,8 @@ public class ProjectController {
                                          @RequestParam("userId") Long userId) throws FirebaseMessagingException {
         projectService.acceptApply(projectId, userId);
 
-        // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(userId)
-                .title("지원 결과 도착")
-                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-                .build();
-
-        fcmService.sendNotification(notificationRequestDto);
-
+        // 지원 결과 알림 보내기
+        fcmService.getApplyAlarm(userId);
         return ResponseEntity.ok(true);
     }
 
@@ -174,14 +167,8 @@ public class ProjectController {
                                          @RequestParam("userId") Long userId) throws FirebaseMessagingException {
         projectService.rejectApply(projectId, userId);
 
-        // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(userId)
-                .title("지원 결과 도착")
-                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-                .build();
-
-        fcmService.sendNotification(notificationRequestDto);
+        // 지원 결과 알림 보내기
+        fcmService.getApplyAlarm(userId);
 
         return ResponseEntity.ok(true);
     }
