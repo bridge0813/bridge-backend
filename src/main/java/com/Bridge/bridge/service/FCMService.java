@@ -1,9 +1,13 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.Chat;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.NotificationRequestDto;
 import com.Bridge.bridge.exception.BridgeException;
+import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
+import com.Bridge.bridge.repository.ChatRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -22,6 +26,7 @@ public class FCMService {
 
     private final FirebaseMessaging firebaseMessaging;
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     @Transactional
     public void saveDeviceToken(String deviceToken){
@@ -64,6 +69,43 @@ public class FCMService {
             throw new BridgeException(HttpStatus.NOT_ACCEPTABLE, "알림 보내기가 실패하였습니다.", 500);
         }
 
+
+    }
+
+    // 채팅 받을 시 알림 보내기
+    public void getChatAlarm(ChatMessageRequest chatMessageRequest) throws FirebaseMessagingException {
+        Chat chat = chatRepository.findByChatRoomId(chatMessageRequest.getChatRoomId())
+                .orElseThrow(() -> new NotFoundChatException());
+
+        User sender = userRepository.findByName(chatMessageRequest.getSender());
+
+        if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
+
+            // TODO : 알림 객체로 저장하기
+
+            // 알림보내기
+            NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+                    .userID(chat.getReceiveUser().getId())
+                    .title(sender.getName())
+                    .body(chatMessageRequest.getMessage())
+                    .build();
+
+            sendNotification(notificationRequestDto);
+            return;
+        }
+        // 메세지를 보낸 사람이 채팅방에 초대된 사람이라면
+
+        // TODO : 알림 객체로 저장하기
+
+        // 알림보내기
+        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+                .userID(chat.getMakeUser().getId())
+                .title(sender.getName())
+                .body(chatMessageRequest.getMessage())
+                .build();
+
+        sendNotification(notificationRequestDto);
+        return;
 
     }
 }

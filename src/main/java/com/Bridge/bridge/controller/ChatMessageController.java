@@ -1,6 +1,8 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
+import com.Bridge.bridge.service.FCMService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatMessageController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final FCMService fcmService;
 
     /**
      * 채팅방에 들어오는 경우
@@ -32,9 +35,12 @@ public class ChatMessageController {
      * 채팅방에 메세지 보내는 경우
      */
     @MessageMapping("/chat/message")
-    public void sendMessage(ChatMessageRequest chatMessageRequest) {
+    public void sendMessage(ChatMessageRequest chatMessageRequest) throws FirebaseMessagingException {
         log.info("message = {}", chatMessageRequest.getMessage());
         simpMessagingTemplate.convertAndSend("/sub/chat/room/" + chatMessageRequest.getChatRoomId(), chatMessageRequest);
+
+        // 채팅 알림 보내기
+        fcmService.getChatAlarm(chatMessageRequest);
     }
 
     /**
