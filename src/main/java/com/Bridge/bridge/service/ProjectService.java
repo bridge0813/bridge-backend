@@ -2,6 +2,7 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.exception.notfound.NotFoundSearchWordException;
@@ -11,21 +12,22 @@ import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.domain.ApplyProject;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ApplyUserResponse;
 import com.Bridge.bridge.dto.response.ProjectListResponseDto;
-import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
+import com.Bridge.bridge.repository.ApplyProjectRepository;
+import com.Bridge.bridge.repository.PartRepository;
+import com.Bridge.bridge.repository.ProjectRepository;
+import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.Tuple;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -43,8 +45,8 @@ public class ProjectService {
     private final PartRepository partRepository;
     private final BookmarkRepository bookmarkRepository;
     private final SearchWordRepository searchWordRepository;
-
     private final ApplyProjectRepository applyProjectRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     /*
@@ -52,6 +54,7 @@ public class ProjectService {
         Parameter : 프로젝트 입력 폼
         Return : 새로 생성된 프로젝트 ID
     */
+    @Transactional
     public Long createProject(ProjectRequestDto projectRequestDto){
         try {
             // 모집글 작성한 user 찾기
@@ -89,23 +92,18 @@ public class ProjectService {
         Parameter : 프로젝트 모집글 ID
         Return : 삭제 여부 -> HttpStatus
     */
-    public Boolean deleteProject(Long projectId, Long userId){
+    @Transactional
+    public Boolean deleteProject(Long projectId){
         try {
             // 삭제할 프로젝트 모집글 찾기
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new NotFoundProjectException());
 
-            // 삭제할 모집글을 작성한 유저 찾기
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NotFoundUserException());
-
             // 해당 모집글 삭제하기
-            if (user.getId().equals(project.getUser().getId())) { // 찾은 프로젝트 유저가 삭제를 요청한 유저가 맞는지 확인
-                projectRepository.delete(project);
+            projectRepository.delete(project);
+            project.getUser().getProjects().remove(project);
 
-                return true;
-            }
-            return false;
+            return true;
         }
         catch (Exception e){
             System.out.println(e);
@@ -119,40 +117,26 @@ public class ProjectService {
         Return : PrjectResponseDto -> 수정본
     */
     @Transactional
-    public ProjectResponseDto updateProject(Long projectId, ProjectRequestDto projectRequestDto){
-        // 모집글 작성한 user 찾기
-        User user = userRepository.findById(projectRequestDto.getUserId())
-                .orElseThrow(() -> new NotFoundUserException());
-
+    public ProjectResponseDto updateProject(Long projectId, ProjectUpdateRequestDto projectUpdateRequestDto){
         // 모집글 찾기
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        // 모집글 작성자와 유저가 같은지 확인하기
-        if (user.getId().equals(project.getUser().getId())) {
-            // 모집 분야, 인원 -> Part entity화 하기
-            List<Part> recruit = projectRequestDto.getRecruit().stream()
-                    .map((p) -> p.toEntity())
-                    .collect(Collectors.toList());
+        // 모집 분야, 인원 -> Part entity화 하기
+        List<Part> recruit = projectUpdateRequestDto.getRecruit().stream()
+                .map((p) -> p.toEntity())
+                .collect(Collectors.toList());
 
-            // 모집분야, 인원 초기화
-            partRepository.deleteAll(project.getRecruit());
+        // 모집분야, 인원 초기화
+        partRepository.deleteAll(project.getRecruit());
 
-            // Part- Project 매핑
-            Project finalProject = project;
-            recruit.stream()
-                    .forEach((part -> part.setProject(finalProject)));
+        // Part- Project 매핑
+        Project finalProject = project;
+        recruit.stream()
+                .forEach((part -> part.setProject(finalProject)));
 
-            project = project.update(user, projectRequestDto, recruit);
-
-            projectRepository.save(project);
-
-            return project.toDto();
-        }
-        else {
-            throw new NullPointerException("작성자와 요청자가 같지 않습니다.");
-        }
-
+        project = project.update(projectUpdateRequestDto, recruit);
+        return project.toDto(true);
     }
 
     /*
@@ -211,13 +195,18 @@ public class ProjectService {
         Parameter : projectID - 모집글 ID
         Return : projectResponse
     */
-    public ProjectResponseDto getProject(Long projectId){
+    public ProjectResponseDto getProject(Long projectId, HttpServletRequest request){
+
+        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
 
         // 해당 모집글 찾기
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        return project.toDto();
+        if(!adminUserId.equals(project.getUser().getId()))  {
+            return project.toDto(false);
+        }
+        return project.toDto(true);
     }
 
     /*
@@ -373,11 +362,8 @@ public class ProjectService {
         Parameter : projectId
         Return : ProjectResponseDto
     */
-    public ProjectResponseDto closeProject(Long projectId, Long userId){
-        // 해당 유저 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
-
+    @Transactional
+    public ProjectResponseDto closeProject(Long projectId){
         // 마감하고자 하는 프로젝트 찾기
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
@@ -387,21 +373,13 @@ public class ProjectService {
         // 포맷
         String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
 
-        if (project.getUser().getId().equals(userId)){ // 프로젝트를 작성한 유저인가
-            if(project.getDueDate().compareTo(formatedNow)<0){ // 마감시간이 이미 지난 경우
-                throw new IllegalStateException("이미 마감이 된 모집글입니다.");
-            }
-            else {
-                project = project.updateDeadline();
-                projectRepository.save(project);
-
-                return project.toDto();
-            }
+        if(project.getDueDate().compareTo(formatedNow)<0){ // 마감시간이 이미 지난 경우
+            throw new IllegalStateException("이미 마감이 된 모집글입니다.");
         }
         else {
-            throw new IllegalStateException("프로젝트 작성자가 아닙니다.");
+            project = project.updateDeadline();
+            return project.toDto(true);
         }
-
     }
 
     /*
@@ -590,6 +568,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundProjectException());
 
         List<ApplyUserResponse> applyUsers = findProject.getApplyProjects().stream()
+                .filter(applyProject -> applyProject.getStage().equals("결과 대기중"))
                 .map(p -> {
                     User user = p.getUser();
                     List<String> fields = user.getFields().stream()
@@ -613,7 +592,7 @@ public class ProjectService {
      */
     @Transactional
     public void acceptApply(Long projectId, Long userId) {
-        //TODO : 수락할 권한이 있는지?
+
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
@@ -625,8 +604,6 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundProjectException());
 
         applyProject.changeStage("수락");
-
-        //TODO : 이후 지원자 목록에서 처리
     }
 
     /**
@@ -634,7 +611,7 @@ public class ProjectService {
      */
     @Transactional
     public void rejectApply(Long projectId, Long userId) {
-        //TODO : 거절할 권한이 있는지?
+
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
@@ -646,7 +623,5 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundProjectException());
 
         applyProject.changeStage("거절");
-
-        //TODO : 이후 지원자 목록에서 처리
     }
 }
