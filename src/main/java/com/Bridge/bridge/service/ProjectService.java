@@ -178,7 +178,9 @@ public class ProjectService {
 
         user.getSearchWords().add(searchWord);
 
-        List<Project> allProject = projectRepository.findAll();
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime.toString());
 
         List<Project> findProject = allProject.stream()
                 .filter((project) ->
@@ -230,7 +232,8 @@ public class ProjectService {
 
         List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(filterRequestDto.getSkills(), filterRequestDto.getPart());
 
-        List<Project> projects = projectRepository.findAllByRecruitIn(parts);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        List<Project> projects = projectRepository.findAllByRecruitInaAndDueDateGreaterThanEqual(parts, localDateTime.toString());
 
         final int[] recruitTotal = {0};
 
@@ -292,15 +295,14 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-
-
-
     /*
         Func : 모든 모집글 리스트 보여주기
         Return : List<projectListResponseDto>
     */
     public List<ProjectListResponseDto> allProjects(){
-        List<Project> allProjects = projectRepository.findAll();
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime.toString());
 
         // 작성글이 하나도 없다면
         if(allProjects.isEmpty()){
@@ -338,7 +340,8 @@ public class ProjectService {
     public List<ProjectListResponseDto> findMyPartProjects(String myPart){
         List<Part> parts = partRepository.findAllByRecruitPart(myPart);
 
-        List<Project> myPartProjects = projectRepository.findAllByRecruitIn(parts);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        List<Project> myPartProjects = projectRepository.findAllByRecruitInaAndDueDateGreaterThanEqual(parts, localDateTime.toString());
 
         // 작성글이 하나도 없다면
         if(myPartProjects.isEmpty()){
