@@ -1,13 +1,16 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Chat;
+import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.NotificationRequestDto;
 import com.Bridge.bridge.exception.BridgeException;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
+import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.ChatRepository;
+import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -27,6 +30,7 @@ public class FCMService {
     private final FirebaseMessaging firebaseMessaging;
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final ProjectRepository projectRepository;
 
     /*
        Func : 알림 받을 디바이스 토큰 저장하기
@@ -84,7 +88,7 @@ public class FCMService {
        Func : 지원 결과 알림 생성
        Parameter: userId -> 알림 받을 유저ID
     */
-    public void getApplyAlarm(Long userId) throws FirebaseMessagingException {
+    public void getApplyResultAlarm(Long userId) throws FirebaseMessagingException {
 
         // TODO : 알람 객체 생성하고 저장
 
@@ -136,5 +140,28 @@ public class FCMService {
         sendNotification(notificationRequestDto);
         return;
 
+    }
+
+    /*
+       Func : 지원자 발생 시 알림 생성
+       Parameter: projectId
+    */
+    public void getApplyAlarm(Long projectId) throws FirebaseMessagingException {
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+
+        User getAlarmuser = project.getUser();
+
+        // TODO : 알람 객체 생성하고 저장
+
+        // 알림보내기
+        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+                .userID(getAlarmuser.getId())
+                .title("지원자 등장?")
+                .body("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .build();
+
+        sendNotification(notificationRequestDto);
     }
 }

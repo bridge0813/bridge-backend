@@ -123,8 +123,12 @@ public class ProjectController {
      * 프로젝트 지원하기
      */
     @PostMapping("/projects/apply")
-    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
+    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) throws FirebaseMessagingException {
         boolean result = projectService.apply(userId, projectId);
+
+        // 모집자에게 지원자 발생 알림 보내기
+        fcmService.getApplyAlarm(projectId);
+
         return ResponseEntity.ok(result);
     }
 
@@ -155,7 +159,7 @@ public class ProjectController {
         projectService.acceptApply(projectId, userId);
 
         // 지원 결과 알림 보내기
-        fcmService.getApplyAlarm(userId);
+        fcmService.getApplyResultAlarm(userId);
         return ResponseEntity.ok(true);
     }
 
@@ -168,7 +172,7 @@ public class ProjectController {
         projectService.rejectApply(projectId, userId);
 
         // 지원 결과 알림 보내기
-        fcmService.getApplyAlarm(userId);
+        fcmService.getApplyResultAlarm(userId);
 
         return ResponseEntity.ok(true);
     }
