@@ -158,11 +158,9 @@ public class ProjectController {
                                          @RequestParam("userId") Long userId) throws FirebaseMessagingException {
         projectService.acceptApply(projectId, userId);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         // 지원 결과 알림 보내기
         fcmService.getApplyResultAlarm(userId);
-=======
+
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
                 .userID(userId)
@@ -172,15 +170,6 @@ public class ProjectController {
 
         fcmService.sendNotification(notificationRequestDto);
 
->>>>>>> aa6b5f9 (FEAT : 지원 수락/거절 시 알림 보내기 기능 구현)
-=======
-        // 지원 결과 알림 보내기
-<<<<<<< HEAD
-        fcmService.getApplyAlarm(userId);
->>>>>>> 03f71c0 (FIX : 지원 결과 알림 보내기 기능 Controller-Service 분리)
-=======
-        fcmService.getApplyResultAlarm(userId);
->>>>>>> f641338 (FEAT : 지원자 발생 시 알림 보내기 기능 구현)
         return ResponseEntity.ok(true);
     }
 
@@ -192,11 +181,9 @@ public class ProjectController {
                                          @RequestParam("userId") Long userId) throws FirebaseMessagingException {
         projectService.rejectApply(projectId, userId);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         // 지원 결과 알림 보내기
         fcmService.getApplyResultAlarm(userId);
-=======
+
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
                 .userID(userId)
@@ -205,15 +192,6 @@ public class ProjectController {
                 .build();
 
         fcmService.sendNotification(notificationRequestDto);
->>>>>>> aa6b5f9 (FEAT : 지원 수락/거절 시 알림 보내기 기능 구현)
-=======
-        // 지원 결과 알림 보내기
-<<<<<<< HEAD
-        fcmService.getApplyAlarm(userId);
->>>>>>> 03f71c0 (FIX : 지원 결과 알림 보내기 기능 Controller-Service 분리)
-=======
-        fcmService.getApplyResultAlarm(userId);
->>>>>>> f641338 (FEAT : 지원자 발생 시 알림 보내기 기능 구현)
 
         return ResponseEntity.ok(true);
     }
