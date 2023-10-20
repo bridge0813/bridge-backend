@@ -11,9 +11,12 @@ import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.Bridge.bridge.service.ProjectService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -56,6 +60,9 @@ class ProjectControllerTest {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void clean() {
@@ -221,7 +228,12 @@ class ProjectControllerTest {
     void detailProject() throws Exception {
         // given
         User user1 = new User("user", "user@gmail.com", Platform.APPLE, "Test");
-        userRepository.save(user1);
+        User saveUser = userRepository.save(user1);
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
 
         List<String> skill = new ArrayList<>();
         skill.add("Java");
@@ -253,6 +265,7 @@ class ProjectControllerTest {
 
         // when
         mockMvc.perform(get("/project")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("projectId", String.valueOf(theProject.getId())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

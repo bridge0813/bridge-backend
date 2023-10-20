@@ -585,6 +585,7 @@ class ProjectServiceTest {
 
         // then
         assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
+        assertThat(result.isMyProject()).isEqualTo(true);
     }
 
     @DisplayName("모집글 상세보기 기능 - 잘못된 모집글 Id")
@@ -635,6 +636,56 @@ class ProjectServiceTest {
                 () -> {
                     ProjectResponseDto result = projectService.getProject(theProject.getId() + Long.valueOf(123), request);
                 });
+    }
+
+    @DisplayName("모집글 상세보기 기능 - 내가 만든 프로젝트가 아닌 경우")
+    @Test
+    void detailProjectNotMine() {
+        // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        User user1 = new User("find", "find@gmail.com", Platform.APPLE, "find1Test");
+        User saveUser = userRepository.save(user1);
+
+        List<String> skill = new ArrayList<>();
+        skill.add("Java");
+        skill.add("Spring boot");
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        Project newProject = Project.builder()
+                .title("Find project")
+                .overview("This is the project that i find")
+                .dueDate("2023-09-07")
+                .startDate("2023-09-11")
+                .endDate("2023-09-30")
+                .recruit(recruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(saveUser)
+                .stage("Before Start")
+                .build();
+
+        Project theProject = projectRepository.save(newProject);
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser.getId()+1L))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
+        // when
+        ProjectResponseDto result = projectService.getProject(theProject.getId(), request);
+
+        // then
+        assertThat(result.isMyProject()).isEqualTo(false);
     }
     
     @DisplayName("모집글 필터링")
