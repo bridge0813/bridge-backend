@@ -38,7 +38,7 @@ public class FileService {
      * 파일 S3에 업로드 저장
      */
     @Transactional
-    private Long uploadFile(MultipartFile file) {
+    public Long uploadFile(MultipartFile file) {
 
         String uploadFilePath =  "bridge/" + getFolderName();
         String uploadFileUrl = "";
