@@ -1,11 +1,10 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.dto.request.UserRegisterRequest;
+import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.response.ErrorResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,8 +37,8 @@ public class UserController {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/signup")
-    public ResponseEntity saveField(@RequestBody UserRegisterRequest request) {
-        userService.signUpInfo(request);
+    public ResponseEntity saveField(@RequestBody UserFieldRequest userFieldRequest) {
+        userService.saveField(userFieldRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 

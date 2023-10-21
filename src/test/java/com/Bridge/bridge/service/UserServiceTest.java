@@ -6,11 +6,9 @@ import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
-import com.Bridge.bridge.dto.request.UserRegisterRequest;
-import com.Bridge.bridge.dto.request.UserSignUpRequest;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
-import com.Bridge.bridge.dto.response.UserSignUpResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,9 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-
-import javax.persistence.EntityNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +49,10 @@ class UserServiceTest {
         fields.add("frontend");
         fields.add("designer");
 
-        UserFieldRequest request = new UserFieldRequest(fields);
+        UserFieldRequest request = new UserFieldRequest(saveUser.getId(), fields);
 
         //when
-        userService.saveField(saveUser.getId(), request);
+        userService.saveField(request);
 
         //then
         User user = userRepository.findAll().get(0);
@@ -75,10 +70,10 @@ class UserServiceTest {
 
         List<String> fields = new ArrayList<>();
 
-        UserFieldRequest request = new UserFieldRequest(fields);
+        UserFieldRequest request = new UserFieldRequest(saveUser.getId(), fields);
 
         //when
-        userService.saveField(saveUser.getId(), request);
+        userService.saveField(request);
 
         //then
         User user = userRepository.findAll().get(0);
@@ -97,10 +92,10 @@ class UserServiceTest {
         fields.add("frontend");
         fields.add("designer");
 
-        UserFieldRequest request = new UserFieldRequest(fields);
+        UserFieldRequest request = new UserFieldRequest(saveUser.getId()+1L, fields);
 
         //expected
-        assertThrows(EntityNotFoundException.class, () -> userService.saveField(saveUser.getId() + 1L, request));
+        assertThrows(NotFoundUserException.class, () -> userService.saveField(request));
     }
 
 
@@ -153,85 +148,7 @@ class UserServiceTest {
                 .build();
 
         //expected
-        assertThrows(EntityNotFoundException.class, () -> userService.saveProfile(saveUser.getId()+1L, request));
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("유저 등록")
-    void register() {
-        //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
-        User saveUser = userRepository.save(newUser);
-
-        List<String> stack = new ArrayList<>();
-        stack.add("Spring");
-        stack.add("Java");
-        stack.add("Jpa");
-
-        UserProfileRequest profile = UserProfileRequest.builder()
-                .selfIntro("자기 소개서")
-                .career("대학생")
-                .stack(stack)
-                .build();
-
-        List<String> fields = new ArrayList<>();
-        fields.add("backend");
-        fields.add("frontend");
-        fields.add("designer");
-
-        UserFieldRequest field = new UserFieldRequest(fields);
-
-        UserRegisterRequest request = new UserRegisterRequest(saveUser.getId(), field, profile);
-
-        //when
-        userService.signUpInfo(request);
-
-        //then
-        User user = userRepository.findAll().get(0);
-        assertEquals(3, user.getProfile().getSkill().size());
-        assertEquals(3, user.getFields().size());
-    }
-
-    @Test
-    @DisplayName("유저 등록 시 필드가 빈값인 경우")
-    void registerFieldNull() {
-        //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
-        User saveUser = userRepository.save(newUser);
-
-        UserFieldRequest field = null;
-
-        UserRegisterRequest request = UserRegisterRequest.builder()
-                .userId(saveUser.getId())
-                .userField(field)
-                .build();
-
-        //when
-        boolean b = userService.saveField(request.getUserId(), request.getUserField());
-
-        //then
-        assertEquals(false, b);
-    }
-    @Test
-    @DisplayName("유저 등록 시 프로필이 빈 값인 경우")
-    void registerProfileNull() {
-        //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
-        User saveUser = userRepository.save(newUser);
-
-        UserProfileRequest profile = null;
-
-        UserRegisterRequest request = UserRegisterRequest.builder()
-                .userId(saveUser.getId())
-                .userProfile(profile)
-                .build();
-
-        //when
-        boolean b = userService.saveProfile(request.getUserId(), request.getUserProfile());
-
-        //then
-        assertEquals(false, b);
+        assertThrows(NotFoundUserException.class, () -> userService.saveProfile(saveUser.getId()+1L, request));
     }
 
     @Test

@@ -5,7 +5,6 @@ import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
-import com.Bridge.bridge.dto.request.UserRegisterRequest;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
@@ -13,10 +12,9 @@ import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,19 +24,15 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public void signUpInfo(UserRegisterRequest request) {
-        saveField(request.getUserId(), request.getUserField());
-        saveProfile(request.getUserId(), request.getUserProfile());
-    }
+    private final FileService fileService;
 
     /**
      * 처음 로그인 시 개인 관심분야 등록
      */
     @Transactional
-    public boolean saveField(Long userId, UserFieldRequest request) {
+    public boolean saveField(UserFieldRequest request) {
 
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
+        User findUser = find(request.getUserId());
 
         List<Field> fields = request.toEntity();
 
