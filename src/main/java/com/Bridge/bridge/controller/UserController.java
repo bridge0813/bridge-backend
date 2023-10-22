@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.UserFieldRequest;
+import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.ErrorResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.service.UserService;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 
 @Tag(name = "User", description = "유저")
 @RestController
@@ -40,6 +44,20 @@ public class UserController {
     public ResponseEntity saveField(@RequestBody UserFieldRequest userFieldRequest) {
         userService.saveField(userFieldRequest);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * 프로필 등록
+     */
+    @PostMapping("/users/profile")
+    public ResponseEntity<?> createProfile(@RequestParam("userId") Long userId,
+                                           @RequestPart("profile") UserProfileRequest userProfileRequest,
+                                           @RequestPart(value = "photo", required = false)MultipartFile photo,
+                                           @RequestPart(value = "refFile", required = false)MultipartFile refFile) {
+        userService.saveProfile(userId, userProfileRequest, photo, refFile);
+
+        // TODO : 리다이렉트?
+        return ResponseEntity.ok(true);
     }
 
     /**

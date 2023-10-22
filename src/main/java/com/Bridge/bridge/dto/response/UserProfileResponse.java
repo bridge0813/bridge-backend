@@ -4,12 +4,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.net.URL;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class UserProfileResponse {
     private String name;       // 이름
+
+    private String profilePhotoURL;  // 유저 이미지
 
     private String selfIntro;   // 자기소개
 
@@ -21,12 +24,12 @@ public class UserProfileResponse {
 
     private String refLink;         // 참고 링크
 
-    //TODO : 파일명 및 ID 반환으로 바꾸기
-    private String refFile;         // 첨부 파일
+    private FileResponse refFile;         // 첨부 파일
 
     @Builder
-    public UserProfileResponse(String name, String selfIntro, List<String> fields, List<String> stacks, String career, String refLink, String refFile) {
+    public UserProfileResponse(String name, String profilePhotoURL, String selfIntro, List<String> fields, List<String> stacks, String career, String refLink, FileResponse refFile) {
         this.name = name;
+        this.profilePhotoURL = profilePhotoURL;
         this.selfIntro = selfIntro;
         this.fields = fields;
         this.stacks = stacks;

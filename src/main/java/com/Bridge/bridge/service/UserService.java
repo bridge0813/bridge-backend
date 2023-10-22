@@ -1,19 +1,24 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
+import com.Bridge.bridge.dto.response.FileResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,19 +49,34 @@ public class UserService {
     }
 
     /**
-     * 처음 로그인 시 개인 프로필 등록 (보류)
+     * 개인 프로필 등록
      */
     @Transactional
-    public boolean saveProfile(Long userId, UserProfileRequest request) {
-        if (Objects.isNull(request)) {
-            return false;
-        }
+    public boolean saveProfile(Long userId, UserProfileRequest request, MultipartFile profilePhoto, MultipartFile refFile) {
 
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
+        User findUser = find(userId);
 
         Profile profile = request.toEntity();
         findUser.updateProfile(profile);
+
+        // 프로필 사진 등록
+        if (profilePhoto != null) {
+            File saveFile = fileService.uploadFile(profilePhoto);
+            File oldFile = profile.setProfilePhoto(saveFile);
+            if (oldFile != null) {
+                fileService.deleteFile(oldFile.getId());
+            }
+        }
+
+        // 첨부파일 등록
+        if (refFile != null) {
+            File saveFile = fileService.uploadFile(refFile);
+            File oldFile = profile.setProfilePhoto(saveFile);
+            if (oldFile != null) {
+                fileService.deleteFile(oldFile.getId());
+            }
+        }
+
         return true;
     }
 
@@ -66,15 +86,26 @@ public class UserService {
     public UserProfileResponse getProfile(Long userId) {
         User findUser = find(userId);
 
-        //TODO : 파일 처리
-
         Profile profile = findUser.getProfile();
         if (profile == null) {
             throw new NotFoundProfileException();
         }
 
+       String photo = null;
+        if (profile.getProfilePhoto() != null) {
+            photo = profile.getProfilePhoto().getUploadFileUrl();
+        }
+
+        String refFile = null;
+        File findRefFile = profile.getRefFile();
+        if (findRefFile != null) {
+            refFile = profile.getRefFile().getUploadFileUrl();
+        }
+
+
         return UserProfileResponse.builder()
                 .name(findUser.getName())
+                .profilePhotoURL(photo)
                 .selfIntro(profile.getSelfIntro())
                 .fields(findUser.getFields().stream()
                         .map(f -> f.getFieldName())
@@ -82,7 +113,7 @@ public class UserService {
                 .stacks(profile.getSkill())
                 .career(profile.getCareer())
                 .refLink(profile.getRefLink())
-                .refFile("임시 파일명")
+                .refFile(new FileResponse(refFile, findRefFile.getOriginName()))
                 .build();
     }
 
