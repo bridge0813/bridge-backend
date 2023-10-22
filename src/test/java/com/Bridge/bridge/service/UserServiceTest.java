@@ -15,8 +15,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,9 +105,42 @@ class UserServiceTest {
 
     @Test
     @Transactional
-    @DisplayName("처음 로그인 시 개인 프로필 등록")
+    @DisplayName("개인 프로필 등록 - 파일 없는 경우")
     void registerProfile() {
         //given
+        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User saveUser = userRepository.save(newUser);
+
+        List<String> stack = new ArrayList<>();
+        stack.add("Spring");
+        stack.add("Java");
+        stack.add("Jpa");
+
+        UserProfileRequest request = UserProfileRequest.builder()
+                .refLink("link")
+                .selfIntro("자기 소개서")
+                .career("대학생")
+                .stack(stack)
+                .build();
+
+        //when
+        userService.saveProfile(saveUser.getId(), request, null, null);
+
+        //then
+        User user = userRepository.findAll().get(0);
+        assertEquals("자기 소개서", user.getProfile().getSelfIntro());
+        assertEquals("대학생", user.getProfile().getCareer());
+        assertEquals(3, user.getProfile().getSkill().size());
+        assertEquals("Java", user.getProfile().getSkill().get(1));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("개인 프로필 등록 - 파일 있는 경우")
+    void registerProfileFile() throws IOException {
+        //given
+        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
+
         User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
@@ -119,18 +156,15 @@ class UserServiceTest {
                 .build();
 
         //when
-        userService.saveProfile(saveUser.getId(), request);
+        userService.saveProfile(saveUser.getId(), request, file, null);
 
         //then
         User user = userRepository.findAll().get(0);
-        assertEquals("자기 소개서", user.getProfile().getSelfIntro());
-        assertEquals("대학생", user.getProfile().getCareer());
-        assertEquals(3, user.getProfile().getSkill().size());
-        assertEquals("Java", user.getProfile().getSkill().get(1));
+        assertNotNull(user.getProfile().getProfilePhoto());
     }
 
     @Test
-    @DisplayName("처음 로그인 시 개인 프로필 등록 - 예외반환")
+    @DisplayName("개인 프로필 등록 - 예외반환")
     void registerProfileEX() {
         //given
         User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
@@ -148,13 +182,13 @@ class UserServiceTest {
                 .build();
 
         //expected
-        assertThrows(NotFoundUserException.class, () -> userService.saveProfile(saveUser.getId()+1L, request));
+        assertThrows(NotFoundUserException.class, () -> userService.saveProfile(saveUser.getId()+1L, request, null, null));
     }
 
     @Test
     @Transactional
     @DisplayName("개인 프로필 확인 - 등록되어 있는 경우")
-    void getProfile() {
+    void getProfile() throws MalformedURLException {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
