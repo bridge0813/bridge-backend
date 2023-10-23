@@ -1,6 +1,6 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.service.FCMService;
+import com.Bridge.bridge.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class FCMController {
+public class AlarmController {
 
-    private final FCMService fcmService;
+    private final AlarmService alarmService;
 
     @PostMapping("/device/token")
     public void saveDeviceToken(@RequestBody String deviceToken){
-        fcmService.saveDeviceToken(deviceToken);
+        alarmService.saveDeviceToken(deviceToken);
         return;
     }
 }
