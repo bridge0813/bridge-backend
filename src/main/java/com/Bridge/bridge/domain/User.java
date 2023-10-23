@@ -57,8 +57,8 @@ public class User {
     @OneToMany(mappedBy = "rcvUser", cascade = CascadeType.ALL)
     private List<Alarm> rcvAlarms = new ArrayList<>();              // 알림 수신 목록
 
-    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
-    private List<Alarm> sendAlarms = new ArrayList<>();             // 알림 발신 목록
+//    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
+//    private List<Alarm> sendAlarms = new ArrayList<>();             // 알림 발신 목록
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StaticMessage> staticMessages = new ArrayList<>();         // 유저가 만든 지정 메세지 목록
