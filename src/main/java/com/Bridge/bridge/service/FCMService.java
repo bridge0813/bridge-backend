@@ -1,5 +1,6 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.Alarm;
 import com.Bridge.bridge.domain.Chat;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
@@ -9,6 +10,7 @@ import com.Bridge.bridge.exception.BridgeException;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
+import com.Bridge.bridge.repository.AlarmRepository;
 import com.Bridge.bridge.repository.ChatRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
@@ -30,6 +32,7 @@ public class FCMService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ProjectRepository projectRepository;
+    private final AlarmRepository alarmRepository;
 
     /*
        Func : 알림 받을 디바이스 토큰 저장하기
@@ -87,9 +90,20 @@ public class FCMService {
        Func : 지원 결과 알림 생성
        Parameter: userId -> 알림 받을 유저ID
     */
+    @Transactional
     public void getApplyResultAlarm(Long userId) throws FirebaseMessagingException {
 
-        // TODO : 알람 객체 생성하고 저장
+        User rcvUser = userRepository.findById(userId)
+                .orElseThrow(()->new NotFoundUserException());
+
+        Alarm alarm = Alarm.builder()
+                .type("Apply")
+                .title("지원 결과 도착")
+                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .rcvUser(rcvUser)
+                .build();
+        alarmRepository.save(alarm);
+
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
@@ -114,8 +128,6 @@ public class FCMService {
 
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
 
-            // TODO : 알림 객체로 저장하기
-
             // 알림보내기
             NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
                     .userID(chat.getReceiveUser().getId())
@@ -127,8 +139,6 @@ public class FCMService {
             return;
         }
         // 메세지를 보낸 사람이 채팅방에 초대된 사람이라면
-
-        // TODO : 알림 객체로 저장하기
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
@@ -151,13 +161,19 @@ public class FCMService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        User getAlarmuser = project.getUser();
+        User getAlarmUser = project.getUser();
 
-        // TODO : 알람 객체 생성하고 저장
+        Alarm alarm = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장?")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .rcvUser(getAlarmUser)
+                .build();
+        alarmRepository.save(alarm);
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(getAlarmuser.getId())
+                .userID(getAlarmUser.getId())
                 .title("지원자 등장?")
                 .body("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
                 .build();
