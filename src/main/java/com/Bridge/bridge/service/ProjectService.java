@@ -233,7 +233,7 @@ public class ProjectService {
         List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(filterRequestDto.getSkills(), filterRequestDto.getPart());
 
         LocalDateTime localDateTime = LocalDateTime.now();
-        List<Project> projects = projectRepository.findAllByRecruitInaAndDueDateGreaterThanEqual(parts, localDateTime.toString());
+        List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime.toString());
 
         final int[] recruitTotal = {0};
 
@@ -341,7 +341,7 @@ public class ProjectService {
         List<Part> parts = partRepository.findAllByRecruitPart(myPart);
 
         LocalDateTime localDateTime = LocalDateTime.now();
-        List<Project> myPartProjects = projectRepository.findAllByRecruitInaAndDueDateGreaterThanEqual(parts, localDateTime.toString());
+        List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime.toString());
 
         // 작성글이 하나도 없다면
         if(myPartProjects.isEmpty()){

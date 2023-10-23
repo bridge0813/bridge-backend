@@ -18,7 +18,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Override
     <S extends Project> S save(S entity);
 
-    List<Project> findAllByRecruitInaAndDueDateGreaterThanEqual(List<Part> parts, String dueDate);
+    List<Project> findAllByRecruitInAndDueDateGreaterThanEqual(List<Part> parts, String dueDate);
 
     List<Project> findAllByUser(User user);
 
