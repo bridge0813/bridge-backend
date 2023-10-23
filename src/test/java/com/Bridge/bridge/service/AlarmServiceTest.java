@@ -71,7 +71,85 @@ public class AlarmServiceTest {
         Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("지원자 등장?");
         Assertions.assertThat(responses.get(1).getTitle()).isEqualTo("지원자 등장?");
         Assertions.assertThat(responses.get(2).getTitle()).isEqualTo("지원 결과 도착");
-
     }
+
+    @DisplayName("모든 알람 삭제")
+    @Test
+    void deleteAllAlarm() {
+        // given
+        User user = new User("user", "user@gmaiil.com", Platform.APPLE, "alarm");
+        userRepository.save(user);
+
+        Alarm alarm1 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장?")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .rcvUser(user)
+                .build();
+        Alarm alarm2 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장?")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .rcvUser(user)
+                .build();
+        Alarm alarm3 = Alarm.builder()
+                .type("Apply")
+                .title("지원 결과 도착")
+                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .rcvUser(user)
+                .build();
+
+        alarmRepository.save(alarm1);
+        alarmRepository.save(alarm2);
+        alarmRepository.save(alarm3);
+
+        // when
+        boolean responses = alarmService.deleteAllAlarms(user.getId());
+
+        // then
+        Assertions.assertThat(responses).isEqualTo(true);
+    }
+
+    @DisplayName("모든 알람 삭제 - 해당 유저 것만 삭제되는지 확인")
+    @Test
+    void deleteAllAlarm_diffrentUser() {
+        // given
+        User user1 = new User("user1", "user1@gmaiil.com", Platform.APPLE, "alarm");
+        User user2 = new User("user2", "user2@gmaiil.com", Platform.APPLE, "alarm");
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        Alarm alarm1 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장?")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .rcvUser(user1)
+                .build();
+        Alarm alarm2 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장?")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .rcvUser(user1)
+                .build();
+        Alarm alarm3 = Alarm.builder()
+                .type("Apply")
+                .title("지원 결과 도착")
+                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .rcvUser(user2)
+                .build();
+
+        alarmRepository.save(alarm1);
+        alarmRepository.save(alarm2);
+        alarmRepository.save(alarm3);
+
+        // when
+        boolean responses = alarmService.deleteAllAlarms(user1.getId());
+        int user2Alarms = alarmRepository.findAllByRcvUser(user2).size();
+
+        // then
+        Assertions.assertThat(responses).isEqualTo(true);
+        Assertions.assertThat(user2Alarms).isEqualTo(1);
+    }
+
 
 }

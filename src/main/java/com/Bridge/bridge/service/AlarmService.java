@@ -217,6 +217,7 @@ public class AlarmService {
        Parameter: userId
        Return : boolean - 전체 삭제 여부
     */
+    @Transactional
     public boolean deleteAllAlarms(Long userId){
         // 유저 찾기
         User user = userRepository.findById(userId)
