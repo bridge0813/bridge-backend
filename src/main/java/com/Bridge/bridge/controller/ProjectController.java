@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.FilterRequestDto;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.service.ProjectService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -32,8 +34,8 @@ public class ProjectController {
 
     // 프로젝트 모집글 삭제
     @DeleteMapping("/project")
-    public ResponseEntity deleteProject(@RequestParam Long projectId, @RequestBody Long userId){
-        Boolean result = projectService.deleteProject(projectId, userId);
+    public ResponseEntity deleteProject(@RequestParam Long projectId){
+        Boolean result = projectService.deleteProject(projectId);
 
         if (result.equals(true)){
             return new ResponseEntity(HttpStatus.ACCEPTED);
@@ -45,14 +47,14 @@ public class ProjectController {
 
     // 프로젝트 모집글 수정
     @PutMapping("/project")
-    public ProjectResponseDto updateProject(@RequestParam Long projectId, @RequestBody ProjectRequestDto projectRequestDto){
-        return projectService.updateProject(projectId, projectRequestDto);
+    public ProjectResponseDto updateProject(@RequestParam Long projectId, @RequestBody ProjectUpdateRequestDto projectUpdateRequestDto){
+        return projectService.updateProject(projectId, projectUpdateRequestDto);
     }
 
     // 프로젝트 모집글 상세보기
     @GetMapping("/project")
-    public ProjectResponseDto detailProject(@RequestParam Long projectId){
-        return projectService.getProject(projectId);
+    public ProjectResponseDto detailProject(HttpServletRequest request, @RequestParam Long projectId){
+        return projectService.getProject(projectId, request);
     }
 
     // 프로젝트 모집글 필터링 조회
@@ -82,8 +84,8 @@ public class ProjectController {
 
     // 모집글 마감하기
     @PostMapping("/project/deadline")
-    public ProjectResponseDto closeProject(@RequestParam Long projectId, @RequestBody Long userId){
-        return projectService.closeProject(projectId, userId);
+    public ProjectResponseDto closeProject(@RequestParam Long projectId){
+        return projectService.closeProject(projectId);
     }
 
     // 모집글 스크랩하기
@@ -160,6 +162,7 @@ public class ProjectController {
                                          @RequestParam("userId") Long userId) {
         projectService.rejectApply(projectId, userId);
         return ResponseEntity.ok(true);
+    }
 
     // 인기글 조회 기능
     @GetMapping("/projects/top")
