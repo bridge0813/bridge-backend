@@ -6,7 +6,9 @@ import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.NotificationRequestDto;
+import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.exception.BridgeException;
+import com.Bridge.bridge.exception.notfound.NotFoundAlarmException;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
@@ -22,6 +24,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -178,5 +183,32 @@ public class AlarmService {
                 .build();
 
         sendNotification(notificationRequestDto);
+    }
+
+    /*
+       Func : 알림 전체 목록 조회 기능
+       Parameter: userId
+       Return : List<AllAlarmResponse>
+    */
+    public List<AllAlarmResponse> getAllOfAlarms(Long userId){
+
+        // 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        List<Alarm> alarms = alarmRepository.findAllByRcvUser(user);
+
+        if(alarms.equals(null)){
+            throw new NotFoundAlarmException();
+        }
+
+        return alarms.stream()
+                .map((alarm -> AllAlarmResponse.builder()
+                        .id(alarm.getId())
+                        .title(alarm.getTitle())
+                        .content(alarm.getContent())
+                        .time(alarm.getSendDateTime())
+                        .build()))
+                .collect(Collectors.toList());
     }
 }
