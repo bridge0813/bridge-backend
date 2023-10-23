@@ -211,4 +211,26 @@ public class AlarmService {
                         .build()))
                 .collect(Collectors.toList());
     }
+
+    /*
+       Func : 알림 전체 목록 삭제 기능
+       Parameter: userId
+       Return : boolean - 전체 삭제 여부
+    */
+    public boolean deleteAllAlarms(Long userId){
+        // 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        List<Alarm> alarms = alarmRepository.findAllByRcvUser(user);
+
+        alarmRepository.deleteAllByRcvUser(user);
+
+        int size = alarmRepository.findAllByRcvUser(user).size();
+
+        if(size == 0){ // 모두 삭제되었나 확인용
+            return true;
+        }
+        return false;
+    }
 }

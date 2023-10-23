@@ -9,4 +9,6 @@ import java.util.List;
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     List<Alarm> findAllByRcvUser(User user);
+
+    void deleteAllByRcvUser(User user);
 }
