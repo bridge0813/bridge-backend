@@ -1,12 +1,18 @@
-package com.Bridge.bridge.dto.response;
+package com.Bridge.bridge.dto.request;
 
+import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.domain.User;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-
 @Data
-public class ProjectResponseDto {
+@NoArgsConstructor
+public class ProjectUpdateRequestDto { // 모집글 생성 시 받아올 데이터 관련 dto
 
     private String title;           //제목
 
@@ -18,7 +24,7 @@ public class ProjectResponseDto {
 
     private String endDate;         // 프로젝트 종료일
 
-    private List<PartResponseDto> recruit; // 모집 분야, 모집 인원
+    private List<PartRequestDto> recruit; // 모집 분야, 모집 인원
 
     private List<String> tagLimit;        //지원자 태그 제한록
 
@@ -26,12 +32,8 @@ public class ProjectResponseDto {
 
     private String stage;           // 진행 단계
 
-    private String userName;        // 모집글을 작성한 유저 이름
-
-    private boolean isMyProject;    // 내가 만든 프로젝트 여부
-
     @Builder
-    public ProjectResponseDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponseDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userName, boolean isMyProject) {
+    public ProjectUpdateRequestDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequestDto> recruit, List<String> tagLimit, String meetingWay, String stage) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
@@ -41,7 +43,5 @@ public class ProjectResponseDto {
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
-        this.userName = userName;
-        this.isMyProject = isMyProject;
     }
 }

@@ -109,6 +109,7 @@ public class FCMService {
         Chat chat = chatRepository.findByChatRoomId(chatMessageRequest.getChatRoomId())
                 .orElseThrow(() -> new NotFoundChatException());
 
+
         User sender = userRepository.findByName(chatMessageRequest.getSender());
 
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면

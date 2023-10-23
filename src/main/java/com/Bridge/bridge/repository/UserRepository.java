@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     User findByDeviceToken(String deviceToken);
 
+//    User findByNameaAndAndId(String name, Long userId);
+
     User findByName(String name);
 
 }
