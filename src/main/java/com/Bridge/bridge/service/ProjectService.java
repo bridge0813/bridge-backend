@@ -572,7 +572,7 @@ public class ProjectService {
                 .map(p -> {
                     User user = p.getUser();
                     List<String> fields = user.getFields().stream()
-                            .map(f -> f.getFieldName())
+                            .map(f -> f.getValue())
                             .collect(Collectors.toList());
 
                     return ApplyUserResponse.builder()

@@ -12,13 +12,10 @@ import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +25,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final FileService fileService;
 
     /**
@@ -40,9 +36,6 @@ public class UserService {
         User findUser = find(request.getUserId());
 
         List<Field> fields = request.toEntity();
-
-        fields.stream()
-                .forEach(f -> f.updateFieldUser(findUser));
 
         findUser.getFields().addAll(fields);
         return true;
@@ -108,7 +101,7 @@ public class UserService {
                 .profilePhotoURL(photo)
                 .selfIntro(profile.getSelfIntro())
                 .fields(findUser.getFields().stream()
-                        .map(f -> f.getFieldName())
+                        .map(f -> f.getValue())
                         .collect(Collectors.toList()))
                 .stacks(profile.getSkill())
                 .career(profile.getCareer())

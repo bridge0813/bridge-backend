@@ -30,7 +30,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Platform platform;          // 플랫폼 구별 enum
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(value = EnumType.STRING)
     private List<Field> fields = new ArrayList<>(); // 관심 분야
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
