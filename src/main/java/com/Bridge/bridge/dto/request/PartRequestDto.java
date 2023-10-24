@@ -3,11 +3,13 @@ package com.Bridge.bridge.dto.request;
 import com.Bridge.bridge.domain.Part;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
 public class PartRequestDto {
 
     private String recruitPart;

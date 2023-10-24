@@ -90,11 +90,12 @@ public class UserService {
         }
 
         String refFile = null;
+        String originName = null;
         File findRefFile = profile.getRefFile();
         if (findRefFile != null) {
             refFile = profile.getRefFile().getUploadFileUrl();
+            originName = findRefFile.getOriginName();
         }
-
 
         return UserProfileResponse.builder()
                 .name(findUser.getName())
@@ -106,7 +107,7 @@ public class UserService {
                 .stacks(profile.getSkill())
                 .career(profile.getCareer())
                 .refLink(profile.getRefLink())
-                .refFile(new FileResponse(refFile, findRefFile.getOriginName()))
+                .refFile(new FileResponse(refFile, originName))
                 .build();
     }
 
