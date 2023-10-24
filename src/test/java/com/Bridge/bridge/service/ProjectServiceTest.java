@@ -1487,14 +1487,8 @@ class ProjectServiceTest {
         User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "2");
         User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "3");
 
-        Field field1 = new Field("Backend");
-        field1.updateFieldUser(user1);
-
-        Field field2 = new Field("Frontend");
-        field2.updateFieldUser(user2);
-
-        user1.getFields().add(field1);
-        user2.getFields().add(field2);
+        user1.getFields().add(Field.BACKEND);
+        user2.getFields().add(Field.FRONTEND);
 
         Profile profile1 = Profile.builder()
                 .career("career1")
@@ -1544,14 +1538,9 @@ class ProjectServiceTest {
         User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "2");
         User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "3");
 
-        Field field1 = new Field("Backend");
-        field1.updateFieldUser(user1);
+        user1.getFields().add(Field.BACKEND);
+        user2.getFields().add(Field.FRONTEND);
 
-        Field field2 = new Field("Frontend");
-        field2.updateFieldUser(user2);
-
-        user1.getFields().add(field1);
-        user2.getFields().add(field2);
 
         Profile profile1 = Profile.builder()
                 .career("career1")
@@ -1600,10 +1589,7 @@ class ProjectServiceTest {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
 
-        Field field1 = new Field("Backend");
-        field1.updateFieldUser(user1);
-
-        user1.getFields().add(field1);
+        user1.getFields().add(Field.BACKEND);
 
         Profile profile1 = Profile.builder()
                 .career("career1")
@@ -1633,7 +1619,7 @@ class ProjectServiceTest {
         //then
         ApplyUserResponse response = applyUsers.get(0);
         assertEquals("bridge1", response.getName());
-        assertEquals("Backend", response.getFields().get(0));
+        assertEquals("백엔드", response.getFields().get(0));
         assertEquals("career1", response.getCareer());
     }
 

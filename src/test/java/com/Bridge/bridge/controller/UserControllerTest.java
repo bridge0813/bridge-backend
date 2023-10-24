@@ -50,9 +50,9 @@ class UserControllerTest {
 
 
         List<String> fields = new ArrayList<>();
-        fields.add("backend");
-        fields.add("frontend");
-        fields.add("designer");
+        fields.add("BACKEND");
+        fields.add("FRONTEND");
+        fields.add("UIUX");
 
         UserFieldRequest request = new UserFieldRequest(saveUser.getId(), fields);
 
@@ -101,15 +101,13 @@ class UserControllerTest {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        Field field = new Field("backend");
-
         List<String> skills = new ArrayList<>();
         skills.add("spring");
         skills.add("redis");
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
-        newUser.getFields().add(field);
+        newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
 
         User saveUser = userRepository.save(newUser);
@@ -121,7 +119,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("bridge"))
                 .andExpect(jsonPath("$.selfIntro").value("selfIntro"))
-                .andExpect(jsonPath("$.fields[0]").value("backend"))
+                .andExpect(jsonPath("$.fields[0]").value("백엔드"))
                 .andExpect(jsonPath("$.stacks[0]").value("spring"))
                 .andExpect(jsonPath("$.career").value("career"))
                 .andExpect(jsonPath("$.refLink").value("testLink"))

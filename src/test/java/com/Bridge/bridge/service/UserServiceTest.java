@@ -49,9 +49,9 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
-        fields.add("backend");
-        fields.add("frontend");
-        fields.add("designer");
+        fields.add("BACKEND");
+        fields.add("FRONTEND");
+        fields.add("UIUX");
 
         UserFieldRequest request = new UserFieldRequest(saveUser.getId(), fields);
 
@@ -61,7 +61,7 @@ class UserServiceTest {
         //then
         User user = userRepository.findAll().get(0);
         assertEquals(3, user.getFields().size());
-        assertEquals("frontend", user.getFields().get(1).getFieldName());
+        assertEquals("프론트엔드", user.getFields().get(1).getValue());
     }
 
     @Test
@@ -192,15 +192,13 @@ class UserServiceTest {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        Field field = new Field("backend");
-
         List<String> skills = new ArrayList<>();
         skills.add("spring");
         skills.add("redis");
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
-        newUser.getFields().add(field);
+        newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
 
         User saveUser = userRepository.save(newUser);
@@ -211,7 +209,7 @@ class UserServiceTest {
         //then
         assertEquals("bridge", profileResponse.getName());
         assertEquals("selfIntro", profileResponse.getSelfIntro());
-        assertEquals("backend", profileResponse.getFields().get(0));
+        assertEquals("백엔드", profileResponse.getFields().get(0));
         assertEquals("spring", profileResponse.getStacks().get(0));
         assertEquals("redis", profileResponse.getStacks().get(1));
         assertEquals("career", profileResponse.getCareer());

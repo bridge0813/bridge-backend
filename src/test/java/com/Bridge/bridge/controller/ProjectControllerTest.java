@@ -905,10 +905,7 @@ class ProjectControllerTest {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
 
-        Field field1 = new Field("Backend");
-        field1.updateFieldUser(user1);
-
-        user1.getFields().add(field1);
+        user1.getFields().add(Field.BACKEND);
 
         Profile profile1 = Profile.builder()
                 .career("career1")
@@ -938,7 +935,7 @@ class ProjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].userId").value(user1.getId()))
                 .andExpect(jsonPath("$[0].name").value("bridge1"))
-                .andExpect(jsonPath("$[0].fields[0]").value("Backend"))
+                .andExpect(jsonPath("$[0].fields[0]").value("백엔드"))
                 .andExpect(jsonPath("$[0].career").value("career1"))
                 .andDo(print());
     }
