@@ -205,9 +205,9 @@ class ProjectControllerTest {
         ProjectUpdateRequestDto updateProject = ProjectUpdateRequestDto.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .startDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -250,9 +250,9 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("Find project")
                 .overview("This is the project that i find")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .startDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -649,9 +649,9 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("Find project")
                 .overview("This is the project that i find")
-                .dueDate("20240101235959")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .startDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -696,9 +696,9 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("20230101235959")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .startDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -818,7 +818,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate("23-10-10")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .build();
 
         projectRepository.save(project1);
@@ -852,7 +852,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate("23-10-10")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -878,7 +878,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate("23-10-10")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -922,7 +922,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate("23-10-10")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .build();
 
         ApplyProject applyProject1 = new ApplyProject();
@@ -953,7 +953,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate("23-10-10")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -985,7 +985,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate("23-10-10")
+                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -1019,7 +1019,7 @@ class ProjectControllerTest {
         for(int i=1; i<32; i++){
             Project project = projectRepository.save(Project.builder()
                     .title("제목"+i)
-                    .dueDate(LocalDateTime.of(year, month, i,0,0,0).toString())
+                    .dueDate(LocalDateTime.of(year, month, i,0,0,0))
                     .build());
             for(int j=i; j<31; j++){
                 project.increaseBookmarksNum();

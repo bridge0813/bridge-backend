@@ -19,7 +19,7 @@ public class ApplyProjectResponse {
     public ApplyProjectResponse(Project project, String stage) {
         this.title = project.getTitle();
         this.overview = project.getOverview();
-        this.dueDate = project.getDueDate();
+        this.dueDate = project.getDueDate().toString();
         this.stage = stage;
     }
 }
