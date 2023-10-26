@@ -18,9 +18,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Override
     <S extends Project> S save(S entity);
 
-    List<Project> findAllByRecruitIn(List<Part> parts);
+    List<Project> findAllByRecruitInaAndDueDateGreaterThanEqual(List<Part> parts, String dueDate);
 
     List<Project> findAllByUser(User user);
+
+    List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(String dueDate);
 
     List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(String dueDate);
 }
