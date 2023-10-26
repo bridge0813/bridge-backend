@@ -127,4 +127,9 @@ public class JwtTokenProvider {
 
         return findUser.getId();
     }
+
+    public Long getUserIdFromRequest(HttpServletRequest request) {
+        String token = request.getHeader(ACCESS_TOKEN_HEADER).replace(TOKEN_PREFIX, "");
+        return Long.parseLong(getPayload(token));
+    }
 }

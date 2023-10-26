@@ -7,12 +7,16 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.Bridge.bridge.service.ProjectService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -55,6 +60,9 @@ class ProjectControllerTest {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void clean() {
@@ -137,17 +145,12 @@ class ProjectControllerTest {
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
-
-        Long userId = user.getId();
-        Long projectId = projectRepository.findByUser_Id(userId).get().getId();
-
+        Long projectId = projectService.createProject(newProject);
 
         // when
         mockMvc.perform(delete("/project")
-                        .contentType(MediaType.APPLICATION_JSON)
                         .param("projectId", String.valueOf(projectId))
-                        .content(objectMapper.writeValueAsString(userId)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(202)) // 응답 status를 ok로 테스트
                 .andDo(print());
 
@@ -158,7 +161,7 @@ class ProjectControllerTest {
     void updateProject() throws Exception {
         // given
         User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
-        userRepository.save(user);
+        User saveUser = userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
         skill.add("Java");
@@ -181,11 +184,11 @@ class ProjectControllerTest {
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user.getId())
+                .userId(saveUser.getId())
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject);
+        Long projectId = projectService.createProject(newProject);
 
         List<String> updateSkill = new ArrayList<>();
         updateSkill.add("Javascript");
@@ -199,7 +202,7 @@ class ProjectControllerTest {
                 .requirement("화이팅")
                 .build());
 
-        ProjectRequestDto updateProject = ProjectRequestDto.builder()
+        ProjectUpdateRequestDto updateProject = ProjectUpdateRequestDto.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
                 .dueDate("2023-09-07")
@@ -208,22 +211,14 @@ class ProjectControllerTest {
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
-        Long userId = user.getId();
-        Long projectId = projectRepository.findByUser_Id(userId).get().getId();
-
-        // when
-        MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
-        data.add("userId", userId.toString());
-        data.add("ProjectRequestDto", updateProject.toString());
-
+        //when
         mockMvc.perform(put("/project")
-                        .contentType(MediaType.APPLICATION_JSON)
                         .param("projectId", String.valueOf(projectId))
-                        .content(objectMapper.writeValueAsString(data)))
+                        .content(objectMapper.writeValueAsString(updateProject))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(202)) // 응답 status를 ok로 테스트
                 .andDo(print());
     }
@@ -233,7 +228,12 @@ class ProjectControllerTest {
     void detailProject() throws Exception {
         // given
         User user1 = new User("user", "user@gmail.com", Platform.APPLE, "Test");
-        userRepository.save(user1);
+        User saveUser = userRepository.save(user1);
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
 
         List<String> skill = new ArrayList<>();
         skill.add("Java");
@@ -265,6 +265,7 @@ class ProjectControllerTest {
 
         // when
         mockMvc.perform(get("/project")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("projectId", String.valueOf(theProject.getId())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -661,13 +662,11 @@ class ProjectControllerTest {
         Project theProject = projectRepository.save(newProject);
 
         Long projectId = theProject.getId();
-        Long userId = user1.getId();
 
         // when
         mockMvc.perform(post("/project/deadline")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("projectId", String.valueOf(projectId))
-                        .content(objectMapper.writeValueAsString(userId)))
+                        .param("projectId", String.valueOf(projectId)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(newProject.getTitle()))
                 .andDo(print());
