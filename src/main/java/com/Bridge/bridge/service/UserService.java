@@ -4,6 +4,7 @@ import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.FileResponse;
@@ -54,20 +55,12 @@ public class UserService {
 
         // 프로필 사진 등록
         if (profilePhoto != null) {
-            File saveFile = fileService.uploadFile(profilePhoto);
-            File oldFile = profile.setProfilePhoto(saveFile);
-            if (oldFile != null) {
-                fileService.deleteFile(oldFile.getId());
-            }
+            updatePhotoFile(profile, profilePhoto);
         }
 
         // 첨부파일 등록
         if (refFile != null) {
-            File saveFile = fileService.uploadFile(refFile);
-            File oldFile = profile.setProfilePhoto(saveFile);
-            if (oldFile != null) {
-                fileService.deleteFile(oldFile.getId());
-            }
+            updateRefFile(profile, refFile);
         }
 
         return true;
@@ -109,6 +102,50 @@ public class UserService {
                 .refLink(profile.getRefLink())
                 .refFile(new FileResponse(refFile, originName))
                 .build();
+    }
+
+    /**
+     * 유저 프로필 수정
+     */
+    @Transactional
+    public void updateProfile(Long userId, ProfileUpdateRequest profileUpdateRequest, MultipartFile profilePhoto,
+                              MultipartFile refFile) {
+        User findUser = find(userId);
+        Profile profile = findUser.getProfile();
+        profile.updateProfile(profileUpdateRequest);
+
+        //파일 업데이트
+        if(profilePhoto != null) {
+            updatePhotoFile(profile, profilePhoto);
+        }
+
+        if(refFile != null) {
+            updateRefFile(profile, refFile);
+        }
+    }
+
+    /**
+     * 프로필 사진 파일 업데이트
+     */
+    @Transactional
+    public void updatePhotoFile(Profile profile, MultipartFile file) {
+        File newFile = fileService.uploadFile(file);
+        File oldFile = profile.setProfilePhoto(newFile);
+        if(oldFile != null) {
+            fileService.deleteFile(oldFile.getId());
+        }
+    }
+
+    /**
+     * 참조파일 업데이트
+     */
+    @Transactional
+    public void updateRefFile(Profile profile, MultipartFile file) {
+        File newFile = fileService.uploadFile(file);
+        File oldFile = profile.setRefFile(newFile);
+        if(oldFile != null) {
+            fileService.deleteFile(oldFile.getId());
+        }
     }
 
 

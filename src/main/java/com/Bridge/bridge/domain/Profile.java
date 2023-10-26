@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,13 +50,20 @@ public class Profile {
         this.user = user;
     }
 
+    public void updateProfile(ProfileUpdateRequest request) {
+        this.selfIntro = request.getSelfIntro();
+        this.career = request.getCareer();
+        this.skill = request.getStack();
+        this.refLink = request.getRefLink();
+    }
+
     // --연관관계 메소드 -- //
     public File setProfilePhoto(File file) {
         // 프로필 자운 후 덥데이트
         if(Objects.nonNull(this.profilePhoto)) {
-           File photo = this.profilePhoto;
+           File oldPhoto = this.profilePhoto;
            this.profilePhoto = file;
-           return photo;
+           return oldPhoto;
         }
         this.profilePhoto = file;
         file.setProfilePhoto(this);

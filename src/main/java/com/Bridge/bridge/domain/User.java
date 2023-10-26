@@ -21,8 +21,6 @@ public class User {
 
     private String email;               // 이메일
 
-    private String photo;               // 프로필 사진
-
     private String platformId;          // 소셜 로그인 고유 아이디
 
     private String refreshToken;
