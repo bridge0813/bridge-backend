@@ -1034,4 +1034,28 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].title").value("제목"+day))
                 .andDo(print());
     }
+
+    @DisplayName("마감 임박 모집글 조회 기능")
+    @Test
+    void imminentProjects() throws Exception{
+        // given
+
+        for (int i=0; i<40; i++){
+            Project project = Project.builder()
+                    .title("project"+(i+1))
+                    .dueDate(LocalDateTime.of(2023,11,30-(i%30),0,0,0))
+                    .build();
+            projectRepository.save(project);
+        }
+
+        //expected
+        mockMvc.perform(get("/projects/imminent")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("project30"))
+                .andExpect(jsonPath("$[0].dueDate").value(LocalDateTime.of(2023,11,1,0,0,0).toString()))
+                .andExpect(jsonPath("$[39].title").value("project31"))
+                .andExpect(jsonPath("$[39].dueDate").value(LocalDateTime.of(2023,11,30,0,0,0).toString()))
+                .andDo(print());
+    }
 }
