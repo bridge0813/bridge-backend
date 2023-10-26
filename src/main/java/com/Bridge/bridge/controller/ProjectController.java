@@ -204,4 +204,11 @@ public class ProjectController {
         return projectService.topProjects();
 
     }
+
+    // 마감 임박 모집글 조회 기능
+    @GetMapping("/projects/imminent")
+    public List<imminentProjectResponse> imminentProjects(){
+        return projectService.getdeadlineImminentProejcts();
+
+    }
 }
