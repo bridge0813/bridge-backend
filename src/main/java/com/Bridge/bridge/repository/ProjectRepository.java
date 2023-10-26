@@ -25,4 +25,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(String dueDate);
 
     List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(String dueDate);
+
+    List<Project> findTop40ByDueDateGreaterThanEqualAndOrderByDueDate(String duedate);
 }

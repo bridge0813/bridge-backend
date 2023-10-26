@@ -183,7 +183,7 @@ public class ProjectService {
                 .map((project) -> ProjectListResponseDto.builder()
                         .projectId(project.getId())
                         .title(project.getTitle())
-                        .dueDate(project.getDueDate())
+                        .dueDate(project.getDueDate().toString())
                         .recruitTotalNum(recruitTotal[0])
                         .build()
                 )
@@ -235,7 +235,7 @@ public class ProjectService {
                 .map((project) -> ProjectListResponseDto.builder()
                         .projectId(project.getId())
                         .title(project.getTitle())
-                        .dueDate(project.getDueDate())
+                        .dueDate(project.getDueDate().toString())
                         .recruitTotalNum(recruitTotal[0])
                         .build()
                 )
@@ -278,7 +278,7 @@ public class ProjectService {
                 .map((project -> MyProjectResponseDto.builder()
                         .projectId(project.getId())
                         .overview(project.getOverview())
-                        .dueDate(project.getDueDate())
+                        .dueDate(project.getDueDate().toString())
                         .recruitTotalNum(recruitTotal[0])
                         .build()))
                 .collect(Collectors.toList());
@@ -311,7 +311,7 @@ public class ProjectService {
                 .map((project -> ProjectListResponseDto.builder()
                         .projectId(project.getId())
                         .title(project.getTitle())
-                        .dueDate(project.getDueDate())
+                        .dueDate(project.getDueDate().toString())
                         .recruitTotalNum(recruitTotal[0])
                         .build()
                 ))
@@ -350,7 +350,7 @@ public class ProjectService {
                 .map((project -> ProjectListResponseDto.builder()
                         .projectId(project.getId())
                         .title(project.getTitle())
-                        .dueDate(project.getDueDate())
+                        .dueDate(project.getDueDate().toString())
                         .recruitTotalNum(recruitTotal[0])
                         .build()
                 ))
@@ -376,7 +376,7 @@ public class ProjectService {
         // 포맷
         String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
 
-        if(project.getDueDate().compareTo(formatedNow)<0){ // 마감시간이 이미 지난 경우
+        if(project.getDueDate().toString().compareTo(formatedNow)<0){ // 마감시간이 이미 지난 경우
             throw new IllegalStateException("이미 마감이 된 모집글입니다.");
         }
         else {
@@ -502,7 +502,7 @@ public class ProjectService {
             topProjectResponseDtos.add(TopProjectResponseDto.builder()
                     .rank(i+1)
                     .title(top20.get(i).getTitle())
-                    .dueDate(top20.get(i).getDueDate())
+                    .dueDate(top20.get(i).getDueDate().toString())
                     .build());
         }
         return topProjectResponseDtos;
@@ -626,5 +626,28 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundProjectException());
 
         applyProject.changeStage("거절");
+    }
+
+    /*
+        Func : 마감 임박 40개 프로젝트 조회 기능
+        Parameter :
+        Return : List<imminentProjectResponseDto>
+    */
+    public List<imminentProjectResponse> getdeadlineImminentProejcts(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        List<Project> projects = projectRepository.findTop40ByDueDateGreaterThanEqualAndOrderByDueDate(localDateTime.toString());
+
+        List<imminentProjectResponse> imminentProjectResponses = new ArrayList<>();
+
+        for (int i=0; i<projects.size(); i++){
+            imminentProjectResponses.add(imminentProjectResponse.builder()
+                    .imminentRank(i+1)
+                    .title(projects.get(i).getTitle())
+                    .dueDate(projects.get(i).getDueDate().toString())
+                    .build());
+        }
+
+        return imminentProjectResponses;
     }
 }
