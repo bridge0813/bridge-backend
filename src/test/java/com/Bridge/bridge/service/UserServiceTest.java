@@ -1,14 +1,17 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
+import com.Bridge.bridge.repository.FileRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +22,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -35,9 +39,16 @@ class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileRepository fileRepository;
+
+    @Autowired
+    private FileService fileService;
+
     @BeforeEach
     void clean() {
         userRepository.deleteAll();
+        fileRepository.deleteAll();
     }
 
     @Test
@@ -225,5 +236,97 @@ class UserServiceTest {
 
         //expected
         assertThrows(NotFoundProfileException.class, () -> userService.getProfile(saveUser.getId()));
+    }
+
+    @Test
+    @DisplayName("파일 업데이트 - 새로운 파일 등록")
+    void setNewFile() throws IOException {
+        //given
+        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
+
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<String> skills = new ArrayList<>();
+        skills.add("spring");
+        skills.add("redis");
+
+        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+
+        newUser.getFields().add(Field.BACKEND);
+        newUser.updateProfile(profile);
+
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        userService.updatePhotoFile(profile, file);
+
+        //then
+        assertEquals(1, fileRepository.count());
+        assertEquals("test.jpg", fileRepository.findAll().get(0).getOriginName());
+    }
+
+    @Test
+    @DisplayName("파일 업데이트 - 파일 업데이트 등록")
+    void updateFile() throws IOException {
+        //given
+        MockMultipartFile oldFile = new MockMultipartFile("file", "old.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
+        MockMultipartFile newFile = new MockMultipartFile("file", "update.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
+
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<String> skills = new ArrayList<>();
+        skills.add("spring");
+        skills.add("redis");
+
+        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        newUser.updateProfile(profile);
+        User saveUser = userRepository.save(newUser);
+
+        File file = fileService.uploadFile(oldFile);
+        profile.setProfilePhoto(file);
+        //when
+        userService.updatePhotoFile(profile, newFile);
+
+        //then
+        assertEquals(1, fileRepository.count());
+        assertEquals("update.jpg", fileRepository.findAll().get(0).getOriginName());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("프로필 수정 - 파일 없는 경우")
+    void updateProfile() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<String> skills = new ArrayList<>();
+        skills.add("spring");
+        skills.add("redis");
+
+        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+
+        newUser.getFields().add(Field.BACKEND);
+        newUser.updateProfile(profile);
+
+        User saveUser = userRepository.save(newUser);
+
+        List<String> newSkills = new ArrayList<>();
+        newSkills.add("mySql");
+
+        ProfileUpdateRequest request = ProfileUpdateRequest.builder()
+                .selfIntro("updateIntro")
+                .career("updateCareer")
+                .stack(newSkills)
+                .refLink("updateLink")
+                .build();
+
+        //when
+        userService.updateProfile(saveUser.getId(), request, null, null);
+
+        //then
+        Profile findProfile = saveUser.getProfile();
+        assertEquals("updateIntro", findProfile.getSelfIntro());
+        assertEquals("updateCareer", findProfile.getCareer());
+        assertEquals("mySql", findProfile.getSkill().get(0));
     }
 }

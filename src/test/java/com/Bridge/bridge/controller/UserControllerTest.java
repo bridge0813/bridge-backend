@@ -4,6 +4,7 @@ import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -123,6 +125,39 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.stacks[0]").value("spring"))
                 .andExpect(jsonPath("$.career").value("career"))
                 .andExpect(jsonPath("$.refLink").value("testLink"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("프로필 수정")
+    void updateProfile() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<String> skills = new ArrayList<>();
+        skills.add("spring");
+        skills.add("redis");
+
+        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+
+        newUser.getFields().add(Field.BACKEND);
+        newUser.updateProfile(profile);
+
+        User saveUser = userRepository.save(newUser);
+
+        ProfileUpdateRequest updateRequest = ProfileUpdateRequest.builder()
+                .selfIntro("updateIntro")
+                .refLink("updateLink")
+                .career("updateCareer")
+                .build();
+
+        MockMultipartFile request = new MockMultipartFile("request", "profile", "application/json", objectMapper.writeValueAsString(updateRequest).getBytes(StandardCharsets.UTF_8));
+
+        //expected
+        mockMvc.perform(multipart(HttpMethod.PUT, "/users/profile")
+                        .file(request)
+                        .param("userId", String.valueOf(saveUser.getId())))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
