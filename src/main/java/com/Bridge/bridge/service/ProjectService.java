@@ -636,7 +636,7 @@ public class ProjectService {
     public List<imminentProjectResponse> getdeadlineImminentProejcts(){
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        List<Project> projects = projectRepository.findTop40ByDueDateGreaterThanEqualAndOrderByDueDate(localDateTime.toString());
+        List<Project> projects = projectRepository.findTop40ByDueDateGreaterThanEqualOrderByDueDate(localDateTime);
 
         List<imminentProjectResponse> imminentProjectResponses = new ArrayList<>();
 

@@ -11,16 +11,9 @@ import com.Bridge.bridge.domain.SearchWord;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
-import com.Bridge.bridge.dto.response.ApplyProjectResponse;
-import com.Bridge.bridge.dto.response.ApplyUserResponse;
-import com.Bridge.bridge.dto.response.BookmarkResponseDto;
-import com.Bridge.bridge.dto.response.MyProjectResponseDto;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
-import com.Bridge.bridge.dto.response.SearchWordResponseDto;
-import com.Bridge.bridge.dto.response.TopProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
@@ -1791,4 +1784,30 @@ class ProjectServiceTest {
         Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목"+day);
         Assertions.assertThat(result.get(31-day).getTitle()).isEqualTo("제목31");
     }
+
+    @DisplayName("마감 임박 프로젝트 조회 기능")
+    @Test
+    @Transactional
+    void getImminentProjects() {
+        // given
+
+        for (int i=0; i<40; i++){
+            Project project = Project.builder()
+                    .title("project"+(i+1))
+                    .dueDate(LocalDateTime.of(2023,11,30-(i%30),0,0,0))
+                    .build();
+            projectRepository.save(project);
+        }
+
+        // when
+        List<imminentProjectResponse> responses = projectService.getdeadlineImminentProejcts();
+
+        // then
+        Assertions.assertThat(responses.size()).isEqualTo(40);
+        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(2023,11,1,0,0,0).toString());
+        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project30");
+        Assertions.assertThat(responses.get(39).getDueDate()).isEqualTo(LocalDateTime.of(2023,11,30,0,0,0).toString());
+        Assertions.assertThat(responses.get(39).getTitle()).isEqualTo("project31");
+    }
+
 }
