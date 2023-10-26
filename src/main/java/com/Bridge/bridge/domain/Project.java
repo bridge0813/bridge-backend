@@ -30,13 +30,13 @@ public class Project {
 
     private String overview;        // 개요, 프로젝트에 대한 간단한 소개
 
-    private String dueDate;         //기간
+    private LocalDateTime dueDate;         //기간
 
-    private String startDate;       // 프로젝트 시작일
+    private LocalDateTime startDate;       // 프로젝트 시작일
 
-    private String endDate;         // 프로젝트 종료일
+    private LocalDateTime endDate;         // 프로젝트 종료일
 
-    private String uploadTime;      // 프로젝트 작성시간 -> 최신순
+    private LocalDateTime uploadTime;      // 프로젝트 작성시간 -> 최신순
 
     @JsonManagedReference
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
@@ -61,26 +61,26 @@ public class Project {
 
     private int bookmarkNum; // 스크랩 횟수
 
-    @Builder
-    public Project(String title, String overview, String dueDate, String startDate, String endDate, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        // 포맷
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
-
+    public Project(Long id, String title, String overview, LocalDateTime dueDate, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime uploadTime, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user, List<ApplyProject> applyProjects, List<Bookmark> bookmarks, int bookmarkNum) {
+        this.id = id;
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.uploadTime = formatedNow;
+        this.uploadTime = uploadTime;
         this.recruit = recruit;
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
-        this.bookmarkNum = 0;
         this.user = user;
+        this.applyProjects = applyProjects;
+        this.bookmarks = bookmarks;
+        this.bookmarkNum = bookmarkNum;
     }
+
+    @Builder
+
 
     public void setRecruit(List<Part> recruit) {
         this.recruit = recruit;
@@ -98,9 +98,9 @@ public class Project {
         return ProjectResponseDto.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
-                .dueDate(this.getDueDate())
-                .startDate(this.getStartDate())
-                .endDate(this.getEndDate())
+                .dueDate(this.getDueDate().toString())
+                .startDate(this.getStartDate().toString())
+                .endDate(this.getEndDate().toString())
                 .recruit(recruit)
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
@@ -126,10 +126,7 @@ public class Project {
     public Project updateDeadline(){
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        // 포맷
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
-
-        this.dueDate = formatedNow;
+        this.dueDate = localDateTime;
 
         return this;
     }
