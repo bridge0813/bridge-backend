@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -25,7 +27,8 @@ public class Profile {
     private String career;          // 경력 사항
 
     @ElementCollection
-    private List<String> skill;           // 기술 스택
+    @Enumerated(EnumType.STRING)
+    private List<Stack> skill = new ArrayList<>();           // 기술 스택
 
     @OneToOne(mappedBy = "profile")
     private User user;              // 해당 프로필을 작성한 유저
@@ -39,7 +42,7 @@ public class Profile {
     private File refFile;           // 첨부 파일
 
     @Builder
-    public Profile(String refLink, String selfIntro, String career, List<String> skill) {
+    public Profile(String refLink, String selfIntro, String career, List<Stack> skill) {
         this.refLink = refLink;
         this.selfIntro = selfIntro;
         this.career = career;
@@ -53,7 +56,9 @@ public class Profile {
     public void updateProfile(ProfileUpdateRequest request) {
         this.selfIntro = request.getSelfIntro();
         this.career = request.getCareer();
-        this.skill = request.getStack();
+        this.skill = request.getStack().stream()
+                .map(s -> Stack.valueOf(s))
+                .collect(Collectors.toList());
         this.refLink = request.getRefLink();
     }
 

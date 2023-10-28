@@ -215,9 +215,11 @@ public class ProjectService {
         Return : projectResponse
     */
     public List<ProjectListResponseDto> filterProjectList(FilterRequestDto filterRequestDto){
+        List<Stack> skills = filterRequestDto.getSkills().stream()
+                .map(s -> Stack.valueOf(s))
+                .collect(Collectors.toList());
 
-
-        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(filterRequestDto.getSkills(), filterRequestDto.getPart());
+        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, filterRequestDto.getPart());
 
         List<Project> projects = projectRepository.findAllByRecruitIn(parts);
 

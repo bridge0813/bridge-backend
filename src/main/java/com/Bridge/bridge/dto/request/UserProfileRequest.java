@@ -1,11 +1,13 @@
 package com.Bridge.bridge.dto.request;
 
 import com.Bridge.bridge.domain.Profile;
+import com.Bridge.bridge.domain.Stack;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,7 +35,9 @@ public class UserProfileRequest {
                 .refLink(refLink)
                 .selfIntro(selfIntro)
                 .career(career)
-                .skill(stack)
+                .skill(stack.stream()
+                        .map(s -> Stack.valueOf(s))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
