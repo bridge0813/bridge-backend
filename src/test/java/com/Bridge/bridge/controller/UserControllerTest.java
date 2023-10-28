@@ -6,6 +6,7 @@ import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
@@ -81,9 +82,8 @@ class UserControllerTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
-        stack.add("Spring");
-        stack.add("Java");
-        stack.add("Jpa");
+        stack.add("SPRING");
+        stack.add("JAVA");
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .refLink("link")
@@ -110,9 +110,9 @@ class UserControllerTest {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        List<String> skills = new ArrayList<>();
-        skills.add("spring");
-        skills.add("redis");
+        List<Stack> skills = new ArrayList<>();
+        skills.add(Stack.SPRING);
+        skills.add(Stack.REDIS);
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
@@ -129,7 +129,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.name").value("bridge"))
                 .andExpect(jsonPath("$.selfIntro").value("selfIntro"))
                 .andExpect(jsonPath("$.fields[0]").value("백엔드"))
-                .andExpect(jsonPath("$.stacks[0]").value("spring"))
+                .andExpect(jsonPath("$.stacks[0]").value("Spring"))
                 .andExpect(jsonPath("$.career").value("career"))
                 .andExpect(jsonPath("$.refLink").value("testLink"))
                 .andDo(print());
@@ -141,9 +141,9 @@ class UserControllerTest {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        List<String> skills = new ArrayList<>();
-        skills.add("spring");
-        skills.add("redis");
+        List<Stack> skills = new ArrayList<>();
+        skills.add(Stack.SPRING);
+        skills.add(Stack.REDIS);
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
@@ -152,10 +152,14 @@ class UserControllerTest {
 
         User saveUser = userRepository.save(newUser);
 
+        List<String> newSkills = new ArrayList<>();
+        newSkills.add("MYSQL");
+
         ProfileUpdateRequest updateRequest = ProfileUpdateRequest.builder()
                 .selfIntro("updateIntro")
                 .refLink("updateLink")
                 .career("updateCareer")
+                .stack(newSkills)
                 .build();
 
         MockMultipartFile request = new MockMultipartFile("request", "profile", "application/json", objectMapper.writeValueAsString(updateRequest).getBytes(StandardCharsets.UTF_8));

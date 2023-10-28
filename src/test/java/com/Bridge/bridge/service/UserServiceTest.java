@@ -7,6 +7,7 @@ import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
+import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
@@ -112,9 +113,9 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
-        fields.add("backend");
-        fields.add("frontend");
-        fields.add("designer");
+        fields.add("BACKEND");
+        fields.add("FRONTEND");
+        fields.add("UIUX");
 
         UserFieldRequest request = new UserFieldRequest(saveUser.getId()+1L, fields);
 
@@ -132,9 +133,8 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
-        stack.add("Spring");
-        stack.add("Java");
-        stack.add("Jpa");
+        stack.add("SPRING");
+        stack.add("JAVA");
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .refLink("link")
@@ -150,7 +150,7 @@ class UserServiceTest {
         User user = userRepository.findAll().get(0);
         assertEquals("자기 소개서", user.getProfile().getSelfIntro());
         assertEquals("대학생", user.getProfile().getCareer());
-        assertEquals(3, user.getProfile().getSkill().size());
+        assertEquals(2, user.getProfile().getSkill().size());
         assertEquals("Java", user.getProfile().getSkill().get(1));
     }
 
@@ -165,9 +165,8 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
-        stack.add("Spring");
-        stack.add("Java");
-        stack.add("Jpa");
+        stack.add("SPRING");
+        stack.add("JAVA");
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .selfIntro("자기 소개서")
@@ -191,9 +190,8 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
-        stack.add("Spring");
-        stack.add("Java");
-        stack.add("Jpa");
+        stack.add("SPRING");
+        stack.add("JAVA");
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .selfIntro("자기 소개서")
@@ -212,9 +210,9 @@ class UserServiceTest {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        List<String> skills = new ArrayList<>();
-        skills.add("spring");
-        skills.add("redis");
+        List<Stack> skills = new ArrayList<>();
+        skills.add(Stack.SPRING);
+        skills.add(Stack.REDIS);
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
@@ -230,8 +228,8 @@ class UserServiceTest {
         assertEquals("bridge", profileResponse.getName());
         assertEquals("selfIntro", profileResponse.getSelfIntro());
         assertEquals("백엔드", profileResponse.getFields().get(0));
-        assertEquals("spring", profileResponse.getStacks().get(0));
-        assertEquals("redis", profileResponse.getStacks().get(1));
+        assertEquals("Spring", profileResponse.getStacks().get(0));
+        assertEquals("Redis", profileResponse.getStacks().get(1));
         assertEquals("career", profileResponse.getCareer());
         assertEquals("testLink", profileResponse.getRefLink());
     }
@@ -255,9 +253,9 @@ class UserServiceTest {
 
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        List<String> skills = new ArrayList<>();
-        skills.add("spring");
-        skills.add("redis");
+        List<Stack> skills = new ArrayList<>();
+        skills.add(Stack.SPRING);
+        skills.add(Stack.REDIS);
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
@@ -283,9 +281,9 @@ class UserServiceTest {
 
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        List<String> skills = new ArrayList<>();
-        skills.add("spring");
-        skills.add("redis");
+        List<Stack> skills = new ArrayList<>();
+        skills.add(Stack.SPRING);
+        skills.add(Stack.REDIS);
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
         newUser.updateProfile(profile);
@@ -308,9 +306,9 @@ class UserServiceTest {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
 
-        List<String> skills = new ArrayList<>();
-        skills.add("spring");
-        skills.add("redis");
+        List<Stack> skills = new ArrayList<>();
+        skills.add(Stack.SPRING);
+        skills.add(Stack.REDIS);
 
         Profile profile = new Profile("testLink", "selfIntro", "career", skills);
 
@@ -320,7 +318,7 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         List<String> newSkills = new ArrayList<>();
-        newSkills.add("mySql");
+        newSkills.add("MYSQL");
 
         ProfileUpdateRequest request = ProfileUpdateRequest.builder()
                 .selfIntro("updateIntro")
@@ -336,7 +334,7 @@ class UserServiceTest {
         Profile findProfile = saveUser.getProfile();
         assertEquals("updateIntro", findProfile.getSelfIntro());
         assertEquals("updateCareer", findProfile.getCareer());
-        assertEquals("mySql", findProfile.getSkill().get(0));
+        assertEquals("MySql", findProfile.getSkill().get(0).getValue());
     }
 
     @Test

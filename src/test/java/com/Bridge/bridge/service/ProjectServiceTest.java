@@ -8,6 +8,7 @@ import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.SearchWord;
+import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
@@ -81,13 +82,13 @@ class ProjectServiceTest {
         User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Spring boot");
+        List<Stack> skill2 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
         List<Part> recruit1 = new ArrayList<>();
         recruit1.add(Part.builder()
@@ -152,8 +153,8 @@ class ProjectServiceTest {
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        skill.add("JAVA");
+        skill.add("SPRINGBOOT");
 
         List<PartRequestDto> recruit = new ArrayList<>();
         recruit.add(PartRequestDto.builder()
@@ -191,9 +192,9 @@ class ProjectServiceTest {
         User user = new User("delete", "delete@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
         List<Part> recruit1 = new ArrayList<>();
         recruit1.add(Part.builder()
@@ -225,54 +226,6 @@ class ProjectServiceTest {
         assertThat(result).isEqualTo(true);
     }
 
-//    @DisplayName("프로젝트 삭제 기능 - 삭제하려는 유저가 DB에 없을 때(올바르지 못한 접근)")
-//    @Test
-//    void deleteProject_Wrong() {
-//        // given
-//        User user1 = new User("delete1", "delete1@gmail.com", Platform.APPLE, "delete1Test");
-//        userRepository.save(user1);
-//
-//        User user2 = new User("delete2", "delete2@gmail.com", Platform.APPLE, "delete1Test");
-//        userRepository.save(user2);
-//
-//        List<String> skill1 = new ArrayList<>();
-//        skill1.add("Java");
-//        skill1.add("Spring boot");
-//
-//        List<Part> recruit1 = new ArrayList<>();
-//        recruit1.add(Part.builder()
-//                .recruitPart("backend")
-//                .recruitNum(3)
-//                .recruitSkill(skill1)
-//                .requirement("아무거나")
-//                .build());
-//
-//        Project newProject1 = Project.builder()
-//                .title("어플 프로젝트")
-//                .overview("This is new Project.")
-//                .dueDate("230907")
-//                .startDate("2023-09-11")
-//                .endDate("2023-09-30")
-//                .recruit(recruit1)
-//                .tagLimit(new ArrayList<>())
-//                .meetingWay("Offline")
-//                .user(user1)
-//                .stage("Before Start")
-//                .build();
-//
-//        projectRepository.save(newProject1);
-//
-//
-//        Long userId = user1.getId();
-//        Long projectId = projectRepository.findByUser_Id(userId).get().getId();
-//
-//        // when
-//        Boolean result = projectService.deleteProject(projectId, user2.getId());
-//
-//        // then
-//        assertThat(result).isEqualTo(false);
-//    }
-
     @Test
     @DisplayName("프로젝트 모집글 수정 테스트")
     void updateProject() {
@@ -280,9 +233,9 @@ class ProjectServiceTest {
         User user = new User("update", "update@gmail.com", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -311,8 +264,8 @@ class ProjectServiceTest {
 
 
         List<String> updateSkill = new ArrayList<>();
-        updateSkill.add("Javascript");
-        updateSkill.add("React");
+        updateSkill.add("JAVASCRIPT");
+        updateSkill.add("REACT");
 
         List<PartRequestDto> updateRecruit = new ArrayList<>();
         updateRecruit.add(PartRequestDto.builder()
@@ -349,9 +302,9 @@ class ProjectServiceTest {
         User user1 = new User("update", "update2@gmail.com", Platform.APPLE, "update1Test");
         userRepository.save(user1);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -406,137 +359,6 @@ class ProjectServiceTest {
         assertThrows(NotFoundProjectException.class, () -> projectService.updateProject(wrongId, updateProject));
     }
 
-//    @Test
-//    @DisplayName("프로젝트 모집글 수정 테스트 _ 잘못된 유저ID")
-//    void updateProject_NotSameWriterandUser() {
-//        // given
-//        User user1 = new User("update", "update2@gmail.com", Platform.APPLE, "update1Test");
-//        userRepository.save(user1);
-//
-//        List<String> skill = new ArrayList<>();
-//        skill.add("Java");
-//        skill.add("Spring boot");
-//
-//        List<Part> recruit = new ArrayList<>();
-//        recruit.add(Part.builder()
-//                .recruitPart("backend")
-//                .recruitNum(3)
-//                .recruitSkill(skill)
-//                .requirement("아무거나")
-//                .build());
-//
-//        Project newProject = Project.builder()
-//                .title("New project")
-//                .overview("This is new Project.")
-//                .dueDate("2023-09-07")
-//                .startDate("2023-09-11")
-//                .endDate("2023-09-30")
-//                .recruit(recruit)
-//                .tagLimit(new ArrayList<>())
-//                .meetingWay("Offline")
-//                .user(user1)
-//                .stage("Before Start")
-//                .build();
-//        projectRepository.save(newProject);
-//
-//
-//        List<String> updateSkill = new ArrayList<>();
-//        updateSkill.add("Javascript");
-//        updateSkill.add("React");
-//
-//        List<PartRequestDto> updateRecruit = new ArrayList<>();
-//        updateRecruit.add(PartRequestDto.builder()
-//                .recruitPart("frontend")
-//                .recruitNum(2)
-//                .recruitSkill(updateSkill)
-//                .requirement("화이팅")
-//                .build());
-//
-//        Long wrongId = Long.valueOf(123456789);
-//
-//        ProjectRequestDto updateProject = ProjectRequestDto.builder()
-//                .title("Update project")
-//                .overview("This is Updated Project.")
-//                .dueDate("2023-09-07")
-//                .startDate("2023-09-11")
-//                .endDate("2023-09-30")
-//                .recruit(updateRecruit)
-//                .tagLimit(new ArrayList<>())
-//                .meetingWay("Offline")
-//                .userId(wrongId)
-//                .stage("Before Start")
-//                .build();
-//
-//        // expected
-//        assertThrows(NotFoundUserException.class, () -> projectService.updateProject(newProject.getId(), updateProject));
-//    }
-
-//    @Test
-//    @DisplayName("프로젝트 모집글 수정 테스트 _ 프로젝트 작성자 != 유저")
-//    void updateProject_wrongUserId() {
-//        // given
-//        User user1 = new User("update1", "update1@gmail.com", Platform.APPLE, "update1Test");
-//        userRepository.save(user1);
-//
-//        User user2 = new User("update2", "update2@gmail.com", Platform.APPLE, "update2Test");
-//        userRepository.save(user2);
-//
-//        List<String> skill = new ArrayList<>();
-//        skill.add("Java");
-//        skill.add("Spring boot");
-//
-//        List<Part> recruit = new ArrayList<>();
-//        recruit.add(Part.builder()
-//                .recruitPart("backend")
-//                .recruitNum(3)
-//                .recruitSkill(skill)
-//                .requirement("아무거나")
-//                .build());
-//
-//        Project newProject = Project.builder()
-//                .title("New project")
-//                .overview("This is new Project.")
-//                .dueDate("2023-09-07")
-//                .startDate("2023-09-11")
-//                .endDate("2023-09-30")
-//                .recruit(recruit)
-//                .tagLimit(new ArrayList<>())
-//                .meetingWay("Offline")
-//                .user(user1)
-//                .stage("Before Start")
-//                .build();
-//        projectRepository.save(newProject);
-//
-//
-//        List<String> updateSkill = new ArrayList<>();
-//        updateSkill.add("Javascript");
-//        updateSkill.add("React");
-//
-//        List<PartRequestDto> updateRecruit = new ArrayList<>();
-//        updateRecruit.add(PartRequestDto.builder()
-//                .recruitPart("frontend")
-//                .recruitNum(2)
-//                .recruitSkill(updateSkill)
-//                .requirement("화이팅")
-//                .build());
-//
-//        ProjectRequestDto updateProject = ProjectRequestDto.builder()
-//                .title("Update project")
-//                .overview("This is Updated Project.")
-//                .dueDate("2023-09-07")
-//                .startDate("2023-09-11")
-//                .endDate("2023-09-30")
-//                .recruit(updateRecruit)
-//                .tagLimit(new ArrayList<>())
-//                .meetingWay("Offline")
-//                .userId(user2.getId())
-//                .stage("Before Start")
-//                .build();
-//
-//        // expected
-//         assertThrows(NullPointerException.class, () -> projectService.updateProject(newProject.getId(), updateProject));
-//    }
-
     @DisplayName("모집글 상세보기 기능")
     @Test
     void detailProject() {
@@ -546,9 +368,9 @@ class ProjectServiceTest {
         User user1 = new User("find", "find@gmail.com", Platform.APPLE, "find1Test");
         User saveUser = userRepository.save(user1);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -597,9 +419,9 @@ class ProjectServiceTest {
         User user1 = new User("detail_wrong", "detail_wrong@gmail.com", Platform.APPLE, "detail_wrongTest");
         User saveUser = userRepository.save(user1);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -647,9 +469,9 @@ class ProjectServiceTest {
         User user1 = new User("find", "find@gmail.com", Platform.APPLE, "find1Test");
         User saveUser = userRepository.save(user1);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -695,15 +517,15 @@ class ProjectServiceTest {
         User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Javascript");
-        skill2.add("Spring boot");
-        skill2.add("NodeJS");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -757,8 +579,8 @@ class ProjectServiceTest {
         projectRepository.save(newProject2);
 
         List<String> findSkills = new ArrayList<>();
-        findSkills.add("Java");
-        findSkills.add("Spring boot");
+        findSkills.add("JAVA");
+        findSkills.add("SPRINGBOOT");
 
         FilterRequestDto filterRequestDto = FilterRequestDto.builder()
                 .part("backend")
@@ -886,15 +708,15 @@ class ProjectServiceTest {
         User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Javascript");
-        skill2.add("Spring boot");
-        skill2.add("NodeJS");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -980,21 +802,21 @@ class ProjectServiceTest {
         User user3 = new User("user3", "user3@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user3);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Javascript");
-        skill2.add("Spring boot");
-        skill2.add("NodeJS");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
-        List<String> skill3 = new ArrayList<>();
-        skill2.add("Python");
-        skill2.add("Java");
-        skill2.add("Spring boot");
-        skill2.add("Django");
+        List<Stack> skill3 = new ArrayList<>();
+        skill2.add(Stack.PYTHON);
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.DJANGO);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -1086,21 +908,21 @@ class ProjectServiceTest {
         User user1 = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Javascript");
-        skill2.add("Spring boot");
-        skill2.add("NodeJS");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
-        List<String> skill3 = new ArrayList<>();
-        skill2.add("Python");
-        skill2.add("Java");
-        skill2.add("Spring boot");
-        skill2.add("Django");
+        List<Stack> skill3 = new ArrayList<>();
+        skill2.add(Stack.PYTHON);
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.DJANGO);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -1192,9 +1014,9 @@ class ProjectServiceTest {
         User user = new User("updateDeadline", "updateDeadline@gmail.com", Platform.APPLE, "updateDeadlineTest");
         userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -1238,9 +1060,9 @@ class ProjectServiceTest {
         User user = new User("alreadyClosed", "alreadyClosed@gmail.com", Platform.APPLE, "alreadyClosedTest");
         userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -1279,9 +1101,9 @@ class ProjectServiceTest {
         User user = new User("scrap", "scrap@gmail.com", Platform.APPLE, "scrapTest");
         user = userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -1322,9 +1144,9 @@ class ProjectServiceTest {
         User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
