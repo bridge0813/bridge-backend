@@ -1,17 +1,22 @@
 package com.Bridge.bridge.service;
 
+import com.Bridge.bridge.domain.Bookmark;
 import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.File;
+import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
+import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
+import com.Bridge.bridge.dto.response.BookmarkListResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.FileRepository;
+import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,11 +27,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +50,9 @@ class UserServiceTest {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @BeforeEach
     void clean() {
@@ -328,5 +337,95 @@ class UserServiceTest {
         assertEquals("updateIntro", findProfile.getSelfIntro());
         assertEquals("updateCareer", findProfile.getCareer());
         assertEquals("mySql", findProfile.getSkill().get(0));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("북마크 프로젝트 목록 조회 - 모집인원 로직 검증")
+    void getBookmarkProjects_RecruitNum() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<Part> recruits = new ArrayList<>();
+        recruits.add(new Part(null, 3, null, null, null));
+        recruits.add(new Part(null, 2, null, null, null));
+
+        Project project = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .dueDate("2023-10-31")
+                .recruit(recruits)
+                .build();
+
+        projectRepository.save(project);
+
+        Bookmark bookmark = new Bookmark(newUser, project);
+
+        newUser.getBookmarks().add(bookmark);
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(saveUser.getId());
+
+        //then
+        assertEquals(5, bookmarkProjects.get(0).getRecruitTotalNum());
+    }
+
+    @Test
+    @DisplayName("북마크 프로젝트 목록 조회 - 개수 검증")
+    void getBookmarkProjects_Num() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<Part> recruits = new ArrayList<>();
+
+        List<Project> projects = IntStream.range(1, 11)
+                .mapToObj(i -> Project.builder()
+                        .title("title" + i)
+                        .overview("overview" + i).build())
+                .collect(Collectors.toList());
+
+        projectRepository.saveAll(projects);
+
+        List<Bookmark> bookmarks = projects.stream()
+                .map(p -> new Bookmark(newUser, p))
+                .collect(Collectors.toList());
+
+        newUser.getBookmarks().addAll(bookmarks);
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(saveUser.getId());
+
+        //then
+        assertEquals(10, bookmarkProjects.size());
+    }
+
+    @Test
+    @DisplayName("북마크 프로젝트 목록 조회 - 내용 검증")
+    void getBookmarkProjects_Detail() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        Project project = Project.builder()
+                .title("title")
+                .overview("overview")
+                .dueDate("2023-10-31")
+                .recruit(null)
+                .build();
+
+        projectRepository.save(project);
+
+        Bookmark bookmark = new Bookmark(newUser, project);
+
+        newUser.getBookmarks().add(bookmark);
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(saveUser.getId());
+
+        //then
+        assertEquals("title", bookmarkProjects.get(0).getTitle());
+        assertEquals("2023-10-31", bookmarkProjects.get(0).getDueDate());
     }
 }

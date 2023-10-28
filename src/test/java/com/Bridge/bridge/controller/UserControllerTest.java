@@ -1,12 +1,16 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.domain.Bookmark;
 import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
+import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
+import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +46,9 @@ class UserControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Test
     @DisplayName("회원 가입시 관심 분야 등록")
@@ -158,6 +165,42 @@ class UserControllerTest {
                         .file(request)
                         .param("userId", String.valueOf(saveUser.getId())))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("북마크 프로젝트 목록 조회")
+    void showBookmarkProjects() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        List<Part> recruits = new ArrayList<>();
+        recruits.add(new Part(null, 3, null, null, null));
+        recruits.add(new Part(null, 2, null, null, null));
+
+        Project project = Project.builder()
+                .title("title")
+                .overview("overview")
+                .dueDate("2023-10-31")
+                .recruit(recruits)
+                .build();
+
+        projectRepository.save(project);
+
+        Bookmark bookmark = new Bookmark(newUser, project);
+
+        newUser.getBookmarks().add(bookmark);
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(get("/users/bookmark")
+                        .param("userId", String.valueOf(saveUser.getId()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("title"))
+                .andExpect(jsonPath("$[0].dueDate").value("2023-10-31"))
+                .andExpect(jsonPath("$[0].recruitTotalNum").value(5))
                 .andDo(print());
     }
 }
