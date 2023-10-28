@@ -7,6 +7,7 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
+import com.Bridge.bridge.dto.response.BookmarkListResponse;
 import com.Bridge.bridge.dto.response.FileResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
@@ -134,6 +135,17 @@ public class UserService {
         if(oldFile != null) {
             fileService.deleteFile(oldFile.getId());
         }
+    }
+
+    /**
+     * 북마크한 프로젝트 목록
+     */
+    public List<BookmarkListResponse> getBookmarkProjects(Long userId) {
+        User findUser = find(userId);
+
+        return findUser.getBookmarks().stream()
+                .map(b -> new BookmarkListResponse(b.getProject()))
+                .collect(Collectors.toList());
     }
 
     /**

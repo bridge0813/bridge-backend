@@ -3,6 +3,7 @@ package com.Bridge.bridge.controller;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
+import com.Bridge.bridge.dto.response.BookmarkListResponse;
 import com.Bridge.bridge.dto.response.ErrorResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.service.UserService;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @Tag(name = "User", description = "유저")
@@ -81,5 +84,14 @@ public class UserController {
                                            @RequestPart(value = "refFile", required = false) MultipartFile refFile) {
         userService.updateProfile(userId, request, photo, refFile);
         return ResponseEntity.ok(true);
+    }
+
+    /**
+     * 북마크 프로젝트 목록 조회
+     */
+    @GetMapping("/users/bookmark")
+    public ResponseEntity<?> showBookmarkProjects(@RequestParam("userId") Long userId) {
+        List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(userId);
+        return ResponseEntity.ok(bookmarkProjects);
     }
 }
