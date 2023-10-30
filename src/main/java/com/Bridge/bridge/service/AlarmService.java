@@ -109,6 +109,7 @@ public class AlarmService {
                 .build();
         alarmRepository.save(alarm);
 
+        rcvUser.getRcvAlarms().add(alarm);
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
@@ -161,6 +162,7 @@ public class AlarmService {
        Func : 지원자 발생 시 알림 생성
        Parameter: projectId
     */
+    @Transactional
     public void getApplyAlarm(Long projectId) throws FirebaseMessagingException {
 
         Project project = projectRepository.findById(projectId)
@@ -175,6 +177,8 @@ public class AlarmService {
                 .rcvUser(getAlarmUser)
                 .build();
         alarmRepository.save(alarm);
+
+        getAlarmUser.getRcvAlarms().add(alarm);
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
