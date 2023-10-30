@@ -62,7 +62,7 @@ public class Project {
     private int bookmarkNum; // 스크랩 횟수
 
     @Builder
-    public Project(Long id, String title, String overview, LocalDateTime dueDate, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime uploadTime, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user, List<ApplyProject> applyProjects, List<Bookmark> bookmarks, int bookmarkNum) {
+    public Project(Long id, String title, String overview, LocalDateTime dueDate, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime uploadTime, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user, int bookmarkNum) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -75,8 +75,6 @@ public class Project {
         this.meetingWay = meetingWay;
         this.stage = stage;
         this.user = user;
-        this.applyProjects = applyProjects;
-        this.bookmarks = bookmarks;
         this.bookmarkNum = bookmarkNum;
     }
 

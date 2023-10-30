@@ -51,45 +51,25 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
     }
 
     public Project toEntityOfProject(User user){
-        LocalDateTime dueDate = LocalDateTime.now();
 
-        int d_year = Integer.valueOf(this.getDueDate().substring(0,2));
-        int d_month = Integer.valueOf(this.getDueDate().substring(2,4));
-        int d_date = Integer.valueOf(this.getDueDate().substring(4,6));
+        int d_year = Integer.valueOf(this.getDueDate().substring(0,4));
+        int d_month = Integer.valueOf(this.getDueDate().substring(5,7));
+        int d_date = Integer.valueOf(this.getDueDate().substring(8,10));
 
-        dueDate.withYear(d_year);
-        dueDate.withMonth(d_month);
-        dueDate.withDayOfMonth(d_date);
-        dueDate.withHour(23);
-        dueDate.withMinute(59);
-        dueDate.withSecond(59);
+        LocalDateTime dueDate = LocalDateTime.of(d_year,d_month,d_date,23,59,59);
 
-        LocalDateTime startDate = LocalDateTime.now();
 
-        int s_year = Integer.valueOf(this.getDueDate().substring(0,2));
-        int s_month = Integer.valueOf(this.getDueDate().substring(2,4));
-        int s_date = Integer.valueOf(this.getDueDate().substring(4,6));
+        int s_year = Integer.valueOf(this.getStartDate().substring(0,4));
+        int s_month = Integer.valueOf(this.getStartDate().substring(5,7));
+        int s_date = Integer.valueOf(this.getStartDate().substring(8,10));
 
-        startDate.withYear(s_year);
-        startDate.withMonth(s_month);
-        startDate.withDayOfMonth(s_date);
-        startDate.withHour(23);
-        startDate.withMinute(59);
-        startDate.withSecond(59);
+        LocalDateTime startDate = LocalDateTime.of(s_year,s_month,s_date,23,59,59);
 
-        LocalDateTime endDate = LocalDateTime.now();
+        int e_year = Integer.valueOf(this.getEndDate().substring(0,4));
+        int e_month = Integer.valueOf(this.getEndDate().substring(5,7));
+        int e_date = Integer.valueOf(this.getEndDate().substring(8,10));
 
-        int e_year = Integer.valueOf(this.getDueDate().substring(0,2));
-        int e_month = Integer.valueOf(this.getDueDate().substring(2,4));
-        int e_date = Integer.valueOf(this.getDueDate().substring(4,6));
-
-        endDate.withYear(e_year);
-        endDate.withMonth(e_month);
-        endDate.withDayOfMonth(e_date);
-        endDate.withHour(23);
-        endDate.withMinute(59);
-        endDate.withSecond(59);
-
+        LocalDateTime endDate = LocalDateTime.of(e_year,e_month,e_date,23,59,59);
 
         return Project.builder()
                 .title(this.getTitle())
