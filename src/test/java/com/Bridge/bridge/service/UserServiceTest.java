@@ -151,7 +151,7 @@ class UserServiceTest {
         assertEquals("자기 소개서", user.getProfile().getSelfIntro());
         assertEquals("대학생", user.getProfile().getCareer());
         assertEquals(2, user.getProfile().getSkill().size());
-        assertEquals("Java", user.getProfile().getSkill().get(1));
+        assertEquals("Java", user.getProfile().getSkill().get(1).getValue());
     }
 
     @Test
@@ -334,7 +334,7 @@ class UserServiceTest {
         Profile findProfile = saveUser.getProfile();
         assertEquals("updateIntro", findProfile.getSelfIntro());
         assertEquals("updateCareer", findProfile.getCareer());
-        assertEquals("MySql", findProfile.getSkill().get(0).getValue());
+        assertEquals("MySQL", findProfile.getSkill().get(0).getValue());
     }
 
     @Test
