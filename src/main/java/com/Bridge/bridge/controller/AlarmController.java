@@ -4,10 +4,7 @@ import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,8 +20,8 @@ public class AlarmController {
         return;
     }
 
-    @PostMapping("/alarms")
-    public List<AllAlarmResponse> getAllOfAlarms(@RequestBody Long userId){
+    @GetMapping("/alarms")
+    public List<AllAlarmResponse> getAllOfAlarms(@RequestParam Long userId){
         return alarmService.getAllOfAlarms(userId);
     }
 
