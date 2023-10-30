@@ -8,6 +8,7 @@ import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.NotificationRequestDto;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.exception.BridgeException;
+import com.Bridge.bridge.exception.badrequest.AlarmDeleteException;
 import com.Bridge.bridge.exception.notfound.NotFoundAlarmException;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
@@ -232,6 +233,6 @@ public class AlarmService {
         if(size == 0){ // 모두 삭제되었나 확인용
             return true;
         }
-        return false;
+        throw new AlarmDeleteException();
     }
 }
