@@ -1,11 +1,13 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.dto.request.UserRegisterRequest;
+import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
+import com.Bridge.bridge.dto.request.UserFieldRequest;
+import com.Bridge.bridge.dto.request.UserProfileRequest;
+import com.Bridge.bridge.dto.response.BookmarkListResponse;
 import com.Bridge.bridge.dto.response.ErrorResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,9 +19,15 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 
 @Tag(name = "User", description = "유저")
 @RestController
@@ -38,9 +46,23 @@ public class UserController {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/signup")
-    public ResponseEntity saveField(@RequestBody UserRegisterRequest request) {
-        userService.signUpInfo(request);
+    public ResponseEntity saveField(@RequestBody UserFieldRequest userFieldRequest) {
+        userService.saveField(userFieldRequest);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * 프로필 등록
+     */
+    @PostMapping("/users/profile")
+    public ResponseEntity<?> createProfile(@RequestParam("userId") Long userId,
+                                           @RequestPart("profile") UserProfileRequest userProfileRequest,
+                                           @RequestPart(value = "photo", required = false)MultipartFile photo,
+                                           @RequestPart(value = "refFile", required = false)MultipartFile refFile) {
+        userService.saveProfile(userId, userProfileRequest, photo, refFile);
+
+        // TODO : 리다이렉트?
+        return ResponseEntity.ok(true);
     }
 
     /**
@@ -51,5 +73,25 @@ public class UserController {
         UserProfileResponse profile = userService.getProfile(userId);
 
         return ResponseEntity.ok(profile);
+    }
+
+    /**
+     * 프로필 수정
+     */
+    @PutMapping("/users/profile")
+    public ResponseEntity<?> updateProfile(@RequestParam("userId") Long userId, @RequestPart("request") ProfileUpdateRequest request,
+                                           @RequestPart(value = "photo", required = false) MultipartFile photo,
+                                           @RequestPart(value = "refFile", required = false) MultipartFile refFile) {
+        userService.updateProfile(userId, request, photo, refFile);
+        return ResponseEntity.ok(true);
+    }
+
+    /**
+     * 북마크 프로젝트 목록 조회
+     */
+    @GetMapping("/users/bookmark")
+    public ResponseEntity<?> showBookmarkProjects(@RequestParam("userId") Long userId) {
+        List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(userId);
+        return ResponseEntity.ok(bookmarkProjects);
     }
 }

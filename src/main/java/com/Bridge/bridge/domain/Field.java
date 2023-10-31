@@ -1,38 +1,20 @@
 package com.Bridge.bridge.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-@Entity
 @Getter
-@NoArgsConstructor
-public class Field {
+@RequiredArgsConstructor
+public enum Field {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "field_id")
-    private Long id;
+    IOS("iOS"),
+    AOS("안드로이드"),
+    FRONTEND("프론트엔드"),
+    BACKEND("백엔드"),
+    UIUX("UI/UX"),
+    BIBX("BI/BX"),
+    VIDEOMOTION("영상/모션"),
+    PM("PM");
 
-    private String fieldName; // 관심 분야
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public Field(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    //-- 연관관계 메소드 --//
-    public void updateFieldUser(User user) {
-        this.user = user;
-    }
+    private final String value;
 }

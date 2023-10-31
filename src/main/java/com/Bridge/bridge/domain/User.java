@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +20,6 @@ public class User {
 
     private String email;               // 이메일
 
-    private String photo;               // 프로필 사진
-
     private String platformId;          // 소셜 로그인 고유 아이디
 
     private String refreshToken;
@@ -32,7 +29,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Platform platform;          // 플랫폼 구별 enum
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(value = EnumType.STRING)
     private List<Field> fields = new ArrayList<>(); // 관심 분야
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

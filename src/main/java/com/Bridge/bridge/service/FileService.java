@@ -38,7 +38,7 @@ public class FileService {
      * 파일 S3에 업로드 저장
      */
     @Transactional
-    private Long uploadFile(MultipartFile file) {
+    public File uploadFile(MultipartFile file) {
 
         String uploadFilePath =  "bridge/" + getFolderName();
         String uploadFileUrl = "";
@@ -55,7 +55,7 @@ public class FileService {
             amazonS3Client.putObject(
                     new PutObjectRequest(bucketName, keyName, inputStream, objectMetadata));
 
-            uploadFileUrl = amazonS3Client.getUrl(bucketName, keyName).toString();
+            uploadFileUrl = String.valueOf(amazonS3Client.getUrl(bucketName, keyName));
 
             File newFile = File.builder()
                     .uploadFileUrl(uploadFileUrl)
@@ -65,7 +65,7 @@ public class FileService {
                     .build();
 
             File saveFile = fileRepository.save(newFile);
-            return saveFile.getId();
+            return saveFile;
 
         } catch (IOException | AmazonS3Exception e) {
             throw new FileUploadException();

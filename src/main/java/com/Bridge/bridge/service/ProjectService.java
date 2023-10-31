@@ -217,9 +217,11 @@ public class ProjectService {
         Return : projectResponse
     */
     public List<ProjectListResponseDto> filterProjectList(FilterRequestDto filterRequestDto){
+        List<Stack> skills = filterRequestDto.getSkills().stream()
+                .map(s -> Stack.valueOf(s))
+                .collect(Collectors.toList());
 
-
-        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(filterRequestDto.getSkills(), filterRequestDto.getPart());
+        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, filterRequestDto.getPart());
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime.toString());
@@ -575,7 +577,7 @@ public class ProjectService {
                 .map(p -> {
                     User user = p.getUser();
                     List<String> fields = user.getFields().stream()
-                            .map(f -> f.getFieldName())
+                            .map(f -> f.getValue())
                             .collect(Collectors.toList());
 
                     return ApplyUserResponse.builder()

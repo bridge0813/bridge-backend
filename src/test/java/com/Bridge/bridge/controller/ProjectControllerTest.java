@@ -121,8 +121,8 @@ class ProjectControllerTest {
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        skill.add("JAVA");
+        skill.add("SPRINGBOOT");
 
         List<PartRequestDto> recruit = new ArrayList<>();
         recruit.add(PartRequestDto.builder()
@@ -164,8 +164,8 @@ class ProjectControllerTest {
         User saveUser = userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        skill.add("JAVA");
+        skill.add("SPRINGBOOT");
 
         List<PartRequestDto> recruit = new ArrayList<>();
         recruit.add(PartRequestDto.builder()
@@ -235,9 +235,9 @@ class ProjectControllerTest {
                 .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
                 .compact();
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -282,12 +282,12 @@ class ProjectControllerTest {
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        skill1.add("JAVA");
+        skill1.add("SPRINGBOOT");
 
         List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Spring boot");
+        skill2.add("JAVA");
+        skill2.add("SPRINGBOOT");
 
         List<PartRequestDto> recruit1 = new ArrayList<>();
         recruit1.add(PartRequestDto.builder()
@@ -335,11 +335,11 @@ class ProjectControllerTest {
         projectService.createProject(newProject2);
 
         List<String> findSkills = new ArrayList<>();
-        findSkills.add("Java");
-        findSkills.add("Spring boot");
+        findSkills.add("JAVA");
+        findSkills.add("SPRINGBOOT");
 
         FilterRequestDto filterRequestDto = FilterRequestDto.builder()
-                .part("backend")
+                .part("Backend")
                 .skills(findSkills)
                 .build();
 
@@ -365,27 +365,27 @@ class ProjectControllerTest {
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        skill1.add("JAVA");
+        skill1.add("SPRINGBOOT");
 
         List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Spring boot");
+        skill2.add("JAVA");
+        skill2.add("SPRINGBOOT");
 
         List<PartRequestDto> recruit1 = new ArrayList<>();
         recruit1.add(PartRequestDto.builder()
-                .recruitPart("backend")
+                .recruitPart("Backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("backend")
+                .requirement("Backend")
                 .build());
 
         List<PartRequestDto> recruit2 = new ArrayList<>();
         recruit2.add(PartRequestDto.builder()
-                .recruitPart("frontend")
+                .recruitPart("Frontend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("frontend")
+                .requirement("Frontend")
                 .build());
 
         ProjectRequestDto newProject1 = ProjectRequestDto.builder()
@@ -443,39 +443,39 @@ class ProjectControllerTest {
         userRepository.save(user3);
 
         List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        skill1.add("JAVA");
+        skill1.add("SPRINGBOOT");
 
         List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Spring boot");
+        skill2.add("JAVA");
+        skill2.add("SPRINGBOOT");
 
         List<String> skill3 = new ArrayList<>();
-        skill2.add("Python");
-        skill2.add("Django");
+        skill3.add("PYTHON");
+        skill3.add("DJANGO");
 
         List<PartRequestDto> recruit1 = new ArrayList<>();
         recruit1.add(PartRequestDto.builder()
-                .recruitPart("backend")
+                .recruitPart("Backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("backend")
+                .requirement("Backend")
                 .build());
 
         List<PartRequestDto> recruit2 = new ArrayList<>();
         recruit2.add(PartRequestDto.builder()
-                .recruitPart("frontend")
+                .recruitPart("Frontend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("frontend")
+                .requirement("Frontend")
                 .build());
 
         List<PartRequestDto> recruit3 = new ArrayList<>();
         recruit3.add(PartRequestDto.builder()
-                .recruitPart("backtend")
+                .recruitPart("Backtend")
                 .recruitNum(5)
                 .recruitSkill(skill3)
-                .requirement("backend")
+                .requirement("Backend")
                 .build());
 
         ProjectRequestDto newProject1 = ProjectRequestDto.builder()
@@ -541,35 +541,35 @@ class ProjectControllerTest {
         userRepository.save(user);
 
         List<String> skill1 = new ArrayList<>();
-        skill1.add("Java");
-        skill1.add("Spring boot");
+        skill1.add("JAVA");
+        skill1.add("SPRINGBOOT");
 
         List<String> skill2 = new ArrayList<>();
-        skill2.add("Java");
-        skill2.add("Spring boot");
+        skill2.add("JAVA");
+        skill2.add("SPRINGBOOT");
 
         List<PartRequestDto> recruit1 = new ArrayList<>();
         recruit1.add(PartRequestDto.builder()
-                .recruitPart("backend")
+                .recruitPart("Backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("backend")
+                .requirement("Backend")
                 .build());
 
         List<PartRequestDto> recruit2 = new ArrayList<>();
         recruit2.add(PartRequestDto.builder()
-                .recruitPart("frontend")
+                .recruitPart("Frontend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("frontend")
+                .requirement("Frontend")
                 .build());
 
         List<PartRequestDto> recruit3 = new ArrayList<>();
         recruit3.add(PartRequestDto.builder()
-                .recruitPart("backend")
+                .recruitPart("Backend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("backend")
+                .requirement("Backend")
                 .build());
 
         ProjectRequestDto newProject1 = ProjectRequestDto.builder()
@@ -634,9 +634,9 @@ class ProjectControllerTest {
         User user1 = new User("closeProject", "closeProject@gmail.com", Platform.APPLE, "closeProjectTest");
         userRepository.save(user1);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -680,9 +680,9 @@ class ProjectControllerTest {
         User user = new User("scrap", "scrap@gmail.com", Platform.APPLE, "scrapTest");
         user = userRepository.save(user);
 
-        List<String> skill = new ArrayList<>();
-        skill.add("Java");
-        skill.add("Spring boot");
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
@@ -905,10 +905,7 @@ class ProjectControllerTest {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
 
-        Field field1 = new Field("Backend");
-        field1.updateFieldUser(user1);
-
-        user1.getFields().add(field1);
+        user1.getFields().add(Field.BACKEND);
 
         Profile profile1 = Profile.builder()
                 .career("career1")
@@ -938,7 +935,7 @@ class ProjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].userId").value(user1.getId()))
                 .andExpect(jsonPath("$[0].name").value("bridge1"))
-                .andExpect(jsonPath("$[0].fields[0]").value("Backend"))
+                .andExpect(jsonPath("$[0].fields[0]").value("백엔드"))
                 .andExpect(jsonPath("$[0].career").value("career1"))
                 .andDo(print());
     }

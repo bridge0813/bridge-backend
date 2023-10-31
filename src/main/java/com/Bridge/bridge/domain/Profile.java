@@ -1,5 +1,6 @@
 package com.Bridge.bridge.domain;
 
+import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -24,16 +27,22 @@ public class Profile {
     private String career;          // 경력 사항
 
     @ElementCollection
-    private List<String> skill;           // 기술 스택
+    @Enumerated(EnumType.STRING)
+    private List<Stack> skill = new ArrayList<>();           // 기술 스택
 
     @OneToOne(mappedBy = "profile")
     private User user;              // 해당 프로필을 작성한 유저
 
-    @OneToMany(mappedBy = "profile")
-    private List<File> files = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "file_id", name = "file_photo_id")
+    private File profilePhoto;      // 프로필 사진
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "file_id", name = "file_ref_id")
+    private File refFile;           // 첨부 파일
 
     @Builder
-    public Profile(String refLink, String selfIntro, String career, List<String> skill) {
+    public Profile(String refLink, String selfIntro, String career, List<Stack> skill) {
         this.refLink = refLink;
         this.selfIntro = selfIntro;
         this.career = career;
@@ -42,5 +51,39 @@ public class Profile {
 
     public void updateUser(User user) {
         this.user = user;
+    }
+
+    public void updateProfile(ProfileUpdateRequest request) {
+        this.selfIntro = request.getSelfIntro();
+        this.career = request.getCareer();
+        this.skill = request.getStack().stream()
+                .map(s -> Stack.valueOf(s))
+                .collect(Collectors.toList());
+        this.refLink = request.getRefLink();
+    }
+
+    // --연관관계 메소드 -- //
+    public File setProfilePhoto(File file) {
+        // 프로필 자운 후 덥데이트
+        if(Objects.nonNull(this.profilePhoto)) {
+           File oldPhoto = this.profilePhoto;
+           this.profilePhoto = file;
+           return oldPhoto;
+        }
+        this.profilePhoto = file;
+        file.setProfilePhoto(this);
+        return null;
+    }
+
+    public File setRefFile(File file) {
+        // 프로필 자운 후 덥데이트
+        if(Objects.nonNull(this.refFile)) {
+            File photo = this.refFile;
+            this.refFile = file;
+            return photo;
+        }
+        this.refFile = file;
+        file.setProfileRef(this);
+        return null;
     }
 }

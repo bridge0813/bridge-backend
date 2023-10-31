@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserFieldRequest {
 
+    private Long userId;
     private List<String> fieldName;
 
     public List<Field> toEntity() {
         return fieldName.stream()
-                .map(Field::new)
+                .map(s -> Field.valueOf(s))
                 .collect(Collectors.toList());
     }
 }

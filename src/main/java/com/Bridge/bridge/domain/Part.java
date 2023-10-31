@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,8 @@ public class Part {
     private int recruitNum;         //모집인원 수
 
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> recruitSkill;    //모집 기술 스택
+    @Enumerated(EnumType.STRING)
+    private List<Stack> recruitSkill = new ArrayList<>();    //모집 기술 스택
 
     private String requirement; // 모집 요건
 
@@ -34,7 +36,7 @@ public class Part {
     private Project project;
 
     @Builder
-    public Part(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement, Project project) {
+    public Part(String recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement, Project project) {
         this.recruitPart = recruitPart;
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;
