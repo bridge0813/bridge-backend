@@ -5,7 +5,7 @@ import com.Bridge.bridge.dto.request.NotificationRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.service.FCMService;
+import com.Bridge.bridge.service.AlarmService;
 import com.Bridge.bridge.service.ProjectService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final FCMService fcmService;
+    private final AlarmService alarmService;
 
 
     // 프로젝트 모집글 작성
@@ -129,7 +129,7 @@ public class ProjectController {
         boolean result = projectService.apply(userId, projectId);
 
         // 모집자에게 지원자 발생 알림 보내기
-        fcmService.getApplyAlarm(projectId);
+        alarmService.getApplyAlarm(projectId);
 
         return ResponseEntity.ok(result);
     }
@@ -161,7 +161,7 @@ public class ProjectController {
         projectService.acceptApply(projectId, userId);
 
         // 지원 결과 알림 보내기
-        fcmService.getApplyResultAlarm(userId);
+        alarmService.getApplyResultAlarm(userId);
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
@@ -170,7 +170,7 @@ public class ProjectController {
                 .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
                 .build();
 
-        fcmService.sendNotification(notificationRequestDto);
+        alarmService.sendNotification(notificationRequestDto);
 
         return ResponseEntity.ok(true);
     }
@@ -184,7 +184,7 @@ public class ProjectController {
         projectService.rejectApply(projectId, userId);
 
         // 지원 결과 알림 보내기
-        fcmService.getApplyResultAlarm(userId);
+        alarmService.getApplyResultAlarm(userId);
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
@@ -193,7 +193,7 @@ public class ProjectController {
                 .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
                 .build();
 
-        fcmService.sendNotification(notificationRequestDto);
+        alarmService.sendNotification(notificationRequestDto);
 
         return ResponseEntity.ok(true);
     }
@@ -202,6 +202,13 @@ public class ProjectController {
     @GetMapping("/projects/top")
     public List<TopProjectResponseDto> topProjects(){
         return projectService.topProjects();
+
+    }
+
+    // 마감 임박 모집글 조회 기능
+    @GetMapping("/projects/imminent")
+    public List<imminentProjectResponse> imminentProjects(){
+        return projectService.getdeadlineImminentProejcts();
 
     }
 }

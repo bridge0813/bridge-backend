@@ -5,6 +5,7 @@ import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +19,13 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Override
     <S extends Project> S save(S entity);
 
-    List<Project> findAllByRecruitInaAndDueDateGreaterThanEqual(List<Part> parts, String dueDate);
+    List<Project> findAllByRecruitInAndDueDateGreaterThanEqual(List<Part> parts, String dueDate);
 
     List<Project> findAllByUser(User user);
 
     List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(String dueDate);
 
     List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(String dueDate);
+
+    List<Project> findTop40ByDueDateGreaterThanEqualOrderByDueDate(LocalDateTime dueDate);
 }

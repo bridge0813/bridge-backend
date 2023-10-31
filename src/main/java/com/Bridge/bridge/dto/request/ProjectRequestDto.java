@@ -51,28 +51,32 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
     }
 
     public Project toEntityOfProject(User user){
-        LocalDateTime localDateTime = LocalDateTime.now();
 
-        int year = Integer.valueOf(this.getDueDate().substring(0,2));
-        int month = Integer.valueOf(this.getDueDate().substring(2,4));
-        int date = Integer.valueOf(this.getDueDate().substring(4,6));
+        int d_year = Integer.valueOf(this.getDueDate().substring(0,4));
+        int d_month = Integer.valueOf(this.getDueDate().substring(5,7));
+        int d_date = Integer.valueOf(this.getDueDate().substring(8,10));
 
-        localDateTime.withYear(year);
-        localDateTime.withMonth(month);
-        localDateTime.withDayOfMonth(date);
-        localDateTime.withHour(23);
-        localDateTime.withMinute(59);
-        localDateTime.withSecond(59);
+        LocalDateTime dueDate = LocalDateTime.of(d_year,d_month,d_date,23,59,59);
 
-        // 포맷
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYMMDDHHmmss"));
+
+        int s_year = Integer.valueOf(this.getStartDate().substring(0,4));
+        int s_month = Integer.valueOf(this.getStartDate().substring(5,7));
+        int s_date = Integer.valueOf(this.getStartDate().substring(8,10));
+
+        LocalDateTime startDate = LocalDateTime.of(s_year,s_month,s_date,23,59,59);
+
+        int e_year = Integer.valueOf(this.getEndDate().substring(0,4));
+        int e_month = Integer.valueOf(this.getEndDate().substring(5,7));
+        int e_date = Integer.valueOf(this.getEndDate().substring(8,10));
+
+        LocalDateTime endDate = LocalDateTime.of(e_year,e_month,e_date,23,59,59);
 
         return Project.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
-                .dueDate(this.getDueDate())
-                .startDate(this.getStartDate())
-                .endDate(formatedNow)
+                .dueDate(dueDate)
+                .startDate(startDate)
+                .endDate(endDate)
                 .recruit(new ArrayList<>())
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
