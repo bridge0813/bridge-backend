@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +187,7 @@ class UserControllerTest {
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate("2023-10-31")
+                .dueDate(LocalDateTime.now())
                 .recruit(recruits)
                 .build();
 
@@ -205,6 +206,31 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].title").value("title"))
                 .andExpect(jsonPath("$[0].dueDate").value("2023-10-31"))
                 .andExpect(jsonPath("$[0].recruitTotalNum").value(5))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴")
+    void deleteUser() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        Project project = Project.builder()
+                .title("title")
+                .overview("overview")
+                .dueDate(LocalDateTime.now())
+                .recruit(null)
+                .user(newUser)
+                .build();
+
+        newUser.getProjects().add(project);
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(delete("/users/{userId}", saveUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
                 .andDo(print());
     }
 }
