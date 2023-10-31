@@ -151,6 +151,16 @@ public class UserService {
     }
 
     /**
+     * 회원 탈퇴
+     */
+    @Transactional
+    public boolean deleteUser(Long userId) {
+        User findUser = find(userId);
+        userRepository.delete(findUser);
+        return true;
+    }
+
+    /**
      * 참조파일 업데이트
      */
     @Transactional
