@@ -1,5 +1,6 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.service.AlarmService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,13 @@ public class AlarmController {
     }
 
     @DeleteMapping("/alarms")
-    public ResponseEntity<?> deleteAllOfAlarms(@RequestBody Long userId){
+    public ResponseEntity<?> deleteAllOfAlarms(@RequestParam Long userId){
         boolean result = alarmService.deleteAllAlarms(userId);
         return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/alarm")
+    public List<AlarmResponse> deleteAlarm(@RequestParam Long userId, @RequestBody Long alarmId){
+        return alarmService.deleteAlarm(userId, alarmId);
     }
 }
