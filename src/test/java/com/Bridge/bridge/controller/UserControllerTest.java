@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +187,7 @@ class UserControllerTest {
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate("2023-10-31")
+                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
                 .recruit(recruits)
                 .build();
 

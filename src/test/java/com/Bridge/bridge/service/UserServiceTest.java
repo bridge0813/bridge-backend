@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -351,7 +352,7 @@ class UserServiceTest {
         Project project = Project.builder()
                 .title("title1")
                 .overview("overview1")
-                .dueDate("2023-10-31")
+                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
                 .recruit(recruits)
                 .build();
 
@@ -408,7 +409,7 @@ class UserServiceTest {
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate("2023-10-31")
+                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
                 .recruit(null)
                 .build();
 
