@@ -3,6 +3,7 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Alarm;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.repository.AlarmRepository;
 import com.Bridge.bridge.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -150,6 +152,55 @@ public class AlarmServiceTest {
         Assertions.assertThat(responses).isEqualTo(true);
         Assertions.assertThat(user2Alarms).isEqualTo(1);
     }
+
+    @DisplayName("개별 알람 삭제")
+    @Test
+    void deleteAlarm() {
+        // given
+        User user1 = new User("user1", "user1@gmaiil.com", Platform.APPLE, "alarm");
+        userRepository.save(user1);
+
+        Alarm alarm1 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장? - 1")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user1)
+                .build();
+        Alarm alarm2 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장? - 2")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user1)
+                .build();
+        Alarm alarm3 = Alarm.builder()
+                .type("Apply")
+                .title("지원 결과 도착")
+                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user1)
+                .build();
+
+        alarmRepository.save(alarm1);
+        alarmRepository.save(alarm2);
+        alarmRepository.save(alarm3);
+
+        user1.getRcvAlarms().add(alarm1);
+        user1.getRcvAlarms().add(alarm2);
+        user1.getRcvAlarms().add(alarm3);
+
+        // when
+        List<AlarmResponse> responses = alarmService.deleteAlarm(user1.getId(), alarm1.getId());
+
+        // then
+
+        Assertions.assertThat(responses.size()).isEqualTo(2);
+        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("지원자 등장? - 2");
+        Assertions.assertThat(responses.get(1).getTitle()).isEqualTo("지원 결과 도착");
+
+    }
+
 
 
 }

@@ -247,6 +247,7 @@ public class AlarmService {
        Parameter: userId, alarmId
        Return : List<AlarmResponse>
     */
+    @Transactional
     public List<AlarmResponse> deleteAlarm(Long userId, Long alarmId){
         // 유저 찾기
         User user = userRepository.findById(userId)
