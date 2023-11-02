@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -118,6 +120,54 @@ public class AlarmControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isOk()) // 응답 status를 ok로 테스트
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("개별 알람 삭제")
+    void deleteAlarm() throws Exception {
+        // given
+        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
+        userRepository.save(user);
+
+        Alarm alarm1 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장? - 1")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user)
+                .build();
+        Alarm alarm2 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장? - 2")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user)
+                .build();
+        Alarm alarm3 = Alarm.builder()
+                .type("Apply")
+                .title("지원 결과 도착")
+                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user)
+                .build();
+
+        alarmRepository.save(alarm1);
+        alarmRepository.save(alarm2);
+        alarmRepository.save(alarm3);
+
+        user.getRcvAlarms().add(alarm1);
+        user.getRcvAlarms().add(alarm2);
+        user.getRcvAlarms().add(alarm3);
+
+        // expected
+        mockMvc.perform(delete("/alarm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("userId", user.getId().toString())
+                        .content(objectMapper.writeValueAsString(alarm2.getId())))
+                .andExpect(status().isOk()) // 응답 status를 ok로 테스트
+                .andExpect(jsonPath("$[0].title").value("지원자 등장? - 1"))
+                .andExpect(jsonPath("$[1].title").value("지원 결과 도착"))
                 .andDo(print());
     }
 
