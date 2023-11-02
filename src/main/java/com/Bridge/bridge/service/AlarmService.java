@@ -6,6 +6,7 @@ import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.NotificationRequestDto;
+import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.exception.BridgeException;
 import com.Bridge.bridge.exception.badrequest.AlarmDeleteException;
@@ -231,6 +232,7 @@ public class AlarmService {
         List<Alarm> alarms = alarmRepository.findAllByRcvUser(user);
 
         alarmRepository.deleteAllByRcvUser(user);
+        user.getRcvAlarms().clear();
 
         int size = alarmRepository.findAllByRcvUser(user).size();
 
@@ -238,5 +240,31 @@ public class AlarmService {
             return true;
         }
         throw new AlarmDeleteException();
+    }
+
+    /*
+       Func : 개별 알람 삭제 기능
+       Parameter: userId, alarmId
+       Return : List<AlarmResponse>
+    */
+    public List<AlarmResponse> deleteAlarm(Long userId, Long alarmId){
+        // 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        Alarm alarm = alarmRepository.findById(alarmId)
+                .orElseThrow(()->new NotFoundAlarmException());
+
+        user.getRcvAlarms().remove(alarm);
+        alarmRepository.delete(alarm);
+
+        return user.getRcvAlarms().stream()
+                .map(a -> AlarmResponse.builder()
+                        .alarmId(a.getId())
+                        .title(a.getTitle())
+                        .content(a.getContent())
+                        .time(a.getSendDateTime().toString())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
