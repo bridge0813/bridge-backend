@@ -109,18 +109,6 @@ public class ProjectController {
         return ResponseEntity.ok(applyProjects);
     }
 
-    // 최근 검색어 불러오기 기능
-    @GetMapping("/searchWords")
-    public List<SearchWordResponseDto> resentSearchWord(@RequestParam("userId") Long userId){
-        return projectService.resentSearchWord(userId);
-    }
-
-    // 최근 검색어 불러오기 기능
-    @DeleteMapping("/searchWords")
-    public List<SearchWordResponseDto> deleteSearchWord(@RequestParam("userId") Long userId, @RequestBody Long searchWordId){
-        return projectService.deleteSearchWord(userId, searchWordId);
-    }
-
     /**
      * 프로젝트 지원하기
      */

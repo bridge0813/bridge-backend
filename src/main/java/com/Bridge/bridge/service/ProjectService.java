@@ -440,50 +440,6 @@ public class ProjectService {
     }
 
     /*
-        Func : 최근 검색어 조회 기능
-        Parameter : userId
-        Return : List<SearchWordResponseDto>
-    */
-    public List<SearchWordResponseDto> resentSearchWord(Long userId){
-        // 해당 유저 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
-
-        return user.getSearchWords().stream()
-                .map((searchWord -> SearchWordResponseDto.builder()
-                        .searchWordId(searchWord.getId())
-                        .searchWord(searchWord.getContent())
-                        .build()))
-                .collect(Collectors.toList());
-    }
-
-    /*
-        Func : 최근 검색어 삭제 기능
-        Parameter : userId, searchWordId
-        Return : List<SearchWordResponseDto>
-    */
-    @Transactional
-    public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
-        // 해당 유저 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
-
-        // 해당 검색어 찾기
-        SearchWord theSearchWord = searchWordRepository.findById(searchWordId)
-                .orElseThrow(()-> new NotFoundSearchWordException());
-
-        user.getSearchWords().remove(theSearchWord);
-        searchWordRepository.delete(theSearchWord);
-
-        return user.getSearchWords().stream()
-                .map((searchWord -> SearchWordResponseDto.builder()
-                        .searchWordId(searchWord.getId())
-                        .searchWord(searchWord.getContent())
-                        .build()))
-                .collect(Collectors.toList());
-    }
-
-    /*
         Func : 인기글 조회
         Parameter :
         Return : List<TopProjectResponseDto>
