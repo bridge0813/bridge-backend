@@ -780,8 +780,8 @@ class ProjectControllerTest {
     void applyProjects() throws Exception {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        user1.updateDeviceToken("deviceToken");
         User saveUser1 = userRepository.save(user1);
-
 
         Project project1 = Project.builder()
                 .title("title1")
