@@ -191,8 +191,8 @@ class ProjectControllerTest {
         Long projectId = projectService.createProject(newProject);
 
         List<String> updateSkill = new ArrayList<>();
-        updateSkill.add("Javascript");
-        updateSkill.add("React");
+        updateSkill.add("JAVASCRIPT");
+        updateSkill.add("REACT");
 
         List<PartRequestDto> updateRecruit = new ArrayList<>();
         updateRecruit.add(PartRequestDto.builder()
@@ -837,7 +837,7 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].stage").value("결과 대기중"))
                 .andExpect(jsonPath("$[0].title").value("title1"))
                 .andExpect(jsonPath("$[0].overview").value("overview1"))
-                .andExpect(jsonPath("$[0].dueDate").value("23-10-10"))
+                .andExpect(jsonPath("$[0].dueDate").value("2023-11-01T00:00"))
                 .andDo(print());
     }
 
@@ -846,7 +846,7 @@ class ProjectControllerTest {
     void applyProjects() throws Exception {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
-        userRepository.save(user1);
+        User saveUser1 = userRepository.save(user1);
 
         Project project1 = Project.builder()
                 .title("title1")
@@ -856,12 +856,11 @@ class ProjectControllerTest {
                 .build();
 
         Project saveProject = projectRepository.save(project1);
-        User saveUser1 = userRepository.save(user1);
 
         //expected
         mockMvc.perform(post("/projects/apply")
-                        .param("userId", saveUser1.getId().toString())
-                        .param("projectId", saveProject.getId().toString())
+                        .param("userId", String.valueOf(saveUser1.getId()))
+                        .param("projectId", String.valueOf(saveProject.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))
@@ -973,7 +972,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    @DisplayName("프로젝트 수락하기")
+    @DisplayName("프로젝트 거절하기")
     void rejectApply() throws Exception {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
