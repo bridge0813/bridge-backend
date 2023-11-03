@@ -420,7 +420,7 @@ class ProjectControllerTest {
         // when
         String expectByTitle = "$.[?(@.title == '%s')]";
 
-        mockMvc.perform(post("/projects/")
+        mockMvc.perform(get("/projects/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

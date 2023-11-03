@@ -62,15 +62,15 @@ public class ProjectController {
     }
 
     // 프로젝트 모집글 필터링 조회
-    @PostMapping("/project/category")
+    @PostMapping("/projects/category")
     public List<ProjectListResponseDto> filterProjects(@RequestBody FilterRequestDto filterRequestDto){
         return projectService.filterProjectList(filterRequestDto);
     }
 
 
     // 내가 작성한 프로젝트 모집글 불러오기
-    @PostMapping("/projects/")
-    public List<MyProjectResponseDto> findMyProjects(@RequestBody Long userId){
+    @GetMapping("/projects/")
+    public List<MyProjectResponseDto> findMyProjects(@RequestParam Long userId){
         return projectService.findMyProjects(userId);
     }
 
@@ -88,13 +88,13 @@ public class ProjectController {
 
     // 모집글 마감하기
     @PostMapping("/project/deadline")
-    public ProjectResponseDto closeProject(@RequestParam Long projectId){
+    public ProjectResponseDto closeProject(@RequestBody Long projectId){
         return projectService.closeProject(projectId);
     }
 
     // 모집글 스크랩하기
     @PostMapping("/project/scrap")
-    public BookmarkResponseDto scrap(@RequestParam Long projectId, @RequestBody Long userId){
+    public BookmarkResponseDto scrap(@RequestParam Long userId, @RequestBody Long projectId){
 
         return projectService.scrap(projectId, userId);
 
@@ -113,7 +113,7 @@ public class ProjectController {
      * 프로젝트 지원하기
      */
     @PostMapping("/projects/apply")
-    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) throws FirebaseMessagingException {
+    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) throws FirebaseMessagingException{
         boolean result = projectService.apply(userId, projectId);
 
         // 모집자에게 지원자 발생 알림 보내기
