@@ -406,11 +406,12 @@ class UserServiceTest {
     void getBookmarkProjects_Detail() {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        LocalDateTime now = LocalDateTime.now();
 
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate(LocalDateTime.now())
+                .dueDate(now)
                 .recruit(null)
                 .build();
 
@@ -426,7 +427,7 @@ class UserServiceTest {
 
         //then
         assertEquals("title", bookmarkProjects.get(0).getTitle());
-        assertEquals(LocalDateTime.now(), bookmarkProjects.get(0).getDueDate());
+        assertEquals(now, bookmarkProjects.get(0).getDueDate());
     }
 
     @Test

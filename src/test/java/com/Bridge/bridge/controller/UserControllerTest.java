@@ -183,11 +183,12 @@ class UserControllerTest {
         List<Part> recruits = new ArrayList<>();
         recruits.add(new Part(null, 3, null, null, null));
         recruits.add(new Part(null, 2, null, null, null));
+        LocalDateTime now = LocalDateTime.now();
 
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate(LocalDateTime.now())
+                .dueDate(now)
                 .recruit(recruits)
                 .build();
 
@@ -204,7 +205,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("title"))
-                .andExpect(jsonPath("$[0].dueDate").value("2023-10-31"))
+                .andExpect(jsonPath("$[0].dueDate").value(String.valueOf(now)))
                 .andExpect(jsonPath("$[0].recruitTotalNum").value(5))
                 .andDo(print());
     }
