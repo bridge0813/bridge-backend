@@ -19,13 +19,13 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Override
     <S extends Project> S save(S entity);
 
-    List<Project> findAllByRecruitInAndDueDateGreaterThanEqual(List<Part> parts, String dueDate);
+    List<Project> findAllByRecruitInAndDueDateGreaterThanEqual(List<Part> parts, LocalDateTime dueDate);
 
     List<Project> findAllByUser(User user);
 
-    List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(String dueDate);
+    List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(LocalDateTime dueDate);
 
-    List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(String dueDate);
+    List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(LocalDateTime dueDate);
 
     List<Project> findTop40ByDueDateGreaterThanEqualOrderByDueDate(LocalDateTime dueDate);
 }
