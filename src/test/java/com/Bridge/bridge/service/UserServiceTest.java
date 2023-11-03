@@ -426,7 +426,7 @@ class UserServiceTest {
 
         //then
         assertEquals("title", bookmarkProjects.get(0).getTitle());
-        assertEquals("2023-10-31", bookmarkProjects.get(0).getDueDate());
+        assertEquals(LocalDateTime.now(), bookmarkProjects.get(0).getDueDate());
     }
 
     @Test
