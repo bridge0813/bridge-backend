@@ -353,7 +353,7 @@ class UserServiceTest {
         Project project = Project.builder()
                 .title("title1")
                 .overview("overview1")
-                .dueDate(LocalDateTime.now())
+                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
                 .recruit(recruits)
                 .build();
 

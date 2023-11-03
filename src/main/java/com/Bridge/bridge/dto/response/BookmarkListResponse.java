@@ -21,7 +21,7 @@ public class BookmarkListResponse {
     public BookmarkListResponse(Project project) {
         this.projectId = project.getId();
         this.title = project.getTitle();
-        this.dueDate = project.getDueDate();
+        this.dueDate = project.getDueDate().toString();
         int recruitTotalNum = project.getRecruit().stream()
                 .mapToInt(p -> p.getRecruitNum())
                 .sum();
