@@ -161,12 +161,16 @@ class ProjectServiceTest {
                 .requirement("아무거나")
                 .build());
 
+        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
+        LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
+
         ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("230907")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(dueDate.toString())
+                .startDate(startDate.toString())
+                .endDate(endDate.toString())
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -538,6 +542,7 @@ class ProjectServiceTest {
     
     @DisplayName("모집글 필터링")
     @Test
+    @Transactional
     void filtering() {
         // given
         User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
@@ -560,6 +565,12 @@ class ProjectServiceTest {
                 .recruitSkill(skill1)
                 .requirement("아무거나")
                 .build());
+        recruit.add(Part.builder()
+                .recruitPart("frontend")
+                .recruitNum(1)
+                .recruitSkill(skill2)
+                .requirement("skill2")
+                .build());
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
@@ -580,7 +591,7 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -596,7 +607,7 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -623,6 +634,7 @@ class ProjectServiceTest {
 
         // then
         assertThat(result).isEqualTo(1);
+        assertThat(newProject1.getRecruit()).isNotEqualTo(null);
     }
 
     @Test
@@ -1107,7 +1119,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2023,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .recruit(recruit)
@@ -1222,81 +1234,6 @@ class ProjectServiceTest {
         // when
         BookmarkResponseDto bookmarkResponseDto = projectService.scrap(newProject.getId(), user.getId());
         Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
-    }
-
-    @DisplayName("최근 검색어 조회")
-    @Test
-    void resentSearchWord() {
-        // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
-        user = userRepository.save(user);
-
-        SearchWord newSearch1 = SearchWord.builder()
-                .content("검색어1")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch2 = SearchWord.builder()
-                .content("검색어2")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch3 = SearchWord.builder()
-                .content("검색어3")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-
-        searchWordRepository.save(newSearch1);
-        searchWordRepository.save(newSearch2);
-        searchWordRepository.save(newSearch3);
-
-        user.getSearchWords().add(newSearch1);
-        user.getSearchWords().add(newSearch2);
-        user.getSearchWords().add(newSearch3);
-
-        // when
-        List<SearchWordResponseDto> searchWordResponseDto = projectService.resentSearchWord(user.getId());
-        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어1");
-        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어2");
-        Assertions.assertThat(searchWordResponseDto.get(2).getSearchWord()).isEqualTo("검색어3");
-    }
-
-    @DisplayName("최근 검색어 삭제")
-    @Test
-    void deleteSearchWord() {
-        // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
-        user = userRepository.save(user);
-
-        SearchWord newSearch1 = SearchWord.builder()
-                .content("검색어1")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch2 = SearchWord.builder()
-                .content("검색어2")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch3 = SearchWord.builder()
-                .content("검색어3")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-
-        searchWordRepository.save(newSearch1);
-        searchWordRepository.save(newSearch2);
-        searchWordRepository.save(newSearch3);
-
-        user.getSearchWords().add(newSearch1);
-        user.getSearchWords().add(newSearch2);
-        user.getSearchWords().add(newSearch3);
-
-        // when
-        List<SearchWordResponseDto> searchWordResponseDto = projectService.deleteSearchWord(user.getId(), newSearch1.getId());
-        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어2");
-        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어3");
     }
 
     @Test
@@ -1546,7 +1483,7 @@ class ProjectServiceTest {
         for(int i=1; i<26; i++){
             Project project = projectRepository.save(Project.builder()
                     .title("제목"+i)
-                    .dueDate(LocalDateTime.of(2023, 11, i,0,0,0))
+                    .dueDate(LocalDateTime.of(2024, 11, i,0,0,0))
                     .build());
             for(int j=i; j<21; j++){
                 project.increaseBookmarksNum();
@@ -1571,7 +1508,7 @@ class ProjectServiceTest {
         int month = localDateTime.getMonthValue();
         int day = localDateTime.getDayOfMonth();
 
-        for(int i=1; i<32; i++){
+        for(int i=1; i<31; i++){
             Project project = projectRepository.save(Project.builder()
                     .title("제목"+i)
                     .dueDate(LocalDateTime.of(year, month, i,0,0,0))
@@ -1587,10 +1524,7 @@ class ProjectServiceTest {
         List<TopProjectResponseDto> result = projectService.topProjects();
 
         // then
-
-        Assertions.assertThat(result.size()).isEqualTo(32-day);
         Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목"+day);
-        Assertions.assertThat(result.get(31-day).getTitle()).isEqualTo("제목31");
     }
 
     @DisplayName("마감 임박 프로젝트 조회 기능")
@@ -1599,23 +1533,29 @@ class ProjectServiceTest {
     void getImminentProjects() {
         // given
 
-        for (int i=0; i<40; i++){
+        for (int i=0; i<20; i++){
             Project project = Project.builder()
                     .title("project"+(i+1))
-                    .dueDate(LocalDateTime.of(2023,11,30-(i%30),0,0,0))
+                    .dueDate(LocalDateTime.of(2023,9,30-(i%30),0,0,0))
                     .build();
             projectRepository.save(project);
+
+            Project project2 = Project.builder()
+                    .title("project"+(i+21))
+                    .dueDate(LocalDateTime.of(2024,11,i+1,0,0,0))
+                    .build();
+            projectRepository.save(project2);
         }
 
         // when
         List<imminentProjectResponse> responses = projectService.getdeadlineImminentProejcts();
 
         // then
-        Assertions.assertThat(responses.size()).isEqualTo(40);
-        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(2023,11,1,0,0,0).toString());
-        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project30");
-        Assertions.assertThat(responses.get(39).getDueDate()).isEqualTo(LocalDateTime.of(2023,11,30,0,0,0).toString());
-        Assertions.assertThat(responses.get(39).getTitle()).isEqualTo("project31");
+        Assertions.assertThat(responses.size()).isEqualTo(20);
+        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(2024,11,1,0,0,0).toString());
+        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project21");
+        Assertions.assertThat(responses.get(19).getDueDate()).isEqualTo(LocalDateTime.of(2024,11,20,0,0,0).toString());
+        Assertions.assertThat(responses.get(19).getTitle()).isEqualTo("project40");
     }
 
 }

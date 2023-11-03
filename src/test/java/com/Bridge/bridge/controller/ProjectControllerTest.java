@@ -89,16 +89,20 @@ class ProjectControllerTest {
                 .requirement("아무거나")
                 .build());
 
+        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
+        LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
+
         ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(dueDate.toString())
+                .startDate(startDate.toString())
+                .endDate(endDate.toString())
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(newUser.getId())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
@@ -132,12 +136,16 @@ class ProjectControllerTest {
                 .requirement("아무거나")
                 .build());
 
+        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
+        LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
+
         ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(dueDate.toString())
+                .startDate(startDate.toString())
+                .endDate(endDate.toString())
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -175,24 +183,28 @@ class ProjectControllerTest {
                 .requirement("아무거나")
                 .build());
 
+        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
+        LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
+
         ProjectRequestDto newProject = ProjectRequestDto.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
+                .dueDate(dueDate.toString())
+                .startDate(startDate.toString())
+                .endDate(endDate.toString())
                 .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(saveUser.getId())
+                .userId(user.getId())
                 .stage("Before Start")
                 .build();
 
         Long projectId = projectService.createProject(newProject);
 
         List<String> updateSkill = new ArrayList<>();
-        updateSkill.add("Javascript");
-        updateSkill.add("React");
+        updateSkill.add("JAVASCRIPT");
+        updateSkill.add("REACT");
 
         List<PartRequestDto> updateRecruit = new ArrayList<>();
         updateRecruit.add(PartRequestDto.builder()
@@ -219,7 +231,7 @@ class ProjectControllerTest {
                         .param("projectId", String.valueOf(projectId))
                         .content(objectMapper.writeValueAsString(updateProject))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(202)) // 응답 status를 ok로 테스트
+                .andExpect(status().is(200)) // 응답 status를 ok로 테스트
                 .andDo(print());
     }
 
@@ -291,10 +303,10 @@ class ProjectControllerTest {
 
         List<PartRequestDto> recruit1 = new ArrayList<>();
         recruit1.add(PartRequestDto.builder()
-                .recruitPart("backend")
+                .recruitPart("Backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("backend")
+                .requirement("Backend")
                 .build());
 
         List<PartRequestDto> recruit2 = new ArrayList<>();
@@ -308,7 +320,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject1 = ProjectRequestDto.builder()
                 .title("This is what i find")
                 .overview("This is backend Project.")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit1)
@@ -321,7 +333,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject2 = ProjectRequestDto.builder()
                 .title("This is not what i find")
                 .overview("This is frontend Project.")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit2)
@@ -348,11 +360,11 @@ class ProjectControllerTest {
         // when
         String expectByTitle = "$.[?(@.title == '%s')]";
 
-        mockMvc.perform(post("/project/category")
+        mockMvc.perform(post("/projects/category")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(expectByTitle, "This is what i find").exists())
+                .andExpect(jsonPath("$[0].title").value("This is what i find"))
                 .andDo(print());
 
     }
@@ -361,70 +373,76 @@ class ProjectControllerTest {
     @Test
     void findMyProjects() throws Exception {
         // given
-        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("JAVA");
-        skill1.add("SPRINGBOOT");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("JAVA");
-        skill2.add("SPRINGBOOT");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
-        List<PartRequestDto> recruit1 = new ArrayList<>();
-        recruit1.add(PartRequestDto.builder()
-                .recruitPart("Backend")
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("Backend")
+                .requirement("아무거나")
                 .build());
 
-        List<PartRequestDto> recruit2 = new ArrayList<>();
-        recruit2.add(PartRequestDto.builder()
-                .recruitPart("Frontend")
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("frontend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("Frontend")
+                .requirement("skill2")
                 .build());
 
-        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
-                .title("Myproject1")
-                .overview("This is Myproject1")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit1)
+        Project newProject1 = Project.builder()
+                .title("Find MyProject1")
+                .overview("This is My Project1")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,2,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,3,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
-                .title("Myproject2")
-                .overview("This is Myproject2")
-                .dueDate("2023-09-07")
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit2)
+        recruit.stream()
+                .forEach((part -> part.setProject(newProject1)));
+
+        Project newProject2 = Project.builder()
+                .title("Find MyProject2")
+                .overview("This is My Project2")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject1);
-        projectService.createProject(newProject2);
+        recruit2.stream()
+                .forEach((part -> part.setProject(newProject2)));
 
-        // when
-        String expectByTitle = "$.[?(@.title == '%s')]";
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
 
-        mockMvc.perform(post("/projects/")
+        // expected
+        mockMvc.perform(get("/projects/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user.getId())))
+                        .param("userId", String.valueOf(user.getId())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(expectByTitle, "Myproject2").exists())
+                .andExpect(jsonPath("$[0].title").value("Find MyProject1"))
                 .andDo(print());
 
     }
@@ -481,7 +499,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject1 = ProjectRequestDto.builder()
                 .title("Myproject1")
                 .overview("This is Myproject1")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit1)
@@ -494,7 +512,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject2 = ProjectRequestDto.builder()
                 .title("Myproject2")
                 .overview("This is Myproject2")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit2)
@@ -507,7 +525,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject3 = ProjectRequestDto.builder()
                 .title("Myproject3")
                 .overview("This is Myproject3")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit3)
@@ -575,7 +593,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject1 = ProjectRequestDto.builder()
                 .title("This is backend Project.")
                 .overview("This is backend Project.")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit1)
@@ -588,7 +606,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject2 = ProjectRequestDto.builder()
                 .title("This is not what i find")
                 .overview("This is frontend Project.")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit2)
@@ -601,7 +619,7 @@ class ProjectControllerTest {
         ProjectRequestDto newProject3 = ProjectRequestDto.builder()
                 .title("This is backend Project.")
                 .overview("This is backend Project.")
-                .dueDate("2023-09-07")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit3)
@@ -649,7 +667,7 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("Find project")
                 .overview("This is the project that i find")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(recruit)
@@ -666,7 +684,7 @@ class ProjectControllerTest {
         // when
         mockMvc.perform(post("/project/deadline")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("projectId", String.valueOf(projectId)))
+                        .content(objectMapper.writeValueAsString(projectId)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(newProject.getTitle()))
                 .andDo(print());
@@ -696,7 +714,7 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(recruit)
@@ -715,94 +733,10 @@ class ProjectControllerTest {
         // when
         mockMvc.perform(post("/project/scrap")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("projectId", String.valueOf(projectId))
-                        .content(objectMapper.writeValueAsString(userId)))
+                        .param("userId", String.valueOf(userId))
+                        .content(objectMapper.writeValueAsString(projectId)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.scrap").value("스크랩이 설정되었습니다."))
-                .andDo(print());
-
-    }
-
-    @Test
-    @DisplayName("최근 검색어 조회")
-    void resentSearch() throws Exception {
-        // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
-        user = userRepository.save(user);
-
-        SearchWord newSearch1 = SearchWord.builder()
-                .content("검색어1")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch2 = SearchWord.builder()
-                .content("검색어2")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch3 = SearchWord.builder()
-                .content("검색어3")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-
-        searchWordRepository.save(newSearch1);
-        searchWordRepository.save(newSearch2);
-        searchWordRepository.save(newSearch3);
-
-        user.getSearchWords().add(newSearch1);
-        user.getSearchWords().add(newSearch2);
-        user.getSearchWords().add(newSearch3);
-
-        // when
-        mockMvc.perform(get("/searchWords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", String.valueOf(user.getId())))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].searchWord").value("검색어1"))
-                .andDo(print());
-
-    }
-
-    @Test
-    @DisplayName("최근 검색어 삭제")
-    void deleteSearchWord() throws Exception {
-        // given
-        User user = new User("searchWord", "searchWord@gmail.com", Platform.APPLE, "searchWordTest");
-        user = userRepository.save(user);
-
-        SearchWord newSearch1 = SearchWord.builder()
-                .content("검색어1")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch2 = SearchWord.builder()
-                .content("검색어2")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch3 = SearchWord.builder()
-                .content("검색어3")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-
-        searchWordRepository.save(newSearch1);
-        searchWordRepository.save(newSearch2);
-        searchWordRepository.save(newSearch3);
-
-        user.getSearchWords().add(newSearch1);
-        user.getSearchWords().add(newSearch2);
-        user.getSearchWords().add(newSearch3);
-
-        // when
-        mockMvc.perform(delete("/searchWords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", String.valueOf(user.getId()))
-                        .content(objectMapper.writeValueAsString(newSearch1.getId())))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].searchWord").value("검색어2"))
-                .andExpect(jsonPath("$[1].searchWord").value("검색어3"))
                 .andDo(print());
 
     }
@@ -818,7 +752,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
                 .build();
 
         projectRepository.save(project1);
@@ -837,7 +771,7 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].stage").value("결과 대기중"))
                 .andExpect(jsonPath("$[0].title").value("title1"))
                 .andExpect(jsonPath("$[0].overview").value("overview1"))
-                .andExpect(jsonPath("$[0].dueDate").value("23-10-10"))
+                .andExpect(jsonPath("$[0].dueDate").value(LocalDateTime.of(2024,11,1,0,0,0).toString()))
                 .andDo(print());
     }
 
@@ -845,14 +779,15 @@ class ProjectControllerTest {
     @DisplayName("프로젝트 지원하기")
     void applyProjects() throws Exception {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user1 = new User("device Token");
         userRepository.save(user1);
 
         Project project1 = Project.builder()
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
+                .user(user1)
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -872,13 +807,13 @@ class ProjectControllerTest {
     @DisplayName("프로젝트 지원 취소하기")
     void cancelApply() throws Exception {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user1 = new User("device Token");
 
         Project project1 = Project.builder()
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -944,13 +879,15 @@ class ProjectControllerTest {
     @DisplayName("프로젝트 수락하기")
     void acceptApply() throws Exception {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
+        User user1 = new User("device Token");
+        userRepository.save(user1);
 
         Project project1 = Project.builder()
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
                 .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .user(user1)
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -973,16 +910,18 @@ class ProjectControllerTest {
     }
 
     @Test
-    @DisplayName("프로젝트 수락하기")
+    @DisplayName("프로젝트 거절하기")
     void rejectApply() throws Exception {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
+        User user1 = new User("device Token");
+        userRepository.save(user1);
 
         Project project1 = Project.builder()
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
                 .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .user(user1)
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -1013,7 +952,7 @@ class ProjectControllerTest {
         int month = localDateTime.getMonthValue();
         int day = localDateTime.getDayOfMonth();
 
-        for(int i=1; i<32; i++){
+        for(int i=1; i<30; i++){
             Project project = projectRepository.save(Project.builder()
                     .title("제목"+i)
                     .dueDate(LocalDateTime.of(year, month, i,0,0,0))
@@ -1037,22 +976,28 @@ class ProjectControllerTest {
     void imminentProjects() throws Exception{
         // given
 
-        for (int i=0; i<40; i++){
+        for (int i=0; i<20; i++){
             Project project = Project.builder()
                     .title("project"+(i+1))
-                    .dueDate(LocalDateTime.of(2023,11,30-(i%30),0,0,0))
+                    .dueDate(LocalDateTime.of(2023,9,30-(i%30),0,0,0))
                     .build();
             projectRepository.save(project);
+
+            Project project2 = Project.builder()
+                    .title("project"+(i+21))
+                    .dueDate(LocalDateTime.of(2024,11,i+1,0,0,0))
+                    .build();
+            projectRepository.save(project2);
         }
 
         //expected
         mockMvc.perform(get("/projects/imminent")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("project30"))
-                .andExpect(jsonPath("$[0].dueDate").value(LocalDateTime.of(2023,11,1,0,0,0).toString()))
-                .andExpect(jsonPath("$[39].title").value("project31"))
-                .andExpect(jsonPath("$[39].dueDate").value(LocalDateTime.of(2023,11,30,0,0,0).toString()))
+                .andExpect(jsonPath("$[0].title").value("project21"))
+                .andExpect(jsonPath("$[0].dueDate").value(LocalDateTime.of(2024,11,1,0,0,0).toString()))
+                .andExpect(jsonPath("$[19].title").value("project40"))
+                .andExpect(jsonPath("$[19].dueDate").value(LocalDateTime.of(2024,11,20,0,0,0).toString()))
                 .andDo(print());
     }
 }

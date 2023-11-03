@@ -164,7 +164,7 @@ public class ProjectService {
 
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime.toString());
+        List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
 
         List<Project> findProject = allProject.stream()
                 .filter((project) ->
@@ -224,7 +224,7 @@ public class ProjectService {
         List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, filterRequestDto.getPart());
 
         LocalDateTime localDateTime = LocalDateTime.now();
-        List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime.toString());
+        List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
         final int[] recruitTotal = {0};
 
@@ -293,7 +293,7 @@ public class ProjectService {
     public List<ProjectListResponseDto> allProjects(){
 
         LocalDateTime localDateTime = LocalDateTime.now();
-        List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime.toString());
+        List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
 
         // 작성글이 하나도 없다면
         if(allProjects.isEmpty()){
@@ -332,7 +332,7 @@ public class ProjectService {
         List<Part> parts = partRepository.findAllByRecruitPart(myPart);
 
         LocalDateTime localDateTime = LocalDateTime.now();
-        List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime.toString());
+        List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
         // 작성글이 하나도 없다면
         if(myPartProjects.isEmpty()){
@@ -440,50 +440,6 @@ public class ProjectService {
     }
 
     /*
-        Func : 최근 검색어 조회 기능
-        Parameter : userId
-        Return : List<SearchWordResponseDto>
-    */
-    public List<SearchWordResponseDto> resentSearchWord(Long userId){
-        // 해당 유저 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
-
-        return user.getSearchWords().stream()
-                .map((searchWord -> SearchWordResponseDto.builder()
-                        .searchWordId(searchWord.getId())
-                        .searchWord(searchWord.getContent())
-                        .build()))
-                .collect(Collectors.toList());
-    }
-
-    /*
-        Func : 최근 검색어 삭제 기능
-        Parameter : userId, searchWordId
-        Return : List<SearchWordResponseDto>
-    */
-    @Transactional
-    public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
-        // 해당 유저 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundUserException());
-
-        // 해당 검색어 찾기
-        SearchWord theSearchWord = searchWordRepository.findById(searchWordId)
-                .orElseThrow(()-> new NotFoundSearchWordException());
-
-        user.getSearchWords().remove(theSearchWord);
-        searchWordRepository.delete(theSearchWord);
-
-        return user.getSearchWords().stream()
-                .map((searchWord -> SearchWordResponseDto.builder()
-                        .searchWordId(searchWord.getId())
-                        .searchWord(searchWord.getContent())
-                        .build()))
-                .collect(Collectors.toList());
-    }
-
-    /*
         Func : 인기글 조회
         Parameter :
         Return : List<TopProjectResponseDto>
@@ -494,7 +450,7 @@ public class ProjectService {
         int month = localDateTime.getMonthValue();
         int day = localDateTime.getDayOfMonth();
 
-        String now = LocalDateTime.of(year, month, day, 0,0,0).toString();
+        LocalDateTime now = LocalDateTime.of(year, month, day, 0,0,0);
 
         List<Project> top20 = projectRepository.findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(now);
 
