@@ -467,4 +467,21 @@ class UserServiceTest {
         //then
         assertEquals(0, projectRepository.count());
     }
+
+    @Test
+    @Transactional
+    @DisplayName("로그아웃 기능")
+    void logout() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        newUser.updateRefreshToken("refreshToken");
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        boolean result = userService.logout(saveUser.getId());
+
+        //then
+        assertTrue(result);
+        assertNull(saveUser.getRefreshToken());
+    }
 }

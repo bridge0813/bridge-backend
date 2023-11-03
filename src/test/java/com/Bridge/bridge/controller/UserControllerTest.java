@@ -31,6 +31,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -229,6 +231,23 @@ class UserControllerTest {
 
         //expected
         mockMvc.perform(delete("/users/{userId}", saveUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그아웃 기능")
+    void logout() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        newUser.updateRefreshToken("refreshToken");
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(post("/logout")
+                        .param("userId", String.valueOf(saveUser.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))
