@@ -98,6 +98,15 @@ public class UserController {
     }
 
     /**
+     * 로그아웃
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestParam("userId") Long userId) {
+        boolean result = userService.logout(userId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * 회원 탈퇴
      */
     @DeleteMapping("/users/{userId}")

@@ -151,6 +151,16 @@ public class UserService {
     }
 
     /**
+     * 로그아웃
+     */
+    @Transactional
+    public boolean logout(Long userId) {
+        User findUser = find(userId);
+        findUser.updateRefreshToken(null);
+        return true;
+    }
+
+    /**
      * 회원 탈퇴
      */
     @Transactional
