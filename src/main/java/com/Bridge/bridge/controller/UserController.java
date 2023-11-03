@@ -17,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,5 +95,23 @@ public class UserController {
     public ResponseEntity<?> showBookmarkProjects(@RequestParam("userId") Long userId) {
         List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(userId);
         return ResponseEntity.ok(bookmarkProjects);
+    }
+
+    /**
+     * 로그아웃
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestParam("userId") Long userId) {
+        boolean result = userService.logout(userId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
+        boolean result = userService.deleteUser(userId);
+        return ResponseEntity.ok(result);
     }
 }

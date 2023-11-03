@@ -31,6 +31,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -183,11 +185,12 @@ class UserControllerTest {
         List<Part> recruits = new ArrayList<>();
         recruits.add(new Part(null, 3, null, null, null));
         recruits.add(new Part(null, 2, null, null, null));
+        LocalDateTime now = LocalDateTime.now();
 
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
+                .dueDate(now)
                 .recruit(recruits)
                 .build();
 
@@ -204,8 +207,50 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("title"))
-                .andExpect(jsonPath("$[0].dueDate").value("2023-10-31"))
+                .andExpect(jsonPath("$[0].dueDate").value(String.valueOf(now)))
                 .andExpect(jsonPath("$[0].recruitTotalNum").value(5))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴")
+    void deleteUser() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        Project project = Project.builder()
+                .title("title")
+                .overview("overview")
+                .dueDate(LocalDateTime.now())
+                .recruit(null)
+                .user(newUser)
+                .build();
+
+        newUser.getProjects().add(project);
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(delete("/users/{userId}", saveUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그아웃 기능")
+    void logout() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        newUser.updateRefreshToken("refreshToken");
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(post("/logout")
+                        .param("userId", String.valueOf(saveUser.getId()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(true))
                 .andDo(print());
     }
 }

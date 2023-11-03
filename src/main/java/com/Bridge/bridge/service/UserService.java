@@ -151,6 +151,26 @@ public class UserService {
     }
 
     /**
+     * 로그아웃
+     */
+    @Transactional
+    public boolean logout(Long userId) {
+        User findUser = find(userId);
+        findUser.updateRefreshToken(null);
+        return true;
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @Transactional
+    public boolean deleteUser(Long userId) {
+        User findUser = find(userId);
+        userRepository.delete(findUser);
+        return true;
+    }
+
+    /**
      * 참조파일 업데이트
      */
     @Transactional

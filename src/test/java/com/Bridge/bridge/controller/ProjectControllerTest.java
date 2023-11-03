@@ -779,8 +779,9 @@ class ProjectControllerTest {
     @DisplayName("프로젝트 지원하기")
     void applyProjects() throws Exception {
         //given
-        User user1 = new User("device Token");
-        userRepository.save(user1);
+        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User saveUser1 = userRepository.save(user1);
+
 
         Project project1 = Project.builder()
                 .title("title1")
@@ -791,12 +792,11 @@ class ProjectControllerTest {
                 .build();
 
         Project saveProject = projectRepository.save(project1);
-        User saveUser1 = userRepository.save(user1);
 
         //expected
         mockMvc.perform(post("/projects/apply")
-                        .param("userId", saveUser1.getId().toString())
-                        .param("projectId", saveProject.getId().toString())
+                        .param("userId", String.valueOf(saveUser1.getId()))
+                        .param("projectId", String.valueOf(saveProject.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))

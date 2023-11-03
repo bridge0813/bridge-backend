@@ -4,6 +4,8 @@ import com.Bridge.bridge.domain.Project;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 public class BookmarkListResponse {
@@ -12,7 +14,7 @@ public class BookmarkListResponse {
 
     private String title;
 
-    private String dueDate;  // 프로젝트 모집 기간
+    private LocalDateTime dueDate;  // 프로젝트 모집 기간
 
     private int recruitTotalNum; // 총 모집 인원
 

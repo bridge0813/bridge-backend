@@ -59,6 +59,7 @@ class UserServiceTest {
     @BeforeEach
     void clean() {
         userRepository.deleteAll();
+        projectRepository.deleteAll();
         fileRepository.deleteAll();
     }
 
@@ -405,11 +406,12 @@ class UserServiceTest {
     void getBookmarkProjects_Detail() {
         //given
         User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        LocalDateTime now = LocalDateTime.now();
 
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
+                .dueDate(now)
                 .recruit(null)
                 .build();
 
@@ -425,6 +427,61 @@ class UserServiceTest {
 
         //then
         assertEquals("title", bookmarkProjects.get(0).getTitle());
-        assertEquals("2023-10-31", bookmarkProjects.get(0).getDueDate());
+        assertEquals(now, bookmarkProjects.get(0).getDueDate());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 기능")
+    void deleteUser() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        boolean result = userService.deleteUser(saveUser.getId());
+
+        //then
+        assertEquals(0, userRepository.count());
+        assertTrue(result);
+    }
+    @Test
+    @DisplayName("회원 탈퇴 시 프로젝트 DB도 지워지는 지 검증")
+    void deleteUserWithProjectDB() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        Project project = Project.builder()
+                .title("title")
+                .overview("overview")
+                .dueDate(LocalDateTime.now())
+                .recruit(null)
+                .user(newUser)
+                .build();
+
+        newUser.getProjects().add(project);
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        userService.deleteUser(saveUser.getId());
+
+        //then
+        assertEquals(0, projectRepository.count());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("로그아웃 기능")
+    void logout() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        newUser.updateRefreshToken("refreshToken");
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        boolean result = userService.logout(saveUser.getId());
+
+        //then
+        assertTrue(result);
+        assertNull(saveUser.getRefreshToken());
     }
 }
