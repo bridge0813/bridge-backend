@@ -700,7 +700,7 @@ class ProjectServiceTest {
         assertEquals("결과 대기중", response.getStage());
         assertEquals("title1", response.getTitle());
         assertEquals("overview1", response.getOverview());
-        assertEquals(LocalDateTime.of(2024,1,12,0,0,0), response.getDueDate());
+        assertEquals(String.valueOf(LocalDateTime.of(2024,1,12,0,0,0)), response.getDueDate());
     }
     @Test
     @Transactional
