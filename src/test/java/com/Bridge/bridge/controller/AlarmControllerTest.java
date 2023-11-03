@@ -54,19 +54,19 @@ public class AlarmControllerTest {
                 .type("Applier")
                 .title("지원자 등장?")
                 .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
-                .rcvUser(user)
+                .rcvUser(newUser)
                 .build();
         Alarm alarm2 = Alarm.builder()
                 .type("Applier")
                 .title("지원자 등장?")
                 .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
-                .rcvUser(user)
+                .rcvUser(newUser)
                 .build();
         Alarm alarm3 = Alarm.builder()
                 .type("Apply")
                 .title("지원 결과 도착")
                 .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-                .rcvUser(user)
+                .rcvUser(newUser)
                 .build();
 
         alarmRepository.save(alarm1);
@@ -76,7 +76,7 @@ public class AlarmControllerTest {
         // expected
         mockMvc.perform(get("/alarms")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user.getId())))
+                        .param("userId", user.getId().toString()))
                 .andExpect(status().isOk()) // 응답 status를 ok로 테스트
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].title").value("지원자 등장?"))
@@ -118,7 +118,9 @@ public class AlarmControllerTest {
         // expected
         mockMvc.perform(delete("/alarms")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user.getId())))
+//                        .content(objectMapper.writeValueAsString(user.getId()))
+                        .param("userId", user.getId().toString())
+                )
                 .andExpect(status().isOk()) // 응답 status를 ok로 테스트
                 .andDo(print());
     }

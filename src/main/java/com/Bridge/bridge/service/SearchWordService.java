@@ -32,6 +32,7 @@ public class SearchWordService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
+
         return user.getSearchWords().stream()
                 .map((searchWord -> SearchWordResponseDto.builder()
                         .searchWordId(searchWord.getId())

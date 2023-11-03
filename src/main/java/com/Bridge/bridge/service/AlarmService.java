@@ -179,7 +179,8 @@ public class AlarmService {
                 .build();
         alarmRepository.save(alarm);
 
-        getAlarmUser.getRcvAlarms().add(alarm);
+        List<Alarm> alarms = getAlarmUser.getRcvAlarms();
+        alarms.add(alarm);
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()

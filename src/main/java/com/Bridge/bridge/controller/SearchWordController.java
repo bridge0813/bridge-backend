@@ -13,17 +13,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SearchWordController {
 
-    private SearchWordService searchWordService;
+    private final SearchWordService searchWordService;
 
     // 최근 검색어 불러오기 기능
     @GetMapping("/searchWords")
-    public List<SearchWordResponseDto> resentSearchWord(@RequestParam("userId") Long userId){
+    public List<SearchWordResponseDto> resentSearchWord(@RequestParam Long userId){
         return searchWordService.resentSearchWord(userId);
     }
 
     // 검색어 삭제 기능
     @DeleteMapping("/searchWords")
-    public List<SearchWordResponseDto> deleteSearchWord(@RequestParam("userId") Long userId, @RequestBody Long searchWordId){
+    public List<SearchWordResponseDto> deleteSearchWord(@RequestParam Long userId, @RequestBody Long searchWordId){
         return searchWordService.deleteSearchWord(userId, searchWordId);
     }
 }
