@@ -45,12 +45,13 @@ jobs:
 #          cat src/main/resources/application.yml
 
       - name: Build with Gradle
-        run: ./gradlew build
-        shell: bash
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: clean build -x test
         
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
+      # - name: Make zip file
+      #   run: zip -r ./$GITHUB_SHA.zip .
+      #   shell: bash
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
