@@ -30,7 +30,7 @@ public class UserService {
     private final FileService fileService;
 
     /**
-     * 처음 로그인 시 개인 관심분야 등록
+     * 처음 로그인 시 개인 관심 분야 등록
      */
     @Transactional
     public boolean saveField(UserFieldRequest request) {
