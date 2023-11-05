@@ -3,11 +3,11 @@ os: linux
 # destination에 아티팩트가 unzip된 결과가 생성될 디렉토리명을 넣어준다.
 files:
   - source:  /
-    destination: /home/ubuntu/build/
+    destination: /home/ubuntu/app
     overwrite : yes
 
 permissions:
-  - object: /home/ubuntu
+  - object: /
     pattern: "**"
     owner: ubuntu
     group: ubuntu
