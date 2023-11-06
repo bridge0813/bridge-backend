@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 public class AuthController {
 
-    private AuthService authService;
+    private final AuthService authService;
 
     /**
      * 애플 로그인 후 애플서버로 부터 받아오는 데이터
