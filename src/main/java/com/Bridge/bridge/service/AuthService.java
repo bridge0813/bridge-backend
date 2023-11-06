@@ -41,14 +41,14 @@ public class AuthService {
                     String accessToken = jwtTokenProvider.createAccessToken(findUser.getId());
                     String refreshToken = jwtTokenProvider.createRefreshToken();
 
-                    return new OAuthTokenResponse(accessToken, refreshToken, email, true, platformId);
+                    return new OAuthTokenResponse(accessToken, refreshToken, email, true, platformId, userId);
                 })
                 .orElseGet(() -> {
                     User saveUser = userRepository.save(new User(name, email, platform, platformId));
                     String accessToken = jwtTokenProvider.createAccessToken(saveUser.getId());
                     String refreshToken = jwtTokenProvider.createRefreshToken();
 
-                    return new OAuthTokenResponse(accessToken, refreshToken, email, false, platformId);
+                    return new OAuthTokenResponse(accessToken, refreshToken, email, false, platformId, saveUser.getId());
                 });
     }
 }

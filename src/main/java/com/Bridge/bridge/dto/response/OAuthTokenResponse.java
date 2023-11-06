@@ -17,12 +17,15 @@ public class OAuthTokenResponse {
 
     private String platformId;
 
-    public OAuthTokenResponse(String accessToken, String refreshToken, String email, boolean isRegistered, String platformId) {
+    private Long userId;
+
+    public OAuthTokenResponse(String accessToken, String refreshToken, String email, boolean isRegistered, String platformId, Long userId) {
         this.grantType = "Bearer";
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.email = email;
         this.isRegistered = isRegistered;
         this.platformId = platformId;
+        this.userId = userId;
     }
 }
