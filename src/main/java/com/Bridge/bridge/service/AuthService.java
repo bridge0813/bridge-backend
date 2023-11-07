@@ -40,6 +40,7 @@ public class AuthService {
                             .orElseThrow(() -> new NotFoundUserException());
                     String accessToken = jwtTokenProvider.createAccessToken(findUser.getId());
                     String refreshToken = jwtTokenProvider.createRefreshToken();
+                    jwtTokenProvider.updateRefreshToken(userId, refreshToken);
 
                     return new OAuthTokenResponse(accessToken, refreshToken, email, true, platformId, userId);
                 })
@@ -47,6 +48,7 @@ public class AuthService {
                     User saveUser = userRepository.save(new User(name, email, platform, platformId));
                     String accessToken = jwtTokenProvider.createAccessToken(saveUser.getId());
                     String refreshToken = jwtTokenProvider.createRefreshToken();
+                    jwtTokenProvider.updateRefreshToken(saveUser.getId(), refreshToken);
 
                     return new OAuthTokenResponse(accessToken, refreshToken, email, false, platformId, saveUser.getId());
                 });
