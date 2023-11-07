@@ -43,7 +43,7 @@ jobs:
         mkdir ./src/main/resources/firebase
         cd ./src/main/resources/firebase
         touch ./bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
-        echo "${{ secrets.FIREBASE_YML }}" >> ./bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
+        echo "${{ secrets.FIREBASE_JSON }}" >> ./bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
         cat ./bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
         
     - name: Build with Gradle
