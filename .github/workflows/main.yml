@@ -32,6 +32,7 @@ jobs:
 
     - name: Create application.yml
       run: |
+        mkdir ./src/main/resources
         cd ./src/main/resources
         touch ./application.yml
         echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
@@ -39,6 +40,7 @@ jobs:
 
     - name: Create bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
       run: |
+        mkdir ./src/main/resources/firebase
         cd ./src/main/resources/firebase
         touch ./bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
         echo "${{ secrets.FIREBASE_YML }}" >> ./bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json
