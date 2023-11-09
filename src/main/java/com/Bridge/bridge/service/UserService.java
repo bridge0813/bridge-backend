@@ -9,6 +9,7 @@ import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.BookmarkListResponse;
 import com.Bridge.bridge.dto.response.FileResponse;
+import com.Bridge.bridge.dto.response.MyPageResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
@@ -158,6 +159,21 @@ public class UserService {
         User findUser = find(userId);
         findUser.updateRefreshToken(null);
         return true;
+    }
+
+    /**
+     * 마이페이지
+     */
+    public MyPageResponse getMyPage(Long userId) {
+        User findUser = find(userId);
+
+        return MyPageResponse.builder()
+                .profilePhoto(findUser.getProfile().getProfilePhoto().getUploadFileUrl())
+                .field(findUser.getFields().stream()
+                        .map(f -> f.getValue())
+                        .collect(Collectors.toList()))
+                .bookmarkNum(findUser.getBookmarks().size())
+                .build();
     }
 
     /**

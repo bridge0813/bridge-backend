@@ -5,6 +5,7 @@ import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.BookmarkListResponse;
 import com.Bridge.bridge.dto.response.ErrorResponse;
+import com.Bridge.bridge.dto.response.MyPageResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -113,5 +114,14 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
         boolean result = userService.deleteUser(userId);
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 마이페이지
+     */
+    @GetMapping("/users/mypage")
+    public ResponseEntity<?> getMyPage(@RequestParam("userId") Long userId) {
+        MyPageResponse myPage = userService.getMyPage(userId);
+        return ResponseEntity.ok(myPage);
     }
 }
