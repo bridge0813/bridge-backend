@@ -167,6 +167,16 @@ public class UserService {
     public MyPageResponse getMyPage(Long userId) {
         User findUser = find(userId);
 
+        if (findUser.getProfile() == null || findUser.getProfile().getProfilePhoto() == null) {
+            return MyPageResponse.builder()
+                    .profilePhoto(null)
+                    .field(findUser.getFields().stream()
+                            .map(f -> f.getValue())
+                            .collect(Collectors.toList()))
+                    .bookmarkNum(findUser.getBookmarks().size())
+                    .build();
+        }
+
         return MyPageResponse.builder()
                 .profilePhoto(findUser.getProfile().getProfilePhoto().getUploadFileUrl())
                 .field(findUser.getFields().stream()
