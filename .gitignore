@@ -4,6 +4,7 @@ HELP.md
 !**/src/test/**/build/
 src/test/resources/*
 application.yml
+*.json
 
 ### STS ###
 .apt_generated

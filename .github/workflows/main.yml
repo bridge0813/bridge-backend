@@ -36,6 +36,14 @@ jobs:
         touch ./application.yml
         echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
         cat ./application.yml
+
+    - name: create-json
+      id: create-json
+      uses: jsdaniell/create-json@v1.2.2
+      with:
+        name: "bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json"
+        json: ${{ secrets.FIREBASE_JSON }}
+        dir: './src//main/resources/firebase'
         
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
