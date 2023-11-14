@@ -86,7 +86,7 @@ public class Project {
         this.bookmarks.add(bookmark);
     }
 
-    public ProjectResponseDto toDto(boolean isMyProject){
+    public ProjectResponseDto toDto(boolean isMyProject, boolean scrap){
         List<PartResponseDto> recruit = this.getRecruit().stream()
                 .map((part) -> part.toDto())
                 .collect(Collectors.toList());

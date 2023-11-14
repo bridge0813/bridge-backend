@@ -136,7 +136,7 @@ public class ProjectService {
                 .forEach((part -> part.setProject(finalProject)));
 
         project = project.update(projectUpdateRequestDto, recruit);
-        return project.toDto(true);
+        return project.toDto(true, false);
     }
 
     /*
@@ -206,9 +206,15 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundProjectException());
 
         if(!adminUserId.equals(project.getUser().getId()))  {
-            return project.toDto(false);
+            User user = userRepository.findById(adminUserId)
+                    .orElseThrow(()->new NotFoundUserException());
+            Bookmark bookmark= bookmarkRepository.findByProjectAndUser(project, user);
+            if(bookmark == null){
+             return project.toDto(false, false);
+            }
+            return project.toDto(false, true);
         }
-        return project.toDto(true);
+        return project.toDto(true, false);
     }
 
     /*
@@ -383,7 +389,7 @@ public class ProjectService {
         }
         else {
             project = project.updateDeadline();
-            return project.toDto(true);
+            return project.toDto(true, false);
         }
     }
 
