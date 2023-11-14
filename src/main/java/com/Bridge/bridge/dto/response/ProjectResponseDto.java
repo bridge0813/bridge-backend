@@ -30,8 +30,10 @@ public class ProjectResponseDto {
 
     private boolean isMyProject;    // 내가 만든 프로젝트 여부
 
+    private boolean scrap;          // 스크랩 여부
+
     @Builder
-    public ProjectResponseDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponseDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userName, boolean isMyProject) {
+    public ProjectResponseDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponseDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userName, boolean isMyProject, boolean scrap) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
@@ -43,5 +45,6 @@ public class ProjectResponseDto {
         this.stage = stage;
         this.userName = userName;
         this.isMyProject = isMyProject;
+        this.scrap = scrap;
     }
 }

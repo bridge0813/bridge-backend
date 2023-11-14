@@ -32,8 +32,12 @@ public class SearchWordService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
+        List<SearchWord> searchWords = user.getSearchWords();
 
-        return user.getSearchWords().stream()
+        if(searchWords.isEmpty()){
+            throw new NotFoundSearchWordException();
+        }
+        return searchWords.stream()
                 .map((searchWord -> SearchWordResponseDto.builder()
                         .searchWordId(searchWord.getId())
                         .searchWord(searchWord.getContent())

@@ -8,6 +8,9 @@ import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.service.AlarmService;
 import com.Bridge.bridge.service.ProjectService;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,13 @@ public class ProjectController {
 
 
     // 프로젝트 모집글 작성
+    @Operation(summary = "프로젝트 모집글 작성 기능", description = "프로젝트 모집글을 작성할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 작성 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 작성 실패"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
+    })
     @PostMapping("/project")
     public Long createProject(@RequestBody ProjectRequestDto projectRequestDto){
         return projectService.createProject(projectRequestDto);
@@ -32,12 +42,26 @@ public class ProjectController {
 
     // 검색어 기준으로 프로젝트 모집글 조회
     @PostMapping("/projects/searchWord")
+    @Operation(summary = "검색어로 프로젝트 모집글 조회 기능", description = "검색어를 입력하면 검색어가 포함된 제목이나 내용을 가진 모집글을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 조회 실패"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
+    })
     public List<ProjectListResponseDto> searchProject(@RequestParam Long userId ,@RequestBody String searchWord){
         return projectService.findByTitleAndContent(userId, searchWord);
     }
 
     // 프로젝트 모집글 삭제
     @DeleteMapping("/project")
+    @Operation(summary = "모집글 삭제 기능", description = "모집글을 삭제할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 삭제 완료"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "403", description = "모집글 삭제 실패"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
+    })
     public ResponseEntity deleteProject(@RequestParam Long projectId){
         Boolean result = projectService.deleteProject(projectId);
 
@@ -51,18 +75,36 @@ public class ProjectController {
 
     // 프로젝트 모집글 수정
     @PutMapping("/project")
+    @Operation(summary = "모집글 수정 기능", description = "모집글을 수정할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 수정 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 수정 실패"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
+    })
     public ProjectResponseDto updateProject(@RequestParam Long projectId, @RequestBody ProjectUpdateRequestDto projectUpdateRequestDto){
         return projectService.updateProject(projectId, projectUpdateRequestDto);
     }
 
     // 프로젝트 모집글 상세보기
     @GetMapping("/project")
+    @Operation(summary = "모집글 상세보기 기능", description = "모집글의 구체적인 사항들을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 상세보기 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 상세보기 조회 실패"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
+    })
     public ProjectResponseDto detailProject(HttpServletRequest request, @RequestParam Long projectId){
         return projectService.getProject(projectId, request);
     }
 
     // 프로젝트 모집글 필터링 조회
     @PostMapping("/projects/category")
+    @Operation(summary = "필터링을 이용한 모집글 조회 기능", description = "스택이나 관심분야를 기준으로 필터링하여 모집글을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 필터링 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 필터링 조회 실패")
+    })
     public List<ProjectListResponseDto> filterProjects(@RequestBody FilterRequestDto filterRequestDto){
         return projectService.filterProjectList(filterRequestDto);
     }
@@ -70,30 +112,64 @@ public class ProjectController {
 
     // 내가 작성한 프로젝트 모집글 불러오기
     @GetMapping("/projects/")
+    @Operation(summary = "내가 작성한 프로젝트 모집글 조회 기능", description = "내가 작성한 프로젝트 모집글들을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "내가 작성한 프로젝트 모집글 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "내가 작성한 프로젝트 모집글 조회 실패"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
+    })
     public List<MyProjectResponseDto> findMyProjects(@RequestParam Long userId){
         return projectService.findMyProjects(userId);
     }
 
     // 모든 프로젝트 모집글 불러오기
     @GetMapping("/projects/all")
+    @Operation(summary = "모든 프로젝트 모집글 조회 기능", description = "전체 모집글을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "전체 모집글 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "전체 모집글 조회 실패"),
+            @ApiResponse(responseCode = "404", description = "모집글이 존재하지 않는다.")
+    })
     public List<ProjectListResponseDto> allProjects(){
         return projectService.allProjects();
     }
 
     // 내 분야 프로젝트 모집글 불러오기
     @PostMapping("/projects/mypart")
+    @Operation(summary = "내가 작성한 프로젝트 모집글 조회 기능", description = "내가 작성한 프로젝트 모집글들을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "내가 작성한 프로젝트 모집글 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "내가 작성한 프로젝트 모집글 조회 실패"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
+    })
     public List<ProjectListResponseDto> findMyPartProjects(@RequestBody String part){
         return projectService.findMyPartProjects(part);
     }
 
     // 모집글 마감하기
     @PostMapping("/project/deadline")
+    @Operation(summary = "모집글 마감 기능", description = "내가 작성한 프로젝트 모집글을 마감할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 마감 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 마감 실패 - 이미 마감이 된 모집글"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
+    })
     public ProjectResponseDto closeProject(@RequestBody Long projectId){
         return projectService.closeProject(projectId);
     }
 
     // 모집글 스크랩하기
     @PostMapping("/project/scrap")
+    @Operation(summary = "모집글 스크랩 기능", description = "모집글을 스크랩할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모집글 스크랩 설정 OR 해제 완료"),
+            @ApiResponse(responseCode = "400", description = "모집글 스크랩 설정 OR 해제 실패"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
+            @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
+    })
     public BookmarkResponseDto scrap(@RequestParam Long userId, @RequestBody Long projectId){
 
         return projectService.scrap(projectId, userId);
@@ -188,6 +264,13 @@ public class ProjectController {
 
     // 인기글 조회 기능
     @GetMapping("/projects/top")
+    @PostMapping("/project/scrap")
+    @Operation(summary = "인기글 조회 기능", description = "인기글을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "인기글 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "인기글 조회 실패"),
+            @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
+    })
     public List<TopProjectResponseDto> topProjects(){
         return projectService.topProjects();
 
@@ -195,8 +278,14 @@ public class ProjectController {
 
     // 마감 임박 모집글 조회 기능
     @GetMapping("/projects/imminent")
+    @PostMapping("/project/scrap")
+    @Operation(summary = "마감 임박 모집글 조회 기능", description = "마감 임박 모집글을 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "마감 임박 모집글 조회 완료"),
+            @ApiResponse(responseCode = "400", description = "마감 임박 모집글 조회 실패"),
+            @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
+    })
     public List<imminentProjectResponse> imminentProjects(){
         return projectService.getdeadlineImminentProejcts();
-
     }
 }
