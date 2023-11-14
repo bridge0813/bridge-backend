@@ -31,8 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -251,6 +250,40 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("마이페이지 조회")
+    void myPage() throws Exception {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        newUser.getFields().add(Field.BACKEND);
+        newUser.getFields().add(Field.FRONTEND);
+
+        Project newProject = Project.builder()
+                .title("title")
+                .overview("overview")
+                .build();
+        projectRepository.save(newProject);
+
+        Bookmark bookmark = Bookmark.builder()
+                .user(newUser)
+                .project(newProject)
+                .build();
+
+        newUser.setBookmarks(bookmark);
+        User saveUser = userRepository.save(newUser);
+
+        //expected
+        mockMvc.perform(get("/users/mypage")
+                        .param("userId", String.valueOf(saveUser.getId()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.field[0]").value("백엔드"))
+                .andExpect(jsonPath("$.field[1]").value("프론트엔드"))
+                .andExpect(jsonPath("$.bookmarkNum").value(1))
                 .andDo(print());
     }
 }

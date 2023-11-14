@@ -13,6 +13,7 @@ import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.BookmarkListResponse;
+import com.Bridge.bridge.dto.response.MyPageResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
@@ -483,5 +484,57 @@ class UserServiceTest {
         //then
         assertTrue(result);
         assertNull(saveUser.getRefreshToken());
+    }
+
+    @Test
+    @DisplayName("마이페이지 조회 - 관심분야만 등록 시")
+    void myPage() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        newUser.getFields().add(Field.BACKEND);
+        newUser.getFields().add(Field.FRONTEND);
+
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        MyPageResponse myPage = userService.getMyPage(saveUser.getId());
+
+        //then
+        assertEquals("백엔드", myPage.getField().get(0));
+        assertEquals("프론트엔드", myPage.getField().get(1));
+        assertEquals(0, myPage.getBookmarkNum());
+    }
+
+    @Test
+    @DisplayName("마이페이지 조회 - 관심분야 + 북마크 시")
+    void myPageHasBookmark() {
+        //given
+        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+
+        newUser.getFields().add(Field.BACKEND);
+        newUser.getFields().add(Field.FRONTEND);
+
+        Project newProject = Project.builder()
+                .title("title")
+                .overview("overview")
+                .build();
+        projectRepository.save(newProject);
+
+        Bookmark bookmark = Bookmark.builder()
+                .user(newUser)
+                .project(newProject)
+                .build();
+
+        newUser.setBookmarks(bookmark);
+        User saveUser = userRepository.save(newUser);
+
+        //when
+        MyPageResponse myPage = userService.getMyPage(saveUser.getId());
+
+        //then
+        assertEquals("백엔드", myPage.getField().get(0));
+        assertEquals("프론트엔드", myPage.getField().get(1));
+        assertEquals(1, myPage.getBookmarkNum());
     }
 }
