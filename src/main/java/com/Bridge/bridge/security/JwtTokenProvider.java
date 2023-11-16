@@ -28,7 +28,7 @@ import java.util.Optional;
 public class JwtTokenProvider {
 
     private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30;        // ACCESS 토큰 만료 시간 (30분)
-    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 14;   // REFRESH 토큰 만료 시간 (6시간)
+    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 2;   // REFRESH 토큰 만료 시간 (6시간)
 
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String TOKEN_PREFIX = "Bearer ";

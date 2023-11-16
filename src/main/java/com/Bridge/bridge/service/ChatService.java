@@ -8,6 +8,7 @@ import com.Bridge.bridge.dto.request.ChatRoomRequest;
 import com.Bridge.bridge.dto.response.ChatListResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse.SenderType;
+import com.Bridge.bridge.dto.response.ChatRoomResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class ChatService {
      * 채팅방 개설
      */
     @Transactional
-    public String createChat(ChatRoomRequest chatRoomRequest) {
+    public ChatRoomResponse createChat(ChatRoomRequest chatRoomRequest) {
 
         User makeUser = userService.find(chatRoomRequest.getMakeUserId());
         User receiveUser = userService.find(chatRoomRequest.getReceiveUserId());
@@ -46,7 +47,11 @@ public class ChatService {
 
         Chat saveChat = chatRepository.save(newChat);
 
-        return saveChat.getChatRoomId();
+        return ChatRoomResponse.builder()
+                .chatRoomId(saveChat.getChatRoomId())
+                .receiveUserId(makeUser.getId())
+                .receiveUserId(receiveUser.getId())
+                .build();
     }
 
     /**

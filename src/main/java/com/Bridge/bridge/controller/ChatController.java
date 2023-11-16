@@ -3,6 +3,7 @@ package com.Bridge.bridge.controller;
 import com.Bridge.bridge.dto.request.ChatRoomRequest;
 import com.Bridge.bridge.dto.response.ChatListResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse;
+import com.Bridge.bridge.dto.response.ChatRoomResponse;
 import com.Bridge.bridge.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,8 @@ public class ChatController {
      */
     @PostMapping("/chat")
     public ResponseEntity<?> createChat(@RequestBody ChatRoomRequest chatRoomRequest) {
-        String chatRoomId = chatService.createChat(chatRoomRequest);
-        return ResponseEntity.ok(chatRoomId);
+        ChatRoomResponse chatRoomResponse = chatService.createChat(chatRoomRequest);
+        return ResponseEntity.ok(chatRoomResponse);
     }
 
     /**

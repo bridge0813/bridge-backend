@@ -8,6 +8,7 @@ import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.ChatRoomRequest;
 import com.Bridge.bridge.dto.response.ChatListResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse;
+import com.Bridge.bridge.dto.response.ChatRoomResponse;
 import com.Bridge.bridge.repository.ChatRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,12 +58,12 @@ class ChatServiceTest {
         request.setReceiveUserId(saveUser2.getId());
 
         //when
-        String chatRoomId = chatService.createChat(request);
+        ChatRoomResponse chatRoomResponse = chatService.createChat(request);
 
         //then
         assertEquals(1L, chatRepository.count());
         Chat chat = chatRepository.findAll().get(0);
-        assertNotNull(chatRoomId);
+        assertNotNull(chatRoomResponse.getChatRoomId());
     }
 
     @Test
