@@ -112,7 +112,7 @@ public class ChatService {
         boolean connectStat = findChat.isConnectStat();
 
         Message newMessage = Message.builder()
-                .messageId(message.getMessageId())
+                .messageUuId(message.getMessageId())
                 .content(message.getMessage())
                 .writer(message.getSender())
                 .sendDate(LocalDate.now())

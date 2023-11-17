@@ -1,13 +1,10 @@
 package com.Bridge.bridge.security;
 
-import com.Bridge.bridge.domain.Chat;
-import com.Bridge.bridge.dto.response.ChatMessageResponse;
-import com.Bridge.bridge.repository.ChatRepository;
+
 import com.Bridge.bridge.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -20,8 +17,6 @@ import java.util.List;
 public class ChannelInBoundInterceptor implements ChannelInterceptor {
 
     private final ChatService chatService;
-
-    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -54,8 +49,8 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
 
         // 현재 접속중인 사람 있는지 체크 -> 있다면 메세지 상태 업데이트 해줘야 함...
         if (connectStat == false) {
-            List<ChatMessageResponse> chatList = chatService.findChat(accessor.getMessage());
-            simpMessagingTemplate.convertAndSend("/sub/chat/room/" + accessor.getMessage(), chatList);
+            //List<ChatMessageResponse> chatList = chatService.findChat(accessor.getMessage());
+
         }
     }
 }
