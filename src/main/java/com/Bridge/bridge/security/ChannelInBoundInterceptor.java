@@ -32,25 +32,41 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         switch (command) {
             case CONNECT:
                 //현재 채팅방 인원 추가 및 파악
-                connectToChatRoom(accessor);
+                // connectToChatRoom(accessor);
+                //채팅방 가져오기
+                //입장 처리 -> 현재 접속 인원 +1
+                System.out.println("detination : "+accessor.getDestination());
+                System.out.println("message : "+accessor.getMessage());
+                System.out.println("왜안돼?");
+                boolean connectStat = chatService.changeConnectStat(accessor.getDestination());
+
+                //안읽은 메세지 존재시 읽음 처리
+                chatService.readNotReadMessage(accessor.getDestination());
+
+                // 현재 접속중인 사람 있는지 체크 -> 있다면 메세지 상태 업데이트 해줘야 함...
+                if (connectStat == false) {
+                //List<ChatMessageResponse> chatList = chatService.findChat(accessor.getDestination());
+                }            
                 break;
+            case SEND : 
+                System.out.println("zzz");
         }
     }
 
-    private void connectToChatRoom(StompHeaderAccessor accessor) {
-        //채팅방 가져오기
-        //입장 처리 -> 현재 접속 인원 +1
-        System.out.println("detination : "+accessor.getDestination());
-        System.out.println("message : "+accessor.getMessage());
-        boolean connectStat = chatService.changeConnectStat(accessor.getMessage());
+    // private void connectToChatRoom(StompHeaderAccessor accessor) {
+    //     //채팅방 가져오기
+    //     //입장 처리 -> 현재 접속 인원 +1
+    //     System.out.println("detination : "+accessor.getDestination());
+    //     System.out.println("message : "+accessor.getMessage());
+    //     boolean connectStat = chatService.changeConnectStat(accessor.getMessage());
 
-        //안읽은 메세지 존재시 읽음 처리
-        chatService.readNotReadMessage(accessor.getMessage());
+    //     //안읽은 메세지 존재시 읽음 처리
+    //     chatService.readNotReadMessage(accessor.getMessage());
 
-        // 현재 접속중인 사람 있는지 체크 -> 있다면 메세지 상태 업데이트 해줘야 함...
-        if (connectStat == false) {
-            //List<ChatMessageResponse> chatList = chatService.findChat(accessor.getMessage());
+    //     // 현재 접속중인 사람 있는지 체크 -> 있다면 메세지 상태 업데이트 해줘야 함...
+    //     if (connectStat == false) {
+    //         //List<ChatMessageResponse> chatList = chatService.findChat(accessor.getMessage());
 
-        }
-    }
+    //     }
+    // }
 }
