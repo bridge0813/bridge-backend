@@ -48,8 +48,6 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
                 //List<ChatMessageResponse> chatList = chatService.findChat(accessor.getDestination());
                 }            
                 break;
-            case SEND : 
-                System.out.println("zzz");
         }
     }
 
