@@ -18,7 +18,7 @@ public class Message {
     @Column(name = "message_id")
     private Long id;
 
-    private String messageId;       // 클라이언트에서 생성한 매새자 고유 ID
+    private String messageUuId;       // 클라이언트에서 생성한 매새자 고유 ID
 
     private String content;         // 메세지 내용
 
@@ -39,8 +39,8 @@ public class Message {
     private Chat chat;              // 해당 메세지가 포함된 채팅방
 
     @Builder
-    public Message(String messageId, String content, String writer, LocalDate sendDate, LocalTime sendTime, Chat chat) {
-        this.messageId = messageId;
+    public Message(String messageUuId, String content, String writer, LocalDate sendDate, LocalTime sendTime, Chat chat) {
+        this.messageUuId = messageUuId;
         this.content = content;
         this.writer = writer;
         this.sendDate = sendDate;

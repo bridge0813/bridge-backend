@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
+import com.Bridge.bridge.dto.response.ChatMessageResponse;
 import com.Bridge.bridge.service.AlarmService;
 import com.Bridge.bridge.service.ChatService;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -13,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class ChatMessageController {
      * 모집자가 채팅방을 만듦과 동시에 지원자 모집자 둘 다 입장해야함(구독)
      */
     @MessageMapping("/chat/enter")
-    public void enter(@Payload ChatMessageRequest chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
+    public void enter(@Payload ChatMessageRequest chatMessageRequest) {
 
         chatMessageRequest.setMessage(chatMessageRequest.getSender() + "이 입장하셨습니다.");
 
@@ -45,5 +47,9 @@ public class ChatMessageController {
         boolean connectStat = chatService.saveMessage(chatMessageRequest);
         ChatMessageRequest messageRequest = chatService.changeMessage(chatMessageRequest,connectStat);
         simpMessagingTemplate.convertAndSend("/sub/chat/room/" + messageRequest.getChatRoomId(), messageRequest);
+    }
+
+    public void updateMessage(List<ChatMessageResponse> chatList, String chatRoomId) {
+        simpMessagingTemplate.convertAndSend("/sub/chat/room/" + chatRoomId, chatList);
     }
 }
