@@ -122,7 +122,7 @@ public class ChatService {
 
         if (connectStat == false) { // 나만 접속해 있는 경우 안읽음 처리 저장
             newMessage.changeReadStat();
-            alarmService.getChatAlarm(message);
+            // alarmService.getChatAlarm(message);
         }
         findChat.getMessages().add(newMessage);
         return connectStat;
