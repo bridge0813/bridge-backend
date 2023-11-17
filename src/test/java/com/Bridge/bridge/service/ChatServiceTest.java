@@ -11,6 +11,7 @@ import com.Bridge.bridge.dto.response.ChatMessageResponse;
 import com.Bridge.bridge.dto.response.ChatRoomResponse;
 import com.Bridge.bridge.repository.ChatRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -152,7 +153,7 @@ class ChatServiceTest {
     @Test
     @DisplayName("채팅방 메세지 저장")
     @Transactional
-    void saveMessage() {
+    void saveMessage() throws FirebaseMessagingException {
         //given
         Chat room1 = Chat.builder()
                 .chatRoomId("1")
@@ -162,7 +163,7 @@ class ChatServiceTest {
 
         ChatMessageRequest messageRequest = new ChatMessageRequest();
         messageRequest.setChatRoomId("1");
-        messageRequest.setType(ChatMessageRequest.MessageType.ENTER);
+        messageRequest.setType(ChatMessageRequest.MessageType.TALK);
         messageRequest.setSender("bridge");
         messageRequest.setMessage("content");
 

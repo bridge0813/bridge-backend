@@ -2,6 +2,7 @@ package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.service.AlarmService;
+import com.Bridge.bridge.service.ChatService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,13 +12,15 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class ChatMessageController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final AlarmService alarmService;
+    private final ChatService chatService;
 
     /**
      * 채팅방에 들어오는 경우
@@ -37,13 +40,10 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void sendMessage(ChatMessageRequest chatMessageRequest) throws FirebaseMessagingException {
         log.info("message = {}", chatMessageRequest.getMessage());
-        simpMessagingTemplate.convertAndSend("/sub/chat/room/" + chatMessageRequest.getChatRoomId(), chatMessageRequest);
 
-        // 채팅 알림 보내기
-        alarmService.getChatAlarm(chatMessageRequest);
+        //접속 중인 인원 확인
+        boolean connectStat = chatService.saveMessage(chatMessageRequest);
+        ChatMessageRequest messageRequest = chatService.changeMessage(chatMessageRequest,connectStat);
+        simpMessagingTemplate.convertAndSend("/sub/chat/room/" + messageRequest.getChatRoomId(), messageRequest);
     }
-
-    /**
-     * 채팅방 나가기
-     */
 }
