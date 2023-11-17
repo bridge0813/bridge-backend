@@ -23,9 +23,12 @@ public class ChatMessageResponse {
 
     private LocalDateTime sendTime;  // 메세지 보낸 날짜
 
+    private boolean readStat;       // 메세지 읽음 여부
+
     public ChatMessageResponse(Message message, SenderType senderType) {
         this.content = message.getContent();
         this.senderType = senderType;
         this.sendTime = LocalDateTime.of(message.getSendDate(), message.getSendTime());
+        this.readStat = message.isReadStat();
     }
 }

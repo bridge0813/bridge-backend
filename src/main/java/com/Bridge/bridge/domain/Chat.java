@@ -20,6 +20,8 @@ public class Chat {
 
     private String chatRoomId; // 채팅방 고유 ID
 
+    private boolean connectStat; // 접속 여부 -> false 면 둘 다 접속 or 모두 접속 안한 상태 / true 면 한 명만 접근
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "user_id", name = "make_user_id")
     private User makeUser;      // 채팅방 만든 사람
@@ -33,7 +35,9 @@ public class Chat {
 
     @Builder
     public Chat(String chatRoomId) {
+
         this.chatRoomId = chatRoomId;
+        this.connectStat = false;
     }
 
     //--연관관계 메소드--//
@@ -43,5 +47,14 @@ public class Chat {
 
         this.receiveUser = receiver;
         receiver.getJoinChat().add(this);
+    }
+
+    public boolean changeConnectStat() {
+        if (this.connectStat == false) {
+            this.connectStat = true;
+            return this.connectStat;
+        }
+        this.connectStat = false;
+        return this.connectStat;
     }
 }

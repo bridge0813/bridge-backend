@@ -11,12 +11,14 @@ import com.Bridge.bridge.dto.response.ChatMessageResponse.SenderType;
 import com.Bridge.bridge.dto.response.ChatRoomResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.repository.ChatRepository;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +32,8 @@ public class ChatService {
     private final ChatRepository chatRepository;
 
     private final UserService userService;
+
+    private final AlarmService alarmService;
 
 
     /**
@@ -101,11 +105,14 @@ public class ChatService {
      * 채팅방 메세지 저장
      */
     @Transactional
-    public void saveMessage(ChatMessageRequest message) {
+    public boolean saveMessage(ChatMessageRequest message) throws FirebaseMessagingException {
         Chat findChat = chatRepository.findByChatRoomId(message.getChatRoomId())
                 .orElseThrow(() -> new NotFoundChatException());
 
+        boolean connectStat = findChat.isConnectStat();
+
         Message newMessage = Message.builder()
+                .messageId(message.getMessageId())
                 .content(message.getMessage())
                 .writer(message.getSender())
                 .sendDate(LocalDate.now())
@@ -113,7 +120,12 @@ public class ChatService {
                 .chat(findChat)
                 .build();
 
+        if (connectStat == false) { // 나만 접속해 있는 경우 안읽음 처리 저장
+            newMessage.changeReadStat();
+            alarmService.getChatAlarm(message);
+        }
         findChat.getMessages().add(newMessage);
+        return connectStat;
     }
 
     /**
@@ -126,5 +138,53 @@ public class ChatService {
 
         chatRepository.delete(findChat);
         return true;
+    }
+
+    /**
+     * 채팅방 접속 상태 변경
+     */
+    @Transactional
+    public boolean changeConnectStat(String chatRoomId) {
+        Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
+                .orElseThrow(() -> new NotFoundChatException());
+
+        return findChat.changeConnectStat();
+    }
+
+    /**
+     * 안읽은 메세지 읽음 처리
+     */
+    @Transactional
+    public void readNotReadMessage(String chatRoomId) {
+        Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
+                .orElseThrow(() -> new NotFoundChatException());
+
+        findChat.getMessages().stream()
+                .filter(m -> m.isReadStat() == false)
+                .forEach(m -> m.changeReadStat());
+
+    }
+
+    /**
+     * 수락 거절 처리
+     */
+    public ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
+        switch (message.getType()) {
+            case TALK:
+                message.setSendTime(LocalDateTime.now());
+            case ACCEPT:
+                message.setMessage("소중한 지원 감사드립니다!\n저희 프로젝트에 참여해주실래요?");
+                message.setSendTime(LocalDateTime.now());
+                break;
+            case REJECT:
+                message.setMessage("소중한 지원 감사드립니다!\n아쉽지만 다음 기회에..");
+                message.setSendTime(LocalDateTime.now());
+                break;
+        }
+
+        if (connectStat == false) {
+            message.setReadStat(true);
+        }
+        return message;
     }
 }
