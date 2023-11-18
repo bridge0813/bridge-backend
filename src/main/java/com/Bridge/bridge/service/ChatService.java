@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -171,18 +172,15 @@ public class ChatService {
     public ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
         switch (message.getType()) {
             case TALK:
-                message.setSendTime(LocalDateTime.now());
                 break;
             case ACCEPT:
                 message.setMessage("소중한 지원 감사드립니다!\n저희 프로젝트에 참여해주실래요?");
-                message.setSendTime(LocalDateTime.now());
                 break;
             case REJECT:
                 message.setMessage("소중한 지원 감사드립니다!\n아쉽지만 다음 기회에..");
-                message.setSendTime(LocalDateTime.now());
                 break;
         }
-
+        message.setSendTime(LocalDateTime.now(ZoneId.of("Asia/Tokyo")));
         if (connectStat == false) {
             message.setReadStat(true);
         }
