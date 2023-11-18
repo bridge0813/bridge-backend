@@ -30,7 +30,7 @@ public class ChatListResponse {
             String receiveName = chat.getReceiveUser().getName();
             this.roomName = receiveName;    // person이 0이면 지원자 이름
             this.notReadMessageCnt = chat.getMessages().stream()
-                    .filter(m -> !m.getWriter().equals(receiveName))
+                    .filter(m -> m.getWriter().equals(receiveName))
                     .filter(m -> m.isReadStat()==false)
                     .collect(Collectors.toList()).size();
         }
@@ -38,7 +38,7 @@ public class ChatListResponse {
             String makeName = chat.getMakeUser().getName();
             this.roomName = makeName;       // person이 1이면 모집자 이름
             this.notReadMessageCnt = chat.getMessages().stream()
-                    .filter(m -> !m.getWriter().equals(makeName))
+                    .filter(m -> m.getWriter().equals(makeName))
                     .filter(m -> m.isReadStat()==false)
                     .collect(Collectors.toList()).size();
         }
