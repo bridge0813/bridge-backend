@@ -106,18 +106,20 @@ public class ChatService {
      * 채팅방 메세지 저장
      */
     @Transactional
-    public boolean saveMessage(ChatMessageRequest message) throws FirebaseMessagingException {
+    public ChatMessageRequest saveMessage(ChatMessageRequest message) throws FirebaseMessagingException {
         Chat findChat = chatRepository.findByChatRoomId(message.getChatRoomId())
                 .orElseThrow(() -> new NotFoundChatException());
 
         boolean connectStat = findChat.isConnectStat();
 
+        ChatMessageRequest messageRequest = changeMessage(message, connectStat);
+
         Message newMessage = Message.builder()
-                .messageUuId(message.getMessageId())
-                .content(message.getMessage())
-                .writer(message.getSender())
-                .sendDate(LocalDate.now())
-                .sendTime(LocalTime.now())
+                .messageUuId(messageRequest.getMessageId())
+                .content(messageRequest.getMessage())
+                .writer(messageRequest.getSender())
+                .sendDate(messageRequest.getSendTime().toLocalDate())
+                .sendTime(messageRequest.getSendTime().toLocalTime())
                 .chat(findChat)
                 .build();
 
@@ -126,7 +128,7 @@ public class ChatService {
             // alarmService.getChatAlarm(message);
         }
         findChat.getMessages().add(newMessage);
-        return connectStat;
+        return messageRequest;
     }
 
     /**
@@ -169,7 +171,7 @@ public class ChatService {
     /**
      * 수락 거절 처리
      */
-    public ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
+    private ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
         switch (message.getType()) {
             case TALK:
                 break;

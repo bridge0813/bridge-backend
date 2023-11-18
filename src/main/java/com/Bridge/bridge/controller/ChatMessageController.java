@@ -44,8 +44,8 @@ public class ChatMessageController {
         log.info("message = {}", chatMessageRequest.getMessage());
 
         //접속 중인 인원 확인
-        boolean connectStat = chatService.saveMessage(chatMessageRequest);
-        ChatMessageRequest messageRequest = chatService.changeMessage(chatMessageRequest,connectStat);
+        ChatMessageRequest messageRequest = chatService.saveMessage(chatMessageRequest);
+        log.info("change message = {}", messageRequest.getMessage());
         simpMessagingTemplate.convertAndSend("/sub/chat/room/" + messageRequest.getChatRoomId(), messageRequest);
     }
 
