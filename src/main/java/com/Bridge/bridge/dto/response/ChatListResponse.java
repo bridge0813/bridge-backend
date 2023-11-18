@@ -27,15 +27,22 @@ public class ChatListResponse {
     public ChatListResponse(Chat chat, boolean person) {
         this.roomId = chat.getChatRoomId();
         if (person) {
-            this.roomName = chat.getReceiveUser().getName();    // person이 0이면 지원자 이름
-        }
-        else {
-            this.roomName = chat.getMakeUser().getName();       // person이 1이면 모집자 이름
-        }
-        if(!chat.getMessages().isEmpty()) {
+            String receiveName = chat.getReceiveUser().getName();
+            this.roomName = receiveName;    // person이 0이면 지원자 이름
             this.notReadMessageCnt = chat.getMessages().stream()
+                    .filter(m -> !m.getWriter().equals(receiveName))
                     .filter(m -> m.isReadStat()==false)
                     .collect(Collectors.toList()).size();
+        }
+        else {
+            String makeName = chat.getMakeUser().getName();
+            this.roomName = makeName;       // person이 1이면 모집자 이름
+            this.notReadMessageCnt = chat.getMessages().stream()
+                    .filter(m -> !m.getWriter().equals(makeName))
+                    .filter(m -> m.isReadStat()==false)
+                    .collect(Collectors.toList()).size();
+        }
+        if(!chat.getMessages().isEmpty()) {
             Message message = chat.getMessages().get(chat.getMessages().size() - 1);
             this.lastMessage = message.getContent();
             this.lastTime = LocalDateTime.of(message.getSendDate(), message.getSendTime());
