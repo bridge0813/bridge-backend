@@ -37,15 +37,15 @@ public class ChatMessageController {
     }
 
     /**
-     * 채팅방에 메세지 보내는 경우
+     * 채팅방에 메세지 보내는 경우됌
      */
     @MessageMapping("/chat/message")
     public void sendMessage(ChatMessageRequest chatMessageRequest) throws FirebaseMessagingException {
         log.info("message = {}", chatMessageRequest.getMessage());
 
         //접속 중인 인원 확인
-        boolean connectStat = chatService.saveMessage(chatMessageRequest);
-        ChatMessageRequest messageRequest = chatService.changeMessage(chatMessageRequest,connectStat);
+        ChatMessageRequest messageRequest = chatService.saveMessage(chatMessageRequest);
+        log.info("change message = {}", messageRequest.getMessage());
         simpMessagingTemplate.convertAndSend("/sub/chat/room/" + messageRequest.getChatRoomId(), messageRequest);
     }
 

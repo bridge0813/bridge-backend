@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,18 +106,20 @@ public class ChatService {
      * 채팅방 메세지 저장
      */
     @Transactional
-    public boolean saveMessage(ChatMessageRequest message) throws FirebaseMessagingException {
+    public ChatMessageRequest saveMessage(ChatMessageRequest message) throws FirebaseMessagingException {
         Chat findChat = chatRepository.findByChatRoomId(message.getChatRoomId())
                 .orElseThrow(() -> new NotFoundChatException());
 
         boolean connectStat = findChat.isConnectStat();
 
+        ChatMessageRequest messageRequest = changeMessage(message, connectStat);
+
         Message newMessage = Message.builder()
-                .messageUuId(message.getMessageId())
-                .content(message.getMessage())
-                .writer(message.getSender())
-                .sendDate(LocalDate.now())
-                .sendTime(LocalTime.now())
+                .messageUuId(messageRequest.getMessageId())
+                .content(messageRequest.getMessage())
+                .writer(messageRequest.getSender())
+                .sendDate(messageRequest.getSendTime().toLocalDate())
+                .sendTime(messageRequest.getSendTime().toLocalTime())
                 .chat(findChat)
                 .build();
 
@@ -125,7 +128,7 @@ public class ChatService {
             // alarmService.getChatAlarm(message);
         }
         findChat.getMessages().add(newMessage);
-        return connectStat;
+        return messageRequest;
     }
 
     /**
@@ -155,34 +158,32 @@ public class ChatService {
      * 안읽은 메세지 읽음 처리
      */
     @Transactional
-    public void readNotReadMessage(String chatRoomId) {
+    public void readNotReadMessage(String chatRoomId,String sender) {
         Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new NotFoundChatException());
 
+        //자기것이 아니면 읽음 처리하면 안됌
         findChat.getMessages().stream()
+                .filter(m -> !m.getWriter().equals(sender))
                 .filter(m -> m.isReadStat() == false)
                 .forEach(m -> m.changeReadStat());
-
     }
 
     /**
      * 수락 거절 처리
      */
-    public ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
+    private ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
         switch (message.getType()) {
             case TALK:
-                message.setSendTime(LocalDateTime.now());
                 break;
             case ACCEPT:
                 message.setMessage("소중한 지원 감사드립니다!\n저희 프로젝트에 참여해주실래요?");
-                message.setSendTime(LocalDateTime.now());
                 break;
             case REJECT:
                 message.setMessage("소중한 지원 감사드립니다!\n아쉽지만 다음 기회에..");
-                message.setSendTime(LocalDateTime.now());
                 break;
         }
-
+        message.setSendTime(LocalDateTime.now(ZoneId.of("Asia/Tokyo")));
         if (connectStat == false) {
             message.setReadStat(true);
         }
