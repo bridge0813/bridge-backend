@@ -37,7 +37,7 @@ public class ChatMessageController {
     }
 
     /**
-     * 채팅방에 메세지 보내는 경우
+     * 채팅방에 메세지 보내는 경우됌
      */
     @MessageMapping("/chat/message")
     public void sendMessage(ChatMessageRequest chatMessageRequest) throws FirebaseMessagingException {

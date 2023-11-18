@@ -158,14 +158,15 @@ public class ChatService {
      * 안읽은 메세지 읽음 처리
      */
     @Transactional
-    public void readNotReadMessage(String chatRoomId) {
+    public void readNotReadMessage(String chatRoomId,String sender) {
         Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new NotFoundChatException());
 
+        //자기것이 아니면 읽음 처리하면 안됌
         findChat.getMessages().stream()
+                .filter(m -> !m.getWriter().equals(sender))
                 .filter(m -> m.isReadStat() == false)
                 .forEach(m -> m.changeReadStat());
-
     }
 
     /**
