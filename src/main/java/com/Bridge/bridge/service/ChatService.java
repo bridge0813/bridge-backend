@@ -7,7 +7,7 @@ import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.ChatRoomRequest;
 import com.Bridge.bridge.dto.response.ChatListResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse;
-import com.Bridge.bridge.dto.response.ChatMessageResponse.SenderType;
+//import com.Bridge.bridge.dto.response.ChatMessageResponse.SenderType;
 import com.Bridge.bridge.dto.response.ChatRoomResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundChatException;
 import com.Bridge.bridge.repository.ChatRepository;
@@ -17,9 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,14 +88,18 @@ public class ChatService {
         String sender = findChat.getMakeUser().getName();
 
         //해당 채팅방에 존재하는 메세지 불러와야 함
+//        List<ChatMessageResponse> messageList = findChat.getMessages().stream()
+//                .map(m -> {
+//                    if (sender.equals(m.getWriter())) {
+//                        return new ChatMessageResponse(m, SenderType.MAKER);
+//                    } else {
+//                        return new ChatMessageResponse(m, SenderType.APPLIER);
+//                    }
+//                }).collect(Collectors.toList());
+
         List<ChatMessageResponse> messageList = findChat.getMessages().stream()
-                .map(m -> {
-                    if (sender.equals(m.getWriter())) {
-                        return new ChatMessageResponse(m, SenderType.MAKER);
-                    } else {
-                        return new ChatMessageResponse(m, SenderType.APPLIER);
-                    }
-                }).collect(Collectors.toList());
+                .map(ChatMessageResponse::new)
+                .collect(Collectors.toList());
 
         return messageList;
     }

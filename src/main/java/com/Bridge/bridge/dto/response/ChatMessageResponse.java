@@ -13,21 +13,24 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class ChatMessageResponse {
 
-    public enum SenderType {
-        MAKER, APPLIER;
-    }
+//    public enum SenderType {
+//        MAKER, APPLIER;
+//    }
+
+    private String messageId;
 
     private String content;
 
-    private SenderType senderType;  //모집자인지, 지원자인지 구분
+    private String senderName;  //모집자인지, 지원자인지 구분
 
     private LocalDateTime sendTime;  // 메세지 보낸 날짜
 
     private boolean readStat;       // 메세지 읽음 여부
 
-    public ChatMessageResponse(Message message, SenderType senderType) {
+    public ChatMessageResponse(Message message) {
+        this.messageId = message.getMessageUuId();
         this.content = message.getContent();
-        this.senderType = senderType;
+        this.senderName = message.getWriter();
         this.sendTime = LocalDateTime.of(message.getSendDate(), message.getSendTime());
         this.readStat = message.isReadStat();
     }
