@@ -29,7 +29,7 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         System.out.println("destination : "+accessor.getDestination());
         List<ChatMessageResponse> chatList = handleMessage(accessor.getCommand(), accessor);
         System.out.println("chatList :"  + chatList);
-        if (chatList != null || !chatList.isEmpty()) {
+        if (chatList != null) {
             new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + accessor.getMessage(), chatList);
             System.out.println("@@@@전송 완료@@@@");
         }
