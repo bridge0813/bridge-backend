@@ -58,7 +58,7 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
             // 현재 접속중인 사람 있는지 체크 -> 있다면 메세지 상태 업데이트 해줘야 함...
             if (connectStat == false) {
                 System.out.println("두명다 접속중");
-                return chatService.findChat(accessor.getMessage());
+                return chatService.findChat(chatRoomId);
             }
         }
         //구독 취소
