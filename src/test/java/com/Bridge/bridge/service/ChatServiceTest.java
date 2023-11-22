@@ -145,9 +145,9 @@ class ChatServiceTest {
         ChatMessageResponse response1 = messages.get(0);
         ChatMessageResponse response2 = messages.get(1);
         assertEquals("content1", response1.getContent());
-        assertEquals(ChatMessageResponse.SenderType.MAKER, response1.getSenderType());
+        assertEquals("bridge", response1.getSenderName());
         assertEquals("content2", response2.getContent());
-        assertEquals(ChatMessageResponse.SenderType.APPLIER, response2.getSenderType());
+        assertEquals("bridge2", response2.getSenderName());
     }
 
     @Test
