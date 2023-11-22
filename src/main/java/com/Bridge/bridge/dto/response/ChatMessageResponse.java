@@ -34,7 +34,7 @@ public class ChatMessageResponse {
         this.type = message.getType();
         this.content = message.getContent();
         this.senderId = message.getWriterId();
-        this.sendTime = LocalDateTime.of(message.getSendDate(), message.getSendTime()).withNano(0);
+        this.sendTime = message.getSendDateTime();
         this.readStat = message.isReadStat();
     }
 }
