@@ -31,7 +31,7 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         System.out.println("chatList :"  + chatList);
         if (chatList != null) {
             String chatRoomId = getChatRoomId(accessor.getMessage());
-            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + chatRoomId, chatList);
+            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room/" + chatRoomId, chatList);
             System.out.println("@@@@전송 완료@@@@");
         }
         return message;
