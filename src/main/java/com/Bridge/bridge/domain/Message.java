@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -22,13 +23,13 @@ public class Message {
 
     private String content;         // 메세지 내용
 
-    private String writer;          // 메세지 보낸 사람
+    private Long writerId;          // 메세지 보낸 사람 ID
 
-    private LocalDate sendDate;     // 메세지 보낸 날짜
-
-    private LocalTime sendTime;     // 메세지 보낸 시간
+    private LocalDateTime sendDateTime;     // 메세지 보낸 날짜 + 시간
 
     private boolean readStat;   // 읽음 여부
+
+    private String type;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
@@ -39,13 +40,13 @@ public class Message {
     private Chat chat;              // 해당 메세지가 포함된 채팅방
 
     @Builder
-    public Message(String messageUuId, String content, String writer, LocalDate sendDate, LocalTime sendTime, Chat chat) {
+    public Message(String messageUuId, String content, Long writerId, LocalDateTime sendDateTime, String type, Chat chat) {
         this.messageUuId = messageUuId;
         this.content = content;
-        this.writer = writer;
-        this.sendDate = sendDate;
-        this.sendTime = sendTime;
+        this.writerId = writerId;
+        this.sendDateTime = sendDateTime;
         this.readStat = false;
+        this.type = type;
         this.chat = chat;
     }
 

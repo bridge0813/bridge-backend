@@ -119,9 +119,9 @@ public class ChatService {
         Message newMessage = Message.builder()
                 .messageUuId(messageRequest.getMessageId())
                 .content(messageRequest.getMessage())
-                .writer(messageRequest.getSender())
-                .sendDate(messageRequest.getSendTime().toLocalDate())
-                .sendTime(messageRequest.getSendTime().toLocalTime())
+                .writerId(messageRequest.getSenderId())
+                .sendDateTime(messageRequest.getSendTime())
+                .type(message.getType().name())
                 .chat(findChat)
                 .build();
 
@@ -160,13 +160,13 @@ public class ChatService {
      * 안읽은 메세지 읽음 처리
      */
     @Transactional
-    public void readNotReadMessage(String chatRoomId,String sender) {
+    public void readNotReadMessage(String chatRoomId,String userId) {
         Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new NotFoundChatException());
 
         //자기것이 아니면 읽음 처리하면 안됌
         findChat.getMessages().stream()
-                .filter(m -> !m.getWriter().equals(sender))
+                .filter(m -> m.getWriterId() != Long.parseLong(userId))
                 .filter(m -> m.isReadStat() == false)
                 .forEach(m -> m.changeReadStat());
     }
@@ -185,7 +185,8 @@ public class ChatService {
                 message.setMessage("소중한 지원 감사드립니다!\n아쉽지만 다음 기회에..");
                 break;
         }
-        message.setSendTime(LocalDateTime.now(ZoneId.of("Asia/Tokyo")));
+        LocalDateTime sendTime = LocalDateTime.now(ZoneId.of("Asia/Tokyo")).withNano(0);
+        message.setSendTime(sendTime);
         if (connectStat == false) {
             message.setReadStat(true);
         }

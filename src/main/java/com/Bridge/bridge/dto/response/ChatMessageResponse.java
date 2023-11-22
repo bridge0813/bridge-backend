@@ -19,9 +19,11 @@ public class ChatMessageResponse {
 
     private String messageId;
 
+    private String type;
+
     private String content;
 
-    private String senderName;  //모집자인지, 지원자인지 구분
+    private Long senderId;  //모집자인지, 지원자인지 구분
 
     private LocalDateTime sendTime;  // 메세지 보낸 날짜
 
@@ -29,9 +31,10 @@ public class ChatMessageResponse {
 
     public ChatMessageResponse(Message message) {
         this.messageId = message.getMessageUuId();
+        this.type = message.getType();
         this.content = message.getContent();
-        this.senderName = message.getWriter();
-        this.sendTime = LocalDateTime.of(message.getSendDate(), message.getSendTime());
+        this.senderId = message.getWriterId();
+        this.sendTime = LocalDateTime.of(message.getSendDate(), message.getSendTime()).withNano(0);
         this.readStat = message.isReadStat();
     }
 }

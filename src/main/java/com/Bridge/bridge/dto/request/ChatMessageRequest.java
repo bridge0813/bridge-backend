@@ -17,7 +17,7 @@ public class ChatMessageRequest {
 
     private MessageType type;   // 메세지 타입
 
-    private String sender;      // 메세지 보낸 사람
+    private Long senderId;      // 메세지 보낸 사람 ID
 
     private String message;     // 메세지 내용
 

@@ -22,30 +22,35 @@ public class ChatListResponse {
 
     private String lastMessage;
 
+    private String type;
+
     private LocalDateTime lastTime;
 
     public ChatListResponse(Chat chat, boolean person) {
         this.roomId = chat.getChatRoomId();
         if (person) {
+            Long receiveId = chat.getReceiveUser().getId();
             String receiveName = chat.getReceiveUser().getName();
             this.roomName = receiveName;    // person이 0이면 지원자 이름
             this.notReadMessageCnt = chat.getMessages().stream()
-                    .filter(m -> m.getWriter().equals(receiveName))
+                    .filter(m -> m.getWriterId() == receiveId)
                     .filter(m -> m.isReadStat()==false)
                     .collect(Collectors.toList()).size();
         }
         else {
-            String makeName = chat.getMakeUser().getName();
-            this.roomName = makeName;       // person이 1이면 모집자 이름
+            Long makerId = chat.getMakeUser().getId();
+            String makerName = chat.getMakeUser().getName();
+            this.roomName = makerName;       // person이 1이면 모집자 이름
             this.notReadMessageCnt = chat.getMessages().stream()
-                    .filter(m -> m.getWriter().equals(makeName))
+                    .filter(m -> m.getWriterId() == makerId)
                     .filter(m -> m.isReadStat()==false)
                     .collect(Collectors.toList()).size();
         }
         if(!chat.getMessages().isEmpty()) {
             Message message = chat.getMessages().get(chat.getMessages().size() - 1);
             this.lastMessage = message.getContent();
-            this.lastTime = LocalDateTime.of(message.getSendDate(), message.getSendTime());
+            this.type = message.getType();
+            this.lastTime = message.getSendDateTime();
         }
     }
 }
