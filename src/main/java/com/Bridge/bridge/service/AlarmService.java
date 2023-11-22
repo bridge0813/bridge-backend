@@ -131,7 +131,8 @@ public class AlarmService {
                 .orElseThrow(() -> new NotFoundChatException());
 
 
-        User sender = userRepository.findByName(chatMessageRequest.getSender());
+        User sender = userRepository.findById(chatMessageRequest.getSenderId())
+                .orElseThrow(() -> new NotFoundUserException());
 
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
 
