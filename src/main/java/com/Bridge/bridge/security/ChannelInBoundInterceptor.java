@@ -45,8 +45,8 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
 
             System.out.println("함수 정상 작동");
             // 채팅방 ID 와 유저 ID 분리
-            String chatRoomId = accessor.getMessage().substring(0, 37);
-            String userId = accessor.getMessage().substring(38);
+            String chatRoomId = accessor.getMessage().substring(0, 36);
+            String userId = accessor.getMessage().substring(37);
 
             //입장 처리 -> 현재 접속 인원 +1
             boolean connectStat = chatService.changeConnectStat(chatRoomId);
