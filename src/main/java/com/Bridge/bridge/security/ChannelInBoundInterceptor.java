@@ -29,7 +29,7 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         System.out.println("destination : "+accessor.getDestination());
         List<ChatMessageResponse> chatList = handleMessage(accessor.getCommand(), accessor);
         System.out.println("chatList :"  + chatList);
-        if (chatList != null || !chatList.isEmpty()) {
+        if (chatList != null) {
             new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + accessor.getMessage(), chatList);
             System.out.println("@@@@전송 완료@@@@");
         }
@@ -45,8 +45,8 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
 
             System.out.println("함수 정상 작동");
             // 채팅방 ID 와 유저 ID 분리
-            String chatRoomId = accessor.getMessage().substring(0, 37);
-            String userId = accessor.getMessage().substring(38);
+            String chatRoomId = accessor.getMessage().substring(0, 36);
+            String userId = accessor.getMessage().substring(37);
 
             //입장 처리 -> 현재 접속 인원 +1
             boolean connectStat = chatService.changeConnectStat(chatRoomId);
@@ -58,7 +58,7 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
             // 현재 접속중인 사람 있는지 체크 -> 있다면 메세지 상태 업데이트 해줘야 함...
             if (connectStat == false) {
                 System.out.println("두명다 접속중");
-                return chatService.findChat(accessor.getMessage());
+                return chatService.findChat(chatRoomId);
             }
         }
         //구독 취소
