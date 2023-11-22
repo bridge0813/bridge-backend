@@ -30,7 +30,8 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         List<ChatMessageResponse> chatList = handleMessage(accessor.getCommand(), accessor);
         System.out.println("chatList :"  + chatList);
         if (chatList != null) {
-            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + accessor.getMessage(), chatList);
+            String chatRoomId = getChatRoomId(accessor.getMessage());
+            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + chatRoomId, chatList);
             System.out.println("@@@@전송 완료@@@@");
         }
         return message;
@@ -45,8 +46,8 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
 
             System.out.println("함수 정상 작동");
             // 채팅방 ID 와 유저 ID 분리
-            String chatRoomId = accessor.getMessage().substring(0, 36);
-            String userId = accessor.getMessage().substring(37);
+            String chatRoomId = getChatRoomId(accessor.getMessage());
+            String userId = getUserId(accessor.getMessage());
 
             //입장 처리 -> 현재 접속 인원 +1
             boolean connectStat = chatService.changeConnectStat(chatRoomId);
@@ -71,5 +72,13 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
             log.info("구독 취소 됌");
         }
         return null;
+    }
+
+    private String getChatRoomId(String message) {
+        return message.substring(0, 36);
+    }
+
+    private String getUserId(String message) {
+        return message.substring(37);
     }
 }
