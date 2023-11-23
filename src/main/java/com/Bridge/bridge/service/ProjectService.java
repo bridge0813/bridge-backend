@@ -165,29 +165,54 @@ public class ProjectService {
         LocalDateTime localDateTime = LocalDateTime.now();
 
         List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
+        System.out.println(allProject.size());
 
         List<Project> findProject = allProject.stream()
                 .filter((project) ->
-                { return project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord);
+                {
+                    System.out.println(theSearchWord);
+                    System.out.println(project.getTitle().contains(theSearchWord));
+                    return project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord);
                 })
                 .collect(Collectors.toList());
 
-        final int[] recruitTotal = {0};
+        System.out.println(findProject.size());
+//        findProject.stream()
+//                .forEach((project -> project.getRecruit().stream()
+//                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+//                ));
+//        System.out.println(findProject.get(0).);
+        List<ProjectListResponseDto> response = new ArrayList<>();
 
-        findProject.stream()
-                .forEach((project -> project.getRecruit().stream()
-                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                ));
+        for(int i =0; i<findProject.size(); i++){
+            final int[] total = {0};
 
-        List<ProjectListResponseDto> response = findProject.stream()
-                .map((project) -> ProjectListResponseDto.builder()
-                        .projectId(project.getId())
-                        .title(project.getTitle())
-                        .dueDate(project.getDueDate().toString())
-                        .recruitTotalNum(recruitTotal[0])
-                        .build()
-                )
-                .collect(Collectors.toList());
+            findProject.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+//        findProject.stream()
+//                .forEach((project -> project.getRecruit().stream()
+//                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
+//                ));
+            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+                    .projectId(findProject.get(i).getId())
+                    .title(findProject.get(i).getTitle())
+                    .dueDate(findProject.get(i).getDueDate().toString())
+                    .recruitTotalNum(total[0])
+                    .build();
+            response.add(projectListResponseDto);
+        }
+
+//        List<ProjectListResponseDto> response = findProject.stream()
+//                .map((project) -> ProjectListResponseDto.builder()
+//                        .projectId(project.getId())
+//                        .title(project.getTitle())
+//                        .dueDate(project.getDueDate().toString())
+//                        .recruitTotalNum(recruitTotal[0])
+//                        .build()
+//                )
+//                .collect(Collectors.toList());
+
+        System.out.println(response.size());
 
         return response;
     }
