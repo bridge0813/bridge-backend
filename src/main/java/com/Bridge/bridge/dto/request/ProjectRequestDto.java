@@ -57,19 +57,24 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
         int d_date = Integer.valueOf(this.getDueDate().substring(8,10));
 
         LocalDateTime dueDate = LocalDateTime.of(d_year,d_month,d_date,23,59,59);
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
 
+        if(this.startDate != null){
+            int s_year = Integer.valueOf(this.getStartDate().substring(0,4));
+            int s_month = Integer.valueOf(this.getStartDate().substring(5,7));
+            int s_date = Integer.valueOf(this.getStartDate().substring(8,10));
 
-        int s_year = Integer.valueOf(this.getStartDate().substring(0,4));
-        int s_month = Integer.valueOf(this.getStartDate().substring(5,7));
-        int s_date = Integer.valueOf(this.getStartDate().substring(8,10));
+            startDate = LocalDateTime.of(s_year,s_month,s_date,23,59,59);
+        }
 
-        LocalDateTime startDate = LocalDateTime.of(s_year,s_month,s_date,23,59,59);
+        if(this.endDate != null){
+            int e_year = Integer.valueOf(this.getEndDate().substring(0,4));
+            int e_month = Integer.valueOf(this.getEndDate().substring(5,7));
+            int e_date = Integer.valueOf(this.getEndDate().substring(8,10));
 
-        int e_year = Integer.valueOf(this.getEndDate().substring(0,4));
-        int e_month = Integer.valueOf(this.getEndDate().substring(5,7));
-        int e_date = Integer.valueOf(this.getEndDate().substring(8,10));
-
-        LocalDateTime endDate = LocalDateTime.of(e_year,e_month,e_date,23,59,59);
+            endDate = LocalDateTime.of(e_year,e_month,e_date,23,59,59);
+        }
 
         return Project.builder()
                 .title(this.getTitle())
