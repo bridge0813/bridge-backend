@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -126,16 +127,14 @@ class ChatControllerTest {
 
         Message message1 = Message.builder()
                 .content("content1")
-                .writer("bridge")
-                .sendDate(LocalDate.now())
-                .sendTime(LocalTime.now())
+                .writerId(user1.getId())
+                .sendDateTime(LocalDateTime.now().withNano(0))
                 .build();
 
         Message message2 = Message.builder()
                 .content("content2")
-                .writer("bridge2")
-                .sendDate(LocalDate.now())
-                .sendTime(LocalTime.now())
+                .writerId(user2.getId())
+                .sendDateTime(LocalDateTime.now().withNano(0))
                 .build();
 
         room1.getMessages().add(message1);

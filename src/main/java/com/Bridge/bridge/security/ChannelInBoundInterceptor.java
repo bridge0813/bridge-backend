@@ -7,11 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MimeTypeUtils;
 
 import java.util.List;
 
@@ -29,9 +31,15 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         System.out.println("destination : "+accessor.getDestination());
         List<ChatMessageResponse> chatList = handleMessage(accessor.getCommand(), accessor);
         System.out.println("chatList :"  + chatList);
+
         if (chatList != null) {
-            String chatRoomId = getChatRoomId(accessor.getMessage());
-            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room/" + chatRoomId, chatList);
+            //String chatRoomId = getChatRoomId(accessor.getMessage());
+            boolean sendResult = channel.send(MessageBuilder.withPayload(chatList)
+                    .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                    .build());
+            log.info("send 결과 = {}", sendResult);
+//            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + chatRoomId, );
+//            new SimpMessagingTemplate(channel).send("/sub/chat/room" + chatRoomId, (Message<?>) chatList);
             System.out.println("@@@@전송 완료@@@@");
         }
         return message;

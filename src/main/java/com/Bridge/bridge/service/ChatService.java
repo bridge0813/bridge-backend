@@ -52,7 +52,7 @@ public class ChatService {
 
         return ChatRoomResponse.builder()
                 .chatRoomId(saveChat.getChatRoomId())
-                .receiveUserId(makeUser.getId())
+                .makeUserId(makeUser.getId())
                 .receiveUserId(receiveUser.getId())
                 .build();
     }

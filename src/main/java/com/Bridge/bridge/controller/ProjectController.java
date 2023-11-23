@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +38,11 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
     })
     @PostMapping("/project")
-    public Long createProject(@RequestBody ProjectRequestDto projectRequestDto){
-        return projectService.createProject(projectRequestDto);
+    public ResponseEntity<?> createProject(@RequestBody ProjectRequestDto projectRequestDto){
+        Map<String, Long> result = new HashMap<>();
+        Long projectId = projectService.createProject(projectRequestDto);
+        result.put("projectId", projectId);
+        return ResponseEntity.ok(result);
     }
 
     // 검색어 기준으로 프로젝트 모집글 조회

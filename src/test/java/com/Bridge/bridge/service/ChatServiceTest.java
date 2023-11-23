@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -121,16 +122,14 @@ class ChatServiceTest {
 
         Message message1 = Message.builder()
                 .content("content1")
-                .writer("bridge")
-                .sendDate(LocalDate.now())
-                .sendTime(LocalTime.now())
+                .writerId(saveUser1.getId())
+                .sendDateTime(LocalDateTime.now().withNano(0))
                 .build();
 
         Message message2 = Message.builder()
                 .content("content2")
-                .writer("bridge2")
-                .sendDate(LocalDate.now())
-                .sendTime(LocalTime.now())
+                .writerId(saveUser2.getId())
+                .sendDateTime(LocalDateTime.now().withNano(0))
                 .build();
 
         room1.getMessages().add(message1);
@@ -145,9 +144,9 @@ class ChatServiceTest {
         ChatMessageResponse response1 = messages.get(0);
         ChatMessageResponse response2 = messages.get(1);
         assertEquals("content1", response1.getContent());
-        assertEquals("bridge", response1.getSenderName());
+        assertEquals(saveUser1.getId(), response1.getSenderId());
         assertEquals("content2", response2.getContent());
-        assertEquals("bridge2", response2.getSenderName());
+        assertEquals(saveUser2.getId(), response2.getSenderId());
     }
 
     @Test
@@ -164,7 +163,7 @@ class ChatServiceTest {
         ChatMessageRequest messageRequest = new ChatMessageRequest();
         messageRequest.setChatRoomId("1");
         messageRequest.setType(ChatMessageRequest.MessageType.TALK);
-        messageRequest.setSender("bridge");
+        messageRequest.setSenderId(1L);
         messageRequest.setMessage("content");
 
         //when
@@ -174,7 +173,6 @@ class ChatServiceTest {
         Chat chat = chatRepository.findAll().get(0);
         Message message = chat.getMessages().get(0);
         assertEquals("content", message.getContent());
-        assertEquals("bridge", message.getWriter());
     }
 
     @Test
