@@ -26,8 +26,14 @@ public class ChatListResponse {
 
     private LocalDateTime lastTime;
 
+    private Long makerId;
+
+    private Long receiverId;
+
     public ChatListResponse(Chat chat, boolean person) {
         this.roomId = chat.getChatRoomId();
+        this.makerId = chat.getMakeUser().getId();
+        this.receiverId = chat.getReceiveUser().getId();
         if (person) {
             Long receiveId = chat.getReceiveUser().getId();
             String receiveName = chat.getReceiveUser().getName();
