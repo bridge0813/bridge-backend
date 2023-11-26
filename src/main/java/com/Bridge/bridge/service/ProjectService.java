@@ -176,12 +176,6 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());
 
-        System.out.println(findProject.size());
-//        findProject.stream()
-//                .forEach((project -> project.getRecruit().stream()
-//                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-//                ));
-//        System.out.println(findProject.get(0).);
         List<ProjectListResponseDto> response = new ArrayList<>();
 
         for(int i =0; i<findProject.size(); i++){
@@ -189,10 +183,7 @@ public class ProjectService {
 
             findProject.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
-//        findProject.stream()
-//                .forEach((project -> project.getRecruit().stream()
-//                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-//                ));
+
             ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
                     .projectId(findProject.get(i).getId())
                     .title(findProject.get(i).getTitle())
@@ -201,18 +192,6 @@ public class ProjectService {
                     .build();
             response.add(projectListResponseDto);
         }
-
-//        List<ProjectListResponseDto> response = findProject.stream()
-//                .map((project) -> ProjectListResponseDto.builder()
-//                        .projectId(project.getId())
-//                        .title(project.getTitle())
-//                        .dueDate(project.getDueDate().toString())
-//                        .recruitTotalNum(recruitTotal[0])
-//                        .build()
-//                )
-//                .collect(Collectors.toList());
-
-        System.out.println(response.size());
 
         return response;
     }
@@ -257,22 +236,23 @@ public class ProjectService {
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
-        final int[] recruitTotal = {0};
 
-        projects.stream()
-                .forEach((project -> project.getRecruit().stream()
-                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                ));
+        List<ProjectListResponseDto> response = new ArrayList<>();
 
-        List<ProjectListResponseDto> response = projects.stream()
-                .map((project) -> ProjectListResponseDto.builder()
-                        .projectId(project.getId())
-                        .title(project.getTitle())
-                        .dueDate(project.getDueDate().toString())
-                        .recruitTotalNum(recruitTotal[0])
-                        .build()
-                )
-                .collect(Collectors.toList());
+        for(int i =0; i<projects.size(); i++){
+            final int[] total = {0};
+
+            projects.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+
+            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+                    .projectId(projects.get(i).getId())
+                    .title(projects.get(i).getTitle())
+                    .dueDate(projects.get(i).getDueDate().toString())
+                    .recruitTotalNum(total[0])
+                    .build();
+            response.add(projectListResponseDto);
+        }
 
         return response;
     }
@@ -295,26 +275,25 @@ public class ProjectService {
             throw new NotFoundProjectException();
         }
 
-        // 총 모집인원
-        final int[] recruitTotal = {0};
-
-        // 총 모집인원 구하기
-        myProjects.stream()
-                .forEach((project -> project.getRecruit().stream()
-                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                ));
-
-
         List<MyProjectResponseDto> response = new ArrayList<>();
 
-        return myProjects.stream()
-                .map((project -> MyProjectResponseDto.builder()
-                        .projectId(project.getId())
-                        .overview(project.getOverview())
-                        .dueDate(project.getDueDate().toString())
-                        .recruitTotalNum(recruitTotal[0])
-                        .build()))
-                .collect(Collectors.toList());
+        for(int i =0; i<myProjects.size(); i++){
+            final int[] total = {0};
+
+            myProjects.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+
+            MyProjectResponseDto myProjectResponseDto = MyProjectResponseDto.builder()
+                    .projectId(myProjects.get(i).getId())
+                    .title(myProjects.get(i).getTitle())
+                    .overview(myProjects.get(i).getOverview())
+                    .dueDate(myProjects.get(i).getDueDate().toString())
+                    .recruitTotalNum(total[0])
+                    .build();
+            response.add(myProjectResponseDto);
+        }
+
+        return response;
     }
 
     /*
@@ -331,24 +310,22 @@ public class ProjectService {
             throw new NotFoundProjectException();
         }
 
-        // 총 모집인원
-        final int[] recruitTotal = {0};
+        List<ProjectListResponseDto> response = new ArrayList<>();
 
-        // 총 모집인원 구하기
-        allProjects.stream()
-                .forEach((project -> project.getRecruit().stream()
-                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                ));
+        for(int i =0; i<allProjects.size(); i++){
+            final int[] total = {0};
 
-        List<ProjectListResponseDto> response = allProjects.stream()
-                .map((project -> ProjectListResponseDto.builder()
-                        .projectId(project.getId())
-                        .title(project.getTitle())
-                        .dueDate(project.getDueDate().toString())
-                        .recruitTotalNum(recruitTotal[0])
-                        .build()
-                ))
-                .collect(Collectors.toList());
+            allProjects.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+
+            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+                    .projectId(allProjects.get(i).getId())
+                    .title(allProjects.get(i).getTitle())
+                    .dueDate(allProjects.get(i).getDueDate().toString())
+                    .recruitTotalNum(total[0])
+                    .build();
+            response.add(projectListResponseDto);
+        }
 
         return response;
 
@@ -362,6 +339,8 @@ public class ProjectService {
     public List<ProjectListResponseDto> findMyPartProjects(String myPart){
         List<Part> parts = partRepository.findAllByRecruitPart(myPart);
 
+        System.out.println(parts.size());
+
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
@@ -370,24 +349,22 @@ public class ProjectService {
             throw new NotFoundProjectException();
         }
 
-        // 총 모집인원
-        final int[] recruitTotal = {0};
+        List<ProjectListResponseDto> response = new ArrayList<>();
 
-        // 총 모집인원 구하기
-        myPartProjects.stream()
-                .forEach((project -> project.getRecruit().stream()
-                        .forEach((part -> recruitTotal[0] += part.getRecruitNum()))
-                ));
+        for(int i =0; i<myPartProjects.size(); i++){
+            final int[] total = {0};
 
-        List<ProjectListResponseDto> response = myPartProjects.stream()
-                .map((project -> ProjectListResponseDto.builder()
-                        .projectId(project.getId())
-                        .title(project.getTitle())
-                        .dueDate(project.getDueDate().toString())
-                        .recruitTotalNum(recruitTotal[0])
-                        .build()
-                ))
-                .collect(Collectors.toList());
+            myPartProjects.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+
+            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+                    .projectId(myPartProjects.get(i).getId())
+                    .title(myPartProjects.get(i).getTitle())
+                    .dueDate(myPartProjects.get(i).getDueDate().toString())
+                    .recruitTotalNum(total[0])
+                    .build();
+            response.add(projectListResponseDto);
+        }
 
         return response;
 
@@ -406,10 +383,7 @@ public class ProjectService {
 
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        // 포맷
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
-
-        if(project.getDueDate().toString().compareTo(formatedNow)<0){ // 마감시간이 이미 지난 경우
+        if(project.getDueDate().compareTo(localDateTime)<0){ // 마감시간이 이미 지난 경우
             throw new IllegalStateException("이미 마감이 된 모집글입니다.");
         }
         else {
