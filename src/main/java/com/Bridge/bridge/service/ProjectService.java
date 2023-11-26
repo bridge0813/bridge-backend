@@ -337,7 +337,9 @@ public class ProjectService {
         Return : List<projectListResponseDto>
     */
     public List<ProjectListResponseDto> findMyPartProjects(String myPart){
-        List<Part> parts = partRepository.findAllByRecruitPart(myPart);
+        System.out.println(Field.valueOf(myPart));
+
+        List<Part> parts = partRepository.findAllByRecruitPart(Field.valueOf(myPart).toString());
 
         System.out.println(parts.size());
 
