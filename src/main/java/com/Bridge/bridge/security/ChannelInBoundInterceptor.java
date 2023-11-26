@@ -33,13 +33,10 @@ public class ChannelInBoundInterceptor implements ChannelInterceptor {
         System.out.println("chatList :"  + chatList);
 
         if (chatList != null) {
-            //String chatRoomId = getChatRoomId(accessor.getMessage());
             boolean sendResult = channel.send(MessageBuilder.withPayload(chatList)
                     .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
                     .build());
             log.info("send 결과 = {}", sendResult);
-//            new SimpMessagingTemplate(channel).convertAndSend("/sub/chat/room" + chatRoomId, );
-//            new SimpMessagingTemplate(channel).send("/sub/chat/room" + chatRoomId, (Message<?>) chatList);
             System.out.println("@@@@전송 완료@@@@");
         }
         return message;
