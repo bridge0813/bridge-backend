@@ -1,10 +1,7 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.request.NotificationRequestDto;
-import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
+import com.Bridge.bridge.dto.request.*;
 import com.Bridge.bridge.dto.response.*;
-import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.service.AlarmService;
 import com.Bridge.bridge.service.ProjectService;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -149,8 +146,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public List<ProjectListResponseDto> findMyPartProjects(@RequestBody String part){
-        return projectService.findMyPartProjects(part);
+    public List<ProjectListResponseDto> findMyPartProjects(@RequestBody myPartProjectRequest myPartProjectRequest){
+        return projectService.findMyPartProjects(myPartProjectRequest.getPart());
     }
 
     // 모집글 마감하기
