@@ -142,7 +142,7 @@ public class ProjectController {
 
     // 내 분야 프로젝트 모집글 불러오기
     @PostMapping("/projects/mypart")
-    @Operation(summary = "내가 작성한 프로젝트 모집글 조회 기능", description = "내가 작성한 프로젝트 모집글들을 조회할 수 있다.")
+    @Operation(summary = "내 분야 프로젝트 모집글 조회 기능", description = "내 분야 프로젝트 모집글들을 조회할 수 있다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "내가 작성한 프로젝트 모집글 조회 완료"),
             @ApiResponse(responseCode = "400", description = "내가 작성한 프로젝트 모집글 조회 실패"),
