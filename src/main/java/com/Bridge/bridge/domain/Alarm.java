@@ -28,7 +28,7 @@ public class Alarm {
     private LocalDateTime sendDateTime;         // 발신 날짜 + 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "user_id" , name = "rcv_user_id")
+    @JoinColumn(name = "user_id")
     private User rcvUser;               // 수신자
 
     @Builder
