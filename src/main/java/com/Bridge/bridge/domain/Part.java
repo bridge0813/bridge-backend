@@ -49,7 +49,7 @@ public class Part {
         project.getRecruit().add(this);
     }
 
-    public PartResponseDto toDto(){
+    public PartResponseDto toDto() {
         return PartResponseDto.builder()
                 .recruitPart(this.getRecruitPart())
                 .recruitNum(this.getRecruitNum())
@@ -57,7 +57,4 @@ public class Part {
                 .requirement(this.getRequirement())
                 .build();
     }
-
-
-
 }
