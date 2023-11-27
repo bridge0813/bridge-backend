@@ -265,9 +265,7 @@ public class ProjectController {
     }
 
     // 인기글 조회 기능
-    @GetMapping("/projects/top")
-    @PostMapping("/project/scrap")
-    @Operation(summary = "인기글 조회 기능", description = "인기글을 조회할 수 있다.")
+    @GetMapping("/projects/top") @Operation(summary = "인기글 조회 기능", description = "인기글을 조회할 수 있다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "인기글 조회 완료"),
             @ApiResponse(responseCode = "400", description = "인기글 조회 실패"),
