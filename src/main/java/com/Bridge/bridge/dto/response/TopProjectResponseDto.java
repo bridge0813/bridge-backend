@@ -12,14 +12,20 @@ public class TopProjectResponseDto {
 
     int rank; // 인기 순위
 
+    Long projectId; // 모집글ID
+
     String title; // 모집글 제목
 
     String dueDate; // 모집글 작성 날짜, 시간
 
+    int recruitNum; // 총 모집 인원
+
     @Builder
-    public TopProjectResponseDto(int rank, String title, String dueDate) {
+    public TopProjectResponseDto(int rank, Long projectId, String title, String dueDate, int recruitNum) {
         this.rank = rank;
+        this.projectId = projectId;
         this.title = title;
         this.dueDate = dueDate;
+        this.recruitNum = recruitNum;
     }
 }
