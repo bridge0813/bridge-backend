@@ -613,10 +613,18 @@ public class ProjectService {
         List<imminentProjectResponse> imminentProjectResponses = new ArrayList<>();
 
         for (int i=0; i<projects.size(); i++){
+
+            final int[] total = {0};
+
+            projects.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+
             imminentProjectResponses.add(imminentProjectResponse.builder()
                     .imminentRank(i+1)
+                    .projectId(projects.get(i).getId())
                     .title(projects.get(i).getTitle())
                     .dueDate(projects.get(i).getDueDate().toString())
+                    .recruitNum(total[0])
                     .build());
         }
 
