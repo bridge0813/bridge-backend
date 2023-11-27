@@ -464,10 +464,17 @@ public class ProjectService {
         List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
 
         for (int i=0; i<top20.size(); i++){
+            final int[] total = {0};
+
+            top20.get(i).getRecruit().stream()
+                    .forEach((part -> total[0] += part.getRecruitNum()));
+
             topProjectResponseDtos.add(TopProjectResponseDto.builder()
                     .rank(i+1)
+                    .projectId(top20.get(i).getId())
                     .title(top20.get(i).getTitle())
                     .dueDate(top20.get(i).getDueDate().toString())
+                    .recruitNum(total[0])
                     .build());
         }
         return topProjectResponseDtos;
