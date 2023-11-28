@@ -14,6 +14,7 @@ import com.Bridge.bridge.repository.ChatRepository;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final ChatRepository chatRepository;
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     private final UserService userService;
 
@@ -172,7 +175,7 @@ public class ChatService {
     }
 
     /**
-     * 수락 거절 처리
+     * 메세지 타입에 따른 전송 메세지 변경 함수
      */
     private ChatMessageRequest changeMessage(ChatMessageRequest message, boolean connectStat) {
         switch (message.getType()) {
@@ -190,6 +193,16 @@ public class ChatService {
         if (connectStat == false) {
             message.setReadStat(true);
         }
+        log.info("changed message = {}", message.getMessage());
+        log.info("message readStat = {}", message.isReadStat());
         return message;
+    }
+
+    /**
+     * 클라이언트로 메세지 전송 함수
+     */
+    public void sendMesssage(ChatMessageRequest message) {
+        simpMessagingTemplate.convertAndSend("/sub/chat/room/" + message.getChatRoomId(), message);
+        log.info("메세지 정상 전송 완료");
     }
 }
