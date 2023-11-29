@@ -50,10 +50,12 @@ public class Chat {
     }
 
     public boolean changeConnectStat() {
+        // 1명이 접속하면 True 로 변경
         if (this.connectStat == false) {
             this.connectStat = true;
             return this.connectStat;
         }
+        // 2명 다 접속 중인 경우 False 로 변경
         this.connectStat = false;
         return this.connectStat;
     }
