@@ -1,6 +1,7 @@
 package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.ChatRoomRequest;
+import com.Bridge.bridge.dto.response.ChatHistoryResponse;
 import com.Bridge.bridge.dto.response.ChatListResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse;
 import com.Bridge.bridge.dto.response.ChatRoomResponse;
@@ -48,8 +49,8 @@ public class ChatController {
      */
     @GetMapping("/chat")
     public ResponseEntity<?> getChat(@RequestParam("chatRoomId") String chatRoomId) {
-        List<ChatMessageResponse> chatMessages = chatService.findChat(chatRoomId);
-        return ResponseEntity.ok(chatMessages);
+        ChatHistoryResponse chatHistory = chatService.getChatHistory(chatRoomId);
+        return ResponseEntity.ok(chatHistory);
     }
 
     /**
