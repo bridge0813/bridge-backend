@@ -107,8 +107,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "모집글 필터링 조회 완료"),
             @ApiResponse(responseCode = "400", description = "모집글 필터링 조회 실패")
     })
-    public List<ProjectListResponseDto> filterProjects(@RequestBody FilterRequestDto filterRequestDto){
-        return projectService.filterProjectList(filterRequestDto);
+    public List<ProjectListResponseDto> filterProjects(HttpServletRequest request, @RequestBody FilterRequestDto filterRequestDto){
+        return projectService.filterProjectList(request, filterRequestDto);
     }
 
 
@@ -133,8 +133,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "전체 모집글 조회 실패"),
             @ApiResponse(responseCode = "404", description = "모집글이 존재하지 않는다.")
     })
-    public List<ProjectListResponseDto> allProjects(){
-        return projectService.allProjects();
+    public List<ProjectListResponseDto> allProjects(HttpServletRequest request){
+        return projectService.allProjects(request);
     }
 
     // 내 분야 프로젝트 모집글 불러오기
@@ -146,8 +146,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public List<ProjectListResponseDto> findMyPartProjects(@RequestBody myPartProjectRequest myPartProjectRequest){
-        return projectService.findMyPartProjects(myPartProjectRequest.getPart());
+    public List<ProjectListResponseDto> findMyPartProjects(HttpServletRequest request, @RequestBody myPartProjectRequest myPartProjectRequest){
+        return projectService.findMyPartProjects(request, myPartProjectRequest.getPart());
     }
 
     // 모집글 마감하기

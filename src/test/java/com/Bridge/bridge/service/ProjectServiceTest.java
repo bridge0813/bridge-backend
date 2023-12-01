@@ -545,6 +545,8 @@ class ProjectServiceTest {
     @Transactional
     void filtering() {
         // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
         User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
 
@@ -629,8 +631,15 @@ class ProjectServiceTest {
                 .skills(findSkills)
                 .build();
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        int result = projectService.filterProjectList(filterRequestDto).size();
+        int result = projectService.filterProjectList(request, filterRequestDto).size();
 
         // then
         assertThat(result).isEqualTo(1);
@@ -836,6 +845,8 @@ class ProjectServiceTest {
     @Test
     void findAllProject() {
         // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
         User user1 = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
@@ -937,17 +948,46 @@ class ProjectServiceTest {
         projectRepository.save(newProject2);
         projectRepository.save(newProject3);
 
+        Bookmark bookmark1 = Bookmark.builder()
+                        .project(newProject2)
+                        .user(user1)
+                        .build();
+        bookmarkRepository.save(bookmark1);
+        user1.getBookmarks().add(bookmark1);
+        newProject2.getBookmarks().add(bookmark1);
+
+        Bookmark bookmark2 = Bookmark.builder()
+                .project(newProject3)
+                .user(user1)
+                .build();
+        bookmarkRepository.save(bookmark2);
+        user1.getBookmarks().add(bookmark2);
+        newProject3.getBookmarks().add(bookmark1);
+
+
+
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        List<ProjectListResponseDto> response = projectService.allProjects();
+        List<ProjectListResponseDto> response = projectService.allProjects(request);
 
         // then
-        Assertions.assertThat(response.size()).isEqualTo(3);
+        Assertions.assertThat(response.get(1).isScrap()).isEqualTo(true);
+        Assertions.assertThat(response.get(2).isScrap()).isEqualTo(true);
     }
 
     @DisplayName("내 분야 모집글")
     @Test
     void findMyPartProjects() {
         // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
         User user1 = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
@@ -1043,8 +1083,15 @@ class ProjectServiceTest {
         projectRepository.save(newProject2);
         projectRepository.save(newProject3);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        List<ProjectListResponseDto> response = projectService.findMyPartProjects("backend");
+        List<ProjectListResponseDto> response = projectService.findMyPartProjects(request, "backend");
 
         // then
         Assertions.assertThat(response.size()).isEqualTo(2);

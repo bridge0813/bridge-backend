@@ -184,11 +184,20 @@ public class ProjectService {
             findProject.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            Bookmark bookmark = bookmarkRepository.findByProjectAndUser(findProject.get(i), user);
+            boolean isScrap = false;
+
+
+            if(bookmark != null){
+                isScrap = true;
+            }
+
             ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
                     .projectId(findProject.get(i).getId())
                     .title(findProject.get(i).getTitle())
                     .dueDate(findProject.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
+                    .scrap(isScrap)
                     .build();
             response.add(projectListResponseDto);
         }
@@ -226,7 +235,11 @@ public class ProjectService {
         Parameter : List<String>,
         Return : projectResponse
     */
-    public List<ProjectListResponseDto> filterProjectList(FilterRequestDto filterRequestDto){
+    public List<ProjectListResponseDto> filterProjectList(HttpServletRequest request, FilterRequestDto filterRequestDto){
+
+        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
+        User user = userRepository.findById(adminUserId).orElseThrow(()->new NotFoundUserException());
+
         List<Stack> skills = filterRequestDto.getSkills().stream()
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
@@ -245,11 +258,20 @@ public class ProjectService {
             projects.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            Bookmark bookmark = bookmarkRepository.findByProjectAndUser(projects.get(i), user);
+            boolean isScrap = false;
+
+
+            if(bookmark != null){
+                isScrap = true;
+            }
+
             ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
                     .projectId(projects.get(i).getId())
                     .title(projects.get(i).getTitle())
                     .dueDate(projects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
+                    .scrap(isScrap)
                     .build();
             response.add(projectListResponseDto);
         }
@@ -300,7 +322,9 @@ public class ProjectService {
         Func : 모든 모집글 리스트 보여주기
         Return : List<projectListResponseDto>
     */
-    public List<ProjectListResponseDto> allProjects(){
+    public List<ProjectListResponseDto> allProjects(HttpServletRequest request){
+
+        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
@@ -312,17 +336,50 @@ public class ProjectService {
 
         List<ProjectListResponseDto> response = new ArrayList<>();
 
+        if(adminUserId == null){ // 로그인 안 된 상태
+            for(int i =0; i<allProjects.size(); i++){
+                final int[] total = {0};
+
+                allProjects.get(i).getRecruit().stream()
+                        .forEach((part -> total[0] += part.getRecruitNum()));
+
+                ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+                        .projectId(allProjects.get(i).getId())
+                        .title(allProjects.get(i).getTitle())
+                        .dueDate(allProjects.get(i).getDueDate().toString())
+                        .recruitTotalNum(total[0])
+                        .scrap(false)
+                        .build();
+                response.add(projectListResponseDto);
+            }
+
+            return response;
+        }
+
+        // 로그인 된 상태
+        User user = userRepository.findById(adminUserId)
+                .orElseThrow(()->new NotFoundUserException());
+
         for(int i =0; i<allProjects.size(); i++){
             final int[] total = {0};
 
             allProjects.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            Bookmark bookmark = bookmarkRepository.findByProjectAndUser(allProjects.get(i), user);
+            boolean isScrap = false;
+
+
+            if(bookmark != null){
+                isScrap = true;
+            }
+
             ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
                     .projectId(allProjects.get(i).getId())
                     .title(allProjects.get(i).getTitle())
                     .dueDate(allProjects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
+                    .scrap(isScrap)
                     .build();
             response.add(projectListResponseDto);
         }
@@ -336,8 +393,10 @@ public class ProjectService {
         Parameter : String - 모집분야
         Return : List<projectListResponseDto>
     */
-    public List<ProjectListResponseDto> findMyPartProjects(String myPart){
-        System.out.println(Field.valueOf(myPart));
+    public List<ProjectListResponseDto> findMyPartProjects(HttpServletRequest request, String myPart){
+
+        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
+        User user = userRepository.findById(adminUserId).orElseThrow(()-> new NotFoundUserException());
 
         List<Part> parts = partRepository.findAllByRecruitPart(Field.valueOf(myPart).toString());
 
@@ -359,11 +418,20 @@ public class ProjectService {
             myPartProjects.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            Bookmark bookmark = bookmarkRepository.findByProjectAndUser(myPartProjects.get(i), user);
+            boolean isScrap = false;
+
+
+            if(bookmark != null){
+                isScrap = true;
+            }
+
             ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
                     .projectId(myPartProjects.get(i).getId())
                     .title(myPartProjects.get(i).getTitle())
                     .dueDate(myPartProjects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
+                    .scrap(isScrap)
                     .build();
             response.add(projectListResponseDto);
         }
