@@ -7,10 +7,12 @@ import com.Bridge.bridge.exception.notfound.NotFoundSearchWordException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,13 +23,17 @@ public class SearchWordService {
 
     private final UserRepository userRepository;
     private final SearchWordRepository searchWordRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /*
         Func : 최근 검색어 조회 기능
         Parameter : userId
         Return : List<SearchWordResponseDto>
     */
-    public List<SearchWordResponseDto> resentSearchWord(Long userId){
+    public List<SearchWordResponseDto> resentSearchWord(HttpServletRequest request){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
@@ -51,7 +57,10 @@ public class SearchWordService {
         Return : List<SearchWordResponseDto>
     */
     @Transactional
-    public List<SearchWordResponseDto> deleteSearchWord(Long userId, Long searchWordId){
+    public List<SearchWordResponseDto> deleteSearchWord(HttpServletRequest request, Long searchWordId){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());

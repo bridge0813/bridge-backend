@@ -5,7 +5,10 @@ import com.Bridge.bridge.domain.SearchWord;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ public class SearchWordControllerTest {
 
     @Autowired
     private SearchWordRepository searchWordRepository;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Test
     @DisplayName("최근 검색어 조회")
@@ -72,10 +78,15 @@ public class SearchWordControllerTest {
         user.getSearchWords().add(newSearch3);
         userRepository.save(user);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         // when
         mockMvc.perform(get("/searchWords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", String.valueOf(user.getId())))
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].searchWord").value("검색어1"))
                 .andDo(print());
@@ -113,11 +124,16 @@ public class SearchWordControllerTest {
         user.getSearchWords().add(newSearch2);
         user.getSearchWords().add(newSearch3);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         // when
         mockMvc.perform(delete("/searchWords")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", String.valueOf(user.getId()))
-                        .content(objectMapper.writeValueAsString(newSearch1.getId())))
+                        .param("searchWordId", String.valueOf(newSearch1.getId())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].searchWord").value("검색어2"))
                 .andExpect(jsonPath("$[1].searchWord").value("검색어3"))
