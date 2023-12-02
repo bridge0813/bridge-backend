@@ -145,7 +145,9 @@ public class ProjectService {
         Return : 프로젝트 모집글 List
     */
     @Transactional
-    public List<ProjectListResponseDto> findByTitleAndContent(Long userId, String theSearchWord){
+    public List<ProjectListResponseDto> findByTitleAndContent(HttpServletRequest request, String theSearchWord){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
@@ -238,6 +240,7 @@ public class ProjectService {
     public List<ProjectListResponseDto> filterProjectList(HttpServletRequest request, FilterRequestDto filterRequestDto){
 
         Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
+
         User user = userRepository.findById(adminUserId).orElseThrow(()->new NotFoundUserException());
 
         List<Stack> skills = filterRequestDto.getSkills().stream()
@@ -284,7 +287,10 @@ public class ProjectService {
         Parameter : userId
         Return : List<projectListResponseDto>
     */
-    public List<MyProjectResponseDto> findMyProjects(Long userId){
+    public List<MyProjectResponseDto> findMyProjects(HttpServletRequest request){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
@@ -322,9 +328,7 @@ public class ProjectService {
         Func : 모든 모집글 리스트 보여주기
         Return : List<projectListResponseDto>
     */
-    public List<ProjectListResponseDto> allProjects(HttpServletRequest request){
-
-        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
+    public List<ProjectListResponseDto> allProjects(Long userId){
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
@@ -336,7 +340,7 @@ public class ProjectService {
 
         List<ProjectListResponseDto> response = new ArrayList<>();
 
-        if(adminUserId == null){ // 로그인 안 된 상태
+        if(userId == null){ // 로그인 안 된 상태
             for(int i =0; i<allProjects.size(); i++){
                 final int[] total = {0};
 
@@ -357,7 +361,7 @@ public class ProjectService {
         }
 
         // 로그인 된 상태
-        User user = userRepository.findById(adminUserId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundUserException());
 
         for(int i =0; i<allProjects.size(); i++){
@@ -468,7 +472,10 @@ public class ProjectService {
         Return : Boolean - 스크랩 여부
     */
     @Transactional
-    public BookmarkResponseDto scrap(Long projectId, Long userId){
+    public BookmarkResponseDto scrap(HttpServletRequest request, Long projectId){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         // 해당 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
@@ -519,7 +526,8 @@ public class ProjectService {
         Parameter :
         Return : List<TopProjectResponseDto>
     */
-    public List<TopProjectResponseDto> topProjects(){
+    public List<TopProjectResponseDto> topProjects(Long userId){
+
         LocalDateTime localDateTime = LocalDateTime.now();
         int year = localDateTime.getYear();;
         int month = localDateTime.getMonthValue();
@@ -530,6 +538,35 @@ public class ProjectService {
         List<Project> top20 = projectRepository.findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(now);
 
         List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
+
+        if(userId != null){
+            User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
+
+            for (int i=0; i<top20.size(); i++){
+                final int[] total = {0};
+
+                top20.get(i).getRecruit().stream()
+                        .forEach((part -> total[0] += part.getRecruitNum()));
+
+                Bookmark bookmark = bookmarkRepository.findByProjectAndUser(top20.get(i), user);
+                boolean isScrap = false;
+
+
+                if(bookmark != null){
+                    isScrap = true;
+                }
+
+                topProjectResponseDtos.add(TopProjectResponseDto.builder()
+                        .rank(i+1)
+                        .projectId(top20.get(i).getId())
+                        .title(top20.get(i).getTitle())
+                        .dueDate(top20.get(i).getDueDate().toString())
+                        .recruitNum(total[0])
+                        .scrap(isScrap)
+                        .build());
+            }
+            return topProjectResponseDtos;
+        }
 
         for (int i=0; i<top20.size(); i++){
             final int[] total = {0};
@@ -543,15 +580,21 @@ public class ProjectService {
                     .title(top20.get(i).getTitle())
                     .dueDate(top20.get(i).getDueDate().toString())
                     .recruitNum(total[0])
+                    .scrap(false)
                     .build());
         }
         return topProjectResponseDtos;
+
+
     }
 
     /**
      * 지원한 프로젝트 목록 반환
      */
-    public List<ApplyProjectResponse> getApplyProjects(Long userId) {
+    public List<ApplyProjectResponse> getApplyProjects(HttpServletRequest request) {
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
@@ -566,7 +609,10 @@ public class ProjectService {
      * 프로젝트 지원하기
      */
     @Transactional
-    public boolean apply(Long userId, Long projectId) {
+    public boolean apply(HttpServletRequest request, Long projectId) {
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
@@ -586,7 +632,10 @@ public class ProjectService {
      * 프로젝트 지원 취소하기
      */
     @Transactional
-    public boolean cancelApply(Long userId, Long projectId) {
+    public boolean cancelApply(HttpServletRequest request, Long projectId) {
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
@@ -673,12 +722,46 @@ public class ProjectService {
         Parameter :
         Return : List<imminentProjectResponseDto>
     */
-    public List<imminentProjectResponse> getdeadlineImminentProejcts(){
+    public List<imminentProjectResponse> getdeadlineImminentProejcts(Long userId){
         LocalDateTime localDateTime = LocalDateTime.now();
 
         List<Project> projects = projectRepository.findTop40ByDueDateGreaterThanEqualOrderByDueDate(localDateTime);
 
         List<imminentProjectResponse> imminentProjectResponses = new ArrayList<>();
+
+        if(userId != null){
+            User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
+
+            for (int i=0; i<projects.size(); i++){
+
+                final int[] total = {0};
+
+                projects.get(i).getRecruit().stream()
+                        .forEach((part -> total[0] += part.getRecruitNum()));
+
+                projects.get(i).getRecruit().stream()
+                            .forEach((part -> total[0] += part.getRecruitNum()));
+
+                Bookmark bookmark = bookmarkRepository.findByProjectAndUser(projects.get(i), user);
+                boolean isScrap = false;
+
+
+                if(bookmark != null){
+                    isScrap = true;
+                }
+
+                imminentProjectResponses.add(imminentProjectResponse.builder()
+                        .imminentRank(i+1)
+                        .projectId(projects.get(i).getId())
+                        .title(projects.get(i).getTitle())
+                        .dueDate(projects.get(i).getDueDate().toString())
+                        .recruitNum(total[0])
+                        .scrap(isScrap)
+                        .build());
+            }
+
+            return imminentProjectResponses;
+        }
 
         for (int i=0; i<projects.size(); i++){
 
@@ -693,6 +776,7 @@ public class ProjectService {
                     .title(projects.get(i).getTitle())
                     .dueDate(projects.get(i).getDueDate().toString())
                     .recruitNum(total[0])
+                    .scrap(false)
                     .build());
         }
 

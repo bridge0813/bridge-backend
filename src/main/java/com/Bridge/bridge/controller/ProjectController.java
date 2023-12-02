@@ -2,6 +2,7 @@ package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.dto.request.*;
 import com.Bridge.bridge.dto.response.*;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.Bridge.bridge.service.AlarmService;
 import com.Bridge.bridge.service.ProjectService;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -24,6 +25,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final AlarmService alarmService;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     // 프로젝트 모집글 작성
@@ -51,8 +53,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
     })
-    public List<ProjectListResponseDto> searchProject(@RequestParam Long userId ,@RequestBody String searchWord){
-        return projectService.findByTitleAndContent(userId, searchWord);
+    public List<ProjectListResponseDto> searchProject(HttpServletRequest request,@RequestBody String searchWord){
+        return projectService.findByTitleAndContent(request, searchWord);
     }
 
     // 프로젝트 모집글 삭제
@@ -121,8 +123,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public List<MyProjectResponseDto> findMyProjects(@RequestParam Long userId){
-        return projectService.findMyProjects(userId);
+    public List<MyProjectResponseDto> findMyProjects(HttpServletRequest request){
+        return projectService.findMyProjects(request);
     }
 
     // 모든 프로젝트 모집글 불러오기
@@ -133,8 +135,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "전체 모집글 조회 실패"),
             @ApiResponse(responseCode = "404", description = "모집글이 존재하지 않는다.")
     })
-    public List<ProjectListResponseDto> allProjects(HttpServletRequest request){
-        return projectService.allProjects(request);
+    public List<ProjectListResponseDto> allProjects(@RequestParam(required = false) Long userId){
+        return projectService.allProjects(userId);
     }
 
     // 내 분야 프로젝트 모집글 불러오기
@@ -172,9 +174,9 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public BookmarkResponseDto scrap(@RequestParam Long userId, @RequestBody Long projectId){
+    public BookmarkResponseDto scrap(HttpServletRequest request, @RequestBody Long projectId){
 
-        return projectService.scrap(projectId, userId);
+        return projectService.scrap(request, projectId);
 
     }
   
@@ -182,8 +184,8 @@ public class ProjectController {
      * 지원한 프로젝트 목록 조회
      */
     @GetMapping("/projects/apply")
-    public ResponseEntity<?> getApplyProjects(@RequestParam("userId") Long userId ) {
-        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(userId);
+    public ResponseEntity<?> getApplyProjects(HttpServletRequest request) {
+        List<ApplyProjectResponse> applyProjects = projectService.getApplyProjects(request);
         return ResponseEntity.ok(applyProjects);
     }
 
@@ -191,8 +193,8 @@ public class ProjectController {
      * 프로젝트 지원하기
      */
     @PostMapping("/projects/apply")
-    public ResponseEntity<?> applyProjects(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) throws FirebaseMessagingException{
-        boolean result = projectService.apply(userId, projectId);
+    public ResponseEntity<?> applyProjects(HttpServletRequest request, @RequestParam("projectId") Long projectId) throws FirebaseMessagingException{
+        boolean result = projectService.apply(request, projectId);
 
         // 모집자에게 지원자 발생 알림 보내기
         alarmService.getApplyAlarm(projectId);
@@ -204,8 +206,8 @@ public class ProjectController {
      * 프로젝트 지원 취소하기
      */
     @PostMapping("/projects/apply/cancel")
-    public ResponseEntity<?> cancelApply(@RequestParam("userId") Long userId, @RequestParam("projectId") Long projectId) {
-        boolean result = projectService.cancelApply(userId, projectId);
+    public ResponseEntity<?> cancelApply(HttpServletRequest request, @RequestParam("projectId") Long projectId) {
+        boolean result = projectService.cancelApply(request, projectId);
         return ResponseEntity.ok(result);
     }
 
@@ -222,8 +224,11 @@ public class ProjectController {
      * 프로젝트 수락하기
      */
     @PutMapping("/projects/accept")
-    public ResponseEntity<?> acceptApply(@RequestParam("projectId") Long projectId,
-                                         @RequestParam("userId") Long userId) throws FirebaseMessagingException {
+    public ResponseEntity<?> acceptApply(HttpServletRequest request,
+                                         @RequestParam("projectId") Long projectId) throws FirebaseMessagingException {
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         projectService.acceptApply(projectId, userId);
 
         // 지원 결과 알림 보내기
@@ -245,8 +250,11 @@ public class ProjectController {
      * 프로젝트 거절하기
      */
     @PutMapping("/projects/reject")
-    public ResponseEntity<?> rejectApply(@RequestParam("projectId") Long projectId,
-                                         @RequestParam("userId") Long userId) throws FirebaseMessagingException {
+    public ResponseEntity<?> rejectApply(HttpServletRequest request,
+                                         @RequestParam("projectId") Long projectId) throws FirebaseMessagingException {
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         projectService.rejectApply(projectId, userId);
 
         // 지원 결과 알림 보내기
@@ -271,8 +279,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "인기글 조회 실패"),
             @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
     })
-    public List<TopProjectResponseDto> topProjects(){
-        return projectService.topProjects();
+    public List<TopProjectResponseDto> topProjects(@RequestParam(required = false) Long userId){
+        return projectService.topProjects(userId);
 
     }
 
@@ -284,7 +292,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "마감 임박 모집글 조회 실패"),
             @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
     })
-    public List<imminentProjectResponse> imminentProjects(){
-        return projectService.getdeadlineImminentProejcts();
+    public List<imminentProjectResponse> imminentProjects(@RequestParam(required = false) Long userId){
+        return projectService.getdeadlineImminentProejcts(userId);
     }
 }

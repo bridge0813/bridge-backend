@@ -18,12 +18,15 @@ public class imminentProjectResponse {
 
     int recruitNum; // 총 모집인원
 
+    boolean scrap;  // 스크랩 여부
+
     @Builder
-    public imminentProjectResponse(int imminentRank, Long projectId, String title, String dueDate, int recruitNum) {
+    public imminentProjectResponse(int imminentRank, Long projectId, String title, String dueDate, int recruitNum, boolean scrap) {
         this.imminentRank = imminentRank;
         this.projectId = projectId;
         this.title = title;
         this.dueDate = dueDate;
         this.recruitNum = recruitNum;
+        this.scrap = scrap;
     }
 }
