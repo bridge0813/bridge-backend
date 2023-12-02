@@ -5,8 +5,11 @@ import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.repository.AlarmRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -36,6 +40,9 @@ public class AlarmControllerTest {
 
     @Autowired
     private AlarmRepository alarmRepository;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void clean() {
@@ -73,10 +80,15 @@ public class AlarmControllerTest {
         alarmRepository.save(alarm2);
         alarmRepository.save(alarm3);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         // expected
         mockMvc.perform(get("/alarms")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", user.getId().toString()))
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // 응답 status를 ok로 테스트
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].title").value("지원자 등장?"))
@@ -115,11 +127,16 @@ public class AlarmControllerTest {
         alarmRepository.save(alarm2);
         alarmRepository.save(alarm3);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+
         // expected
         mockMvc.perform(delete("/alarms")
+                                .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(user.getId()))
-                        .param("userId", user.getId().toString())
                 )
                 .andExpect(status().isOk()) // 응답 status를 ok로 테스트
                 .andDo(print());
@@ -162,11 +179,16 @@ public class AlarmControllerTest {
         user.getRcvAlarms().add(alarm2);
         user.getRcvAlarms().add(alarm3);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         // expected
         mockMvc.perform(delete("/alarm")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", user.getId().toString())
-                        .content(objectMapper.writeValueAsString(alarm2.getId())))
+                        .param("alarmId", alarm2.getId().toString()))
                 .andExpect(status().isOk()) // 응답 status를 ok로 테스트
                 .andExpect(jsonPath("$[0].title").value("지원자 등장? - 1"))
                 .andExpect(jsonPath("$[1].title").value("지원 결과 도착"))

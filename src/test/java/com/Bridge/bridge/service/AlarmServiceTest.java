@@ -7,12 +7,16 @@ import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.repository.AlarmRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +32,9 @@ public class AlarmServiceTest {
 
     @Autowired
     private AlarmService alarmService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void clean() {
@@ -65,8 +72,17 @@ public class AlarmServiceTest {
         alarmRepository.save(alarm2);
         alarmRepository.save(alarm3);
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        List<AllAlarmResponse> responses = alarmService.getAllOfAlarms(user.getId());
+        List<AllAlarmResponse> responses = alarmService.getAllOfAlarms(request);
 
         // then
         Assertions.assertThat(responses.size()).isEqualTo(3);
@@ -105,8 +121,17 @@ public class AlarmServiceTest {
         alarmRepository.save(alarm2);
         alarmRepository.save(alarm3);
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        boolean responses = alarmService.deleteAllAlarms(user.getId());
+        boolean responses = alarmService.deleteAllAlarms(request);
 
         // then
         Assertions.assertThat(responses).isEqualTo(true);
@@ -144,8 +169,17 @@ public class AlarmServiceTest {
         alarmRepository.save(alarm2);
         alarmRepository.save(alarm3);
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        boolean responses = alarmService.deleteAllAlarms(user1.getId());
+        boolean responses = alarmService.deleteAllAlarms(request);
         int user2Alarms = alarmRepository.findAllByRcvUser(user2).size();
 
         // then
@@ -190,8 +224,17 @@ public class AlarmServiceTest {
         user1.getRcvAlarms().add(alarm2);
         user1.getRcvAlarms().add(alarm3);
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        List<AlarmResponse> responses = alarmService.deleteAlarm(user1.getId(), alarm1.getId());
+        List<AlarmResponse> responses = alarmService.deleteAlarm(request, alarm1.getId());
 
         // then
 
