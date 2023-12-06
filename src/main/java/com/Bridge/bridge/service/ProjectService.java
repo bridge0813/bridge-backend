@@ -311,12 +311,20 @@ public class ProjectService {
             myProjects.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            LocalDateTime localDateTime = LocalDateTime.now();
+            boolean status = false;
+
+            if(myProjects.get(i).getDueDate().isAfter(localDateTime)){ // 마감되지 않았다면
+                status = true;
+            }
+
             MyProjectResponseDto myProjectResponseDto = MyProjectResponseDto.builder()
                     .projectId(myProjects.get(i).getId())
                     .title(myProjects.get(i).getTitle())
                     .overview(myProjects.get(i).getOverview())
                     .dueDate(myProjects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
+                    .status(status)
                     .build();
             response.add(myProjectResponseDto);
         }
