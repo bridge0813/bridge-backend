@@ -6,11 +6,15 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.response.SearchWordResponseDto;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +30,9 @@ public class SearchWordServiceTest {
 
     @Autowired
     private SearchWordService searchWordService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @DisplayName("최근 검색어 조회")
     @Test
@@ -58,8 +65,17 @@ public class SearchWordServiceTest {
         user.getSearchWords().add(newSearch2);
         user.getSearchWords().add(newSearch3);
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        List<SearchWordResponseDto> searchWordResponseDto = searchWordService.resentSearchWord(user.getId());
+        List<SearchWordResponseDto> searchWordResponseDto = searchWordService.resentSearchWord(request);
         Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어1");
         Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어2");
         Assertions.assertThat(searchWordResponseDto.get(2).getSearchWord()).isEqualTo("검색어3");
@@ -96,8 +112,17 @@ public class SearchWordServiceTest {
         user.getSearchWords().add(newSearch2);
         user.getSearchWords().add(newSearch3);
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
         // when
-        List<SearchWordResponseDto> searchWordResponseDto = searchWordService.deleteSearchWord(user.getId(), newSearch1.getId());
+        List<SearchWordResponseDto> searchWordResponseDto = searchWordService.deleteSearchWord(request, newSearch1.getId());
         Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어2");
         Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어3");
     }

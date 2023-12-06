@@ -8,6 +8,7 @@ import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.PartRequestDto;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
+import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import net.minidev.json.JSONObject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +59,9 @@ class ProjectControllerTest {
 
     @Autowired
     SearchWordRepository searchWordRepository;
+
+    @Autowired
+    BookmarkRepository bookmarkRepository;
 
     @Autowired
     private ProjectService projectService;
@@ -357,10 +362,16 @@ class ProjectControllerTest {
 
         String body = objectMapper.writeValueAsString(filterRequestDto);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         // when
         String expectByTitle = "$.[?(@.title == '%s')]";
 
         mockMvc.perform(post("/projects/category")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -437,8 +448,14 @@ class ProjectControllerTest {
         projectRepository.save(newProject1);
         projectRepository.save(newProject2);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         // expected
         mockMvc.perform(get("/projects/")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("userId", String.valueOf(user.getId())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -451,196 +468,271 @@ class ProjectControllerTest {
     @Test
     void allProjects() throws Exception {
         // given
-        User user1 = new User("user1", "user@gmail.com", Platform.APPLE, "Test");
+        User user1 = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user1);
 
-        User user2 = new User("user2", "user@gmail.com", Platform.APPLE, "Test");
+        User user2 = new User("user2", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user2);
 
-        User user3 = new User("user3", "user@gmail.com", Platform.APPLE, "Test");
+        User user3 = new User("user3", "user3@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user3);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("JAVA");
-        skill1.add("SPRINGBOOT");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("JAVA");
-        skill2.add("SPRINGBOOT");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
-        List<String> skill3 = new ArrayList<>();
-        skill3.add("PYTHON");
-        skill3.add("DJANGO");
+        List<Stack> skill3 = new ArrayList<>();
+        skill2.add(Stack.PYTHON);
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.DJANGO);
 
-        List<PartRequestDto> recruit1 = new ArrayList<>();
-        recruit1.add(PartRequestDto.builder()
-                .recruitPart("Backend")
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("Backend")
+                .requirement("아무거나")
                 .build());
 
-        List<PartRequestDto> recruit2 = new ArrayList<>();
-        recruit2.add(PartRequestDto.builder()
-                .recruitPart("Frontend")
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("frontend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("Frontend")
+                .requirement("skill2")
                 .build());
 
-        List<PartRequestDto> recruit3 = new ArrayList<>();
-        recruit3.add(PartRequestDto.builder()
-                .recruitPart("Backtend")
+        List<Part> recruit3 = new ArrayList<>();
+        recruit3.add(Part.builder()
+                .recruitPart("backend")
                 .recruitNum(5)
                 .recruitSkill(skill3)
-                .requirement("Backend")
+                .requirement("skill3")
                 .build());
 
-        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
-                .title("Myproject1")
-                .overview("This is Myproject1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit1)
+        Project newProject1 = Project.builder()
+                .title("Find AllProject1")
+                .overview("This is My Project1")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user1.getId())
+                .user(user1)
                 .stage("Before Start")
                 .build();
 
-        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
-                .title("Myproject2")
-                .overview("This is Myproject2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit2)
+        recruit.stream()
+                .forEach((part -> part.setProject(newProject1)));
+
+        Project newProject2 = Project.builder()
+                .title("Find AllProject2")
+                .overview("This is My Project2")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
-                .userId(user2.getId())
+                .user(user2)
                 .stage("Before Start")
                 .build();
 
-        ProjectRequestDto newProject3 = ProjectRequestDto.builder()
-                .title("Myproject3")
-                .overview("This is Myproject3")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit3)
+        recruit2.stream()
+                .forEach((part -> part.setProject(newProject2)));
+
+        Project newProject3 = Project.builder()
+                .title("Find AllProject3")
+                .overview("This is My Project3")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
-                .userId(user3.getId())
+                .user(user3)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject1);
-        projectService.createProject(newProject2);
-        projectService.createProject(newProject3);
+        recruit3.stream()
+                .forEach((part -> part.setProject(newProject3)));
+
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
+        projectRepository.save(newProject3);
+
+        Bookmark bookmark1 = Bookmark.builder()
+                .project(newProject2)
+                .user(user1)
+                .build();
+        bookmarkRepository.save(bookmark1);
+        user1.getBookmarks().add(bookmark1);
+        newProject2.getBookmarks().add(bookmark1);
+
+        Bookmark bookmark2 = Bookmark.builder()
+                .project(newProject3)
+                .user(user1)
+                .build();
+        bookmarkRepository.save(bookmark2);
+        user1.getBookmarks().add(bookmark2);
+        newProject3.getBookmarks().add(bookmark1);
 
         // when
         String expectByTitle = "$.[?(@.title == '%s')]";
 
         mockMvc.perform(get("/projects/all")
+//                        .param("userId", "")
                         .contentType(MediaType.APPLICATION_JSON)
                         )
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(expectByTitle, "Myproject3").exists())
+                .andExpect(jsonPath(expectByTitle, "Find AllProject3").exists())
                 .andDo(print());
 
     }
 
     @Test
     @DisplayName("내 분야 모집글 불러오기")
+    @Transactional
     void findMypartProjects() throws Exception {
         // given
         User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
+        User user2 = new User("user2", "user2@gmail.com", Platform.APPLE, "Test");
         userRepository.save(user);
+        userRepository.save(user2);
 
-        List<String> skill1 = new ArrayList<>();
-        skill1.add("JAVA");
-        skill1.add("SPRINGBOOT");
+        List<Stack> skill1 = new ArrayList<>();
+        skill1.add(Stack.JAVA);
+        skill1.add(Stack.SPRINGBOOT);
 
-        List<String> skill2 = new ArrayList<>();
-        skill2.add("JAVA");
-        skill2.add("SPRINGBOOT");
+        List<Stack> skill2 = new ArrayList<>();
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.JAVASCRIPT);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.NODEJS);
 
-        List<PartRequestDto> recruit1 = new ArrayList<>();
-        recruit1.add(PartRequestDto.builder()
-                .recruitPart("Backend")
+        List<Stack> skill3 = new ArrayList<>();
+        skill2.add(Stack.PYTHON);
+        skill2.add(Stack.JAVA);
+        skill2.add(Stack.SPRINGBOOT);
+        skill2.add(Stack.DJANGO);
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart("BACKEND")
                 .recruitNum(3)
                 .recruitSkill(skill1)
-                .requirement("Backend")
+                .requirement("아무거나")
                 .build());
 
-        List<PartRequestDto> recruit2 = new ArrayList<>();
-        recruit2.add(PartRequestDto.builder()
-                .recruitPart("Frontend")
+        List<Part> recruit2 = new ArrayList<>();
+        recruit2.add(Part.builder()
+                .recruitPart("FRONTEND")
                 .recruitNum(1)
                 .recruitSkill(skill2)
-                .requirement("Frontend")
+                .requirement("skill2")
                 .build());
 
-        List<PartRequestDto> recruit3 = new ArrayList<>();
-        recruit3.add(PartRequestDto.builder()
-                .recruitPart("Backend")
-                .recruitNum(1)
-                .recruitSkill(skill2)
-                .requirement("Backend")
+        List<Part> recruit3 = new ArrayList<>();
+        recruit3.add(Part.builder()
+                .recruitPart("BACKEND")
+                .recruitNum(5)
+                .recruitSkill(skill3)
+                .requirement("skill3")
                 .build());
 
-        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
-                .title("This is backend Project.")
-                .overview("This is backend Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit1)
+        Project newProject1 = Project.builder()
+                .title("Find AllProject1")
+                .overview("This is My Project1")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
-                .title("This is not what i find")
-                .overview("This is frontend Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit2)
+        recruit.stream()
+                .forEach((part -> part.setProject(newProject1)));
+
+        Project newProject2 = Project.builder()
+                .title("Find AllProject2")
+                .overview("This is My Project2")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        ProjectRequestDto newProject3 = ProjectRequestDto.builder()
-                .title("This is backend Project.")
-                .overview("This is backend Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
-                .startDate("2023-09-11")
-                .endDate("2023-09-30")
-                .recruit(recruit3)
+        recruit2.stream()
+                .forEach((part -> part.setProject(newProject2)));
+
+        Project newProject3 = Project.builder()
+                .title("Find AllProject3")
+                .overview("This is My Project3")
+                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .startDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .endDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
-                .userId(user.getId())
+                .user(user)
                 .stage("Before Start")
                 .build();
 
-        projectService.createProject(newProject1);
-        projectService.createProject(newProject2);
-        projectService.createProject(newProject3);
+        recruit3.stream()
+                .forEach((part -> part.setProject(newProject3)));
+
+        projectRepository.save(newProject1);
+        projectRepository.save(newProject2);
+        projectRepository.save(newProject3);
+
+        Bookmark bookmark1 = Bookmark.builder()
+                .project(newProject2)
+                .user(user2)
+                .build();
+        bookmarkRepository.save(bookmark1);
+        user2.getBookmarks().add(bookmark1);
+        newProject2.getBookmarks().add(bookmark1);
+
+        Bookmark bookmark2 = Bookmark.builder()
+                .project(newProject3)
+                .user(user2)
+                .build();
+        bookmarkRepository.save(bookmark2);
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user2.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
 
         // when
         String expectByTitle = "$.[?(@.title == '%s')]";
+        JSONObject body = new JSONObject();
+        body.appendField("part", "BACKEND");
 
         mockMvc.perform(post("/projects/mypart")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("backend"))
+                        .content(objectMapper.writeValueAsString(body)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(expectByTitle, "This is backend Project.").exists())
+                .andExpect(jsonPath(expectByTitle, "Find AllProject1").exists())
+                .andExpect(jsonPath(expectByTitle, "Find AllProject3").exists())
+                .andExpect(jsonPath("$[0].scrap").value(false))
+                .andExpect(jsonPath("$[1].scrap").value(true))
                 .andDo(print());
 
     }
@@ -728,12 +820,16 @@ class ProjectControllerTest {
         newProject = projectRepository.save(newProject);
 
         Long projectId = newProject.getId();
-        Long userId = user.getId();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
 
         // when
         mockMvc.perform(post("/project/scrap")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("userId", String.valueOf(userId))
                         .content(objectMapper.writeValueAsString(projectId)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.scrap").value("스크랩이 설정되었습니다."))
@@ -763,8 +859,14 @@ class ProjectControllerTest {
         user1.getApplyProjects().add(applyProject1);
         User saveUser1 = userRepository.save(user1);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         //expected
         mockMvc.perform(get("/projects/apply")
+                    .header("Authorization", "Bearer " + token)
                     .param("userId", saveUser1.getId().toString())
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -780,8 +882,11 @@ class ProjectControllerTest {
     void applyProjects() throws Exception {
         //given
         User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "2");
         user1.updateDeviceToken("deviceToken");
+        user2.updateDeviceToken("deviceToken");
         User saveUser1 = userRepository.save(user1);
+        User saveUser2 = userRepository.save(user2);
 
         Project project1 = Project.builder()
                 .title("title1")
@@ -793,9 +898,14 @@ class ProjectControllerTest {
 
         Project saveProject = projectRepository.save(project1);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser2.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         //expected
         mockMvc.perform(post("/projects/apply")
-                        .param("userId", String.valueOf(saveUser1.getId()))
+                        .header("Authorization", "Bearer " + token)
                         .param("projectId", String.valueOf(saveProject.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -824,9 +934,14 @@ class ProjectControllerTest {
         user1.getApplyProjects().add(applyProject1);
         User saveUser1 = userRepository.save(user1);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         //expected
         mockMvc.perform(post("/projects/apply/cancel")
-                        .param("userId", saveUser1.getId().toString())
+                        .header("Authorization", "Bearer " + token)
                         .param("projectId", saveProject.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -899,10 +1014,15 @@ class ProjectControllerTest {
         user1.getApplyProjects().add(applyProject1);
         User saveUser1 = userRepository.save(user1);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         //expected
         mockMvc.perform(put("/projects/accept")
+                        .header("Authorization", "Bearer " + token)
                         .param("projectId", saveProject.getId().toString())
-                        .param("userId", saveUser1.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))
@@ -933,10 +1053,15 @@ class ProjectControllerTest {
         user1.getApplyProjects().add(applyProject1);
         User saveUser1 = userRepository.save(user1);
 
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(saveUser1.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
         //expected
         mockMvc.perform(put("/projects/reject")
+                        .header("Authorization", "Bearer " + token)
                         .param("projectId", saveProject.getId().toString())
-                        .param("userId", saveUser1.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -27,8 +28,8 @@ public class SearchWordController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 검색어가 존재하지 않는다.")
     })
-    public List<SearchWordResponseDto> resentSearchWord(@RequestParam Long userId){
-        return searchWordService.resentSearchWord(userId);
+    public List<SearchWordResponseDto> resentSearchWord(HttpServletRequest request){
+        return searchWordService.resentSearchWord(request);
     }
 
     // 검색어 삭제 기능
@@ -40,7 +41,7 @@ public class SearchWordController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 검색어 찾기 실패")
     })
-    public List<SearchWordResponseDto> deleteSearchWord(@RequestParam Long userId, @RequestBody Long searchWordId){
-        return searchWordService.deleteSearchWord(userId, searchWordId);
+    public List<SearchWordResponseDto> deleteSearchWord(HttpServletRequest request, @RequestParam Long searchWordId){
+        return searchWordService.deleteSearchWord(request, searchWordId);
     }
 }

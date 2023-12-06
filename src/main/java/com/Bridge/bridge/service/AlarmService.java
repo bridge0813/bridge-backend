@@ -18,6 +18,7 @@ import com.Bridge.bridge.repository.AlarmRepository;
 import com.Bridge.bridge.repository.ChatRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -27,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,7 @@ public class AlarmService {
     private final ChatRepository chatRepository;
     private final ProjectRepository projectRepository;
     private final AlarmRepository alarmRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /*
        Func : 알림 받을 디바이스 토큰 저장하기
@@ -198,8 +201,9 @@ public class AlarmService {
        Parameter: userId
        Return : List<AllAlarmResponse>
     */
-    public List<AllAlarmResponse> getAllOfAlarms(Long userId){
+    public List<AllAlarmResponse> getAllOfAlarms(HttpServletRequest request){
 
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
         // 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
@@ -226,7 +230,10 @@ public class AlarmService {
        Return : boolean - 전체 삭제 여부
     */
     @Transactional
-    public boolean deleteAllAlarms(Long userId){
+    public boolean deleteAllAlarms(HttpServletRequest request){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         // 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
@@ -250,7 +257,10 @@ public class AlarmService {
        Return : List<AlarmResponse>
     */
     @Transactional
-    public List<AlarmResponse> deleteAlarm(Long userId, Long alarmId){
+    public List<AlarmResponse> deleteAlarm(HttpServletRequest request, Long alarmId){
+
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
         // 유저 찾기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());

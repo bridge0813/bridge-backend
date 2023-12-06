@@ -1,5 +1,6 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.dto.request.DeviceTokenRequest;
 import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.dto.response.ErrorResponse;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -28,8 +30,8 @@ public class AlarmController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)")
     })
     @PostMapping("/device/token")
-    public void saveDeviceToken(@RequestBody String deviceToken){
-        alarmService.saveDeviceToken(deviceToken);
+    public void saveDeviceToken(@RequestBody DeviceTokenRequest deviceToken){
+        alarmService.saveDeviceToken(deviceToken.getDeviceToken());
         return;
     }
 
@@ -40,8 +42,8 @@ public class AlarmController {
             @ApiResponse(responseCode = "404", description = "전체 알람 조회 실패")
     })
     @GetMapping("/alarms")
-    public List<AllAlarmResponse> getAllOfAlarms(@RequestParam Long userId){
-        return alarmService.getAllOfAlarms(userId);
+    public List<AllAlarmResponse> getAllOfAlarms(HttpServletRequest request){
+        return alarmService.getAllOfAlarms(request);
     }
 
     @Operation(summary = "전체 알람 삭제 기능", description = "유저가 받은 모든 알람을 삭제할 수 있다.")
@@ -52,8 +54,8 @@ public class AlarmController {
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
     })
     @DeleteMapping("/alarms")
-    public ResponseEntity<?> deleteAllOfAlarms(@RequestParam Long userId){
-        boolean result = alarmService.deleteAllAlarms(userId);
+    public ResponseEntity<?> deleteAllOfAlarms(HttpServletRequest request){
+        boolean result = alarmService.deleteAllAlarms(request);
         return ResponseEntity.ok(result);
     }
 
@@ -65,7 +67,7 @@ public class AlarmController {
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 해당 알람 찾기 실패")
     })
     @DeleteMapping("/alarm")
-    public List<AlarmResponse> deleteAlarm(@RequestParam Long userId, @RequestBody Long alarmId){
-        return alarmService.deleteAlarm(userId, alarmId);
+    public List<AlarmResponse> deleteAlarm(HttpServletRequest request, @RequestParam Long alarmId){
+        return alarmService.deleteAlarm(request, alarmId);
     }
 }
