@@ -226,6 +226,7 @@ public class ChatService {
 
         if (!chatHistory.getChatHistory().isEmpty()) {
             ChatMessageRequest messageRequest = ChatMessageRequest.builder()
+                    .chatRoomId(chatRoomId)
                     .chatHistory(chatHistory)
                     .build();
 
