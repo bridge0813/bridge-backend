@@ -42,6 +42,8 @@ dependencies {
 
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
 
+	implementation 'org.springframework.kafka:spring-kafka'
+
 	implementation 'com.mysql:mysql-connector-j'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'

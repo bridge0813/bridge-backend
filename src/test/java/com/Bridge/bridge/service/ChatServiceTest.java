@@ -6,6 +6,7 @@ import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.request.ChatRoomRequest;
+import com.Bridge.bridge.dto.response.ChatHistoryResponse;
 import com.Bridge.bridge.dto.response.ChatListResponse;
 import com.Bridge.bridge.dto.response.ChatMessageResponse;
 import com.Bridge.bridge.dto.response.ChatRoomResponse;
@@ -19,10 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -138,15 +138,41 @@ class ChatServiceTest {
         chatRepository.save(room1);
 
         //when
-        List<ChatMessageResponse> messages = chatService.findChat("1");
+        ChatHistoryResponse chatHistory = chatService.getChatHistory("1");
 
         //then
-        ChatMessageResponse response1 = messages.get(0);
-        ChatMessageResponse response2 = messages.get(1);
+        ChatMessageResponse response1 = chatHistory.getChatHistory().get(0);
+        ChatMessageResponse response2 = chatHistory.getChatHistory().get(1);
         assertEquals("content1", response1.getContent());
         assertEquals(saveUser1.getId(), response1.getSenderId());
         assertEquals("content2", response2.getContent());
         assertEquals(saveUser2.getId(), response2.getSenderId());
+    }
+
+    @Test
+    @DisplayName("채팅방 조회 - 메세지 없는 경우")
+    @Transactional
+    void findChatNoMessage() {
+        //given
+        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+
+        User saveUser1 = userRepository.save(user1);
+        User saveUser2 = userRepository.save(user2);
+
+        Chat room1 = Chat.builder()
+                .chatRoomId("1")
+                .build();
+
+        room1.setChatUser(saveUser1, saveUser2);
+        chatRepository.save(room1);
+
+        //when
+        ChatHistoryResponse chatHistory = chatService.getChatHistory("1");
+
+        //then
+        assertTrue(chatHistory.getChatHistory().isEmpty());
+
     }
 
     @Test
@@ -173,6 +199,7 @@ class ChatServiceTest {
         Chat chat = chatRepository.findAll().get(0);
         Message message = chat.getMessages().get(0);
         assertEquals("content", message.getContent());
+        assertEquals(true, message.isReadStat());
     }
 
     @Test
@@ -190,5 +217,136 @@ class ChatServiceTest {
 
         //then
         assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("채팅방 접속 인원 변경 -> 1명")
+    void getConnectStatOnePeople() {
+        //given
+        Chat room1 = Chat.builder()
+                .chatRoomId("1")
+                .build();
+
+        chatRepository.save(room1);
+
+        //when
+        chatService.changeConnectStat("1");
+
+        //then
+        Chat findChat = chatRepository.findAll().get(0);
+        assertTrue(findChat.isConnectStat());
+    }
+
+    @Test
+    @DisplayName("채팅방 접속 인원 변경 -> 2명")
+    void getConnectStatTwoPeople() {
+        //given
+        Chat room1 = Chat.builder()
+                .chatRoomId("1")
+                .build();
+
+        chatRepository.save(room1);
+
+        //when
+        chatService.changeConnectStat("1");
+        chatService.changeConnectStat("1");
+
+        //then
+        Chat findChat = chatRepository.findAll().get(0);
+        assertFalse(findChat.isConnectStat());
+    }
+
+    @Test
+    @DisplayName("안읽은 메세지 읽음 처리 - 상대방 메세지")
+    @Transactional
+    void readNotMessage() {
+        //given
+        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+
+        User saveUser1 = userRepository.save(user1);
+        User saveUser2 = userRepository.save(user2);
+
+        Chat room1 = Chat.builder()
+                .chatRoomId("1")
+                .build();
+
+        room1.setChatUser(saveUser1, saveUser2);
+
+        Message message1 = Message.builder()
+                .content("content1")
+                .writerId(saveUser1.getId())
+                .readStat(true)
+                .sendDateTime(LocalDateTime.now().withNano(0))
+                .build();
+
+        Message message2 = Message.builder()
+                .content("content2")
+                .writerId(saveUser1.getId())
+                .readStat(false)
+                .sendDateTime(LocalDateTime.now().withNano(0))
+                .build();
+
+        room1.getMessages().add(message1);
+        room1.getMessages().add(message2);
+
+        chatRepository.save(room1);
+
+        //when
+        chatService.readNotReadMessage("1", String.valueOf(saveUser2.getId()));
+
+        //then
+        Chat findChat = chatRepository.findAll().get(0);
+        List<Message> messages = findChat.getMessages().stream()
+                .filter(m -> m.isReadStat() == false)
+                .collect(Collectors.toList());
+        assertEquals(0, messages.size());
+    }
+
+    @Test
+    @DisplayName("안읽은 메세지 읽음 처리 - 본인 메세지")
+    @Transactional
+    void readNotMessageMine() {
+        //given
+        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
+        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+
+        User saveUser1 = userRepository.save(user1);
+        User saveUser2 = userRepository.save(user2);
+
+        Chat room1 = Chat.builder()
+                .chatRoomId("1")
+                .build();
+
+        room1.setChatUser(saveUser1, saveUser2);
+
+        Message message1 = Message.builder()
+                .content("content1")
+                .writerId(saveUser1.getId())
+                .readStat(true)
+                .sendDateTime(LocalDateTime.now().withNano(0))
+                .build();
+
+        Message message2 = Message.builder()
+                .content("content2")
+                .writerId(saveUser1.getId())
+                .readStat(false)
+                .sendDateTime(LocalDateTime.now().withNano(0))
+                .build();
+
+        room1.getMessages().add(message1);
+        room1.getMessages().add(message2);
+
+        chatRepository.save(room1);
+
+        //when
+        chatService.readNotReadMessage("1", "1");
+
+        //then
+        Chat findChat = chatRepository.findAll().get(0);
+        List<Message> messages = findChat.getMessages().stream()
+                .filter(m -> m.isReadStat() == false)
+                .collect(Collectors.toList());
+        assertEquals(1, messages.size());
     }
 }

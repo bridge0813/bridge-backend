@@ -40,12 +40,12 @@ public class Message {
     private Chat chat;              // 해당 메세지가 포함된 채팅방
 
     @Builder
-    public Message(String messageUuId, String content, Long writerId, LocalDateTime sendDateTime, String type, Chat chat) {
+    public Message(String messageUuId, String content, Long writerId, LocalDateTime sendDateTime,boolean readStat, String type, Chat chat) {
         this.messageUuId = messageUuId;
         this.content = content;
         this.writerId = writerId;
         this.sendDateTime = sendDateTime;
-        this.readStat = false;
+        this.readStat = readStat;
         this.type = type;
         this.chat = chat;
     }
