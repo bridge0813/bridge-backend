@@ -5,6 +5,10 @@
 
 <img width=150px src="https://github.com/bridge0813/bridge-backend/assets/102718303/9b7d03b8-5636-4b87-9a3a-56d97230d161">
 
+## 개발인원
+
+
+
 
 ## ERD
 
