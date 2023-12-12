@@ -169,6 +169,7 @@ public class UserService {
 
         if (findUser.getProfile() == null || findUser.getProfile().getProfilePhoto() == null) {
             return MyPageResponse.builder()
+                    .name(findUser.getName())
                     .profilePhoto(null)
                     .field(findUser.getFields().stream()
                             .map(f -> f.getValue())
@@ -178,6 +179,7 @@ public class UserService {
         }
 
         return MyPageResponse.builder()
+                .name(findUser.getName())
                 .profilePhoto(findUser.getProfile().getProfilePhoto().getUploadFileUrl())
                 .field(findUser.getFields().stream()
                         .map(f -> f.getValue())
