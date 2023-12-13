@@ -36,7 +36,7 @@ public class ConsumerConfig {
 
         Map<String, Object> consumerConfigurations =
                 ImmutableMap.<String, Object>builder()
-                        .put(BOOTSTRAP_SERVERS_CONFIG, "54.180.195.17:9092")
+                        .put(BOOTSTRAP_SERVERS_CONFIG, Constant.BOOTSTRAP_SERVER)
                         .put(GROUP_ID_CONFIG, Constant.GROUP_ID)
                         .put(KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                         .put(VALUE_DESERIALIZER_CLASS_CONFIG, deserializer)

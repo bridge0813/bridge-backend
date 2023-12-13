@@ -87,8 +87,6 @@ public class ChatService {
         Chat findChat = chatRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new NotFoundChatException());
 
-        String sender = findChat.getMakeUser().getName();
-
         //해당 채팅방에 존재하는 메세지 불러와야 함
         List<ChatMessageResponse> messageList = findChat.getMessages().stream()
                 .map(ChatMessageResponse::new)

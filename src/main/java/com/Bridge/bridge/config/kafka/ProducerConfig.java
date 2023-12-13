@@ -1,6 +1,7 @@
 package com.Bridge.bridge.config.kafka;
 
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
+import com.Bridge.bridge.util.Constant;
 import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +28,7 @@ public class ProducerConfig {
     @Bean
     public Map<String, Object> producerConfigurations() {
         return ImmutableMap.<String, Object>builder()
-                .put(BOOTSTRAP_SERVERS_CONFIG, "54.180.195.17:9092")
+                .put(BOOTSTRAP_SERVERS_CONFIG, Constant.BOOTSTRAP_SERVER)
                 .put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class)
                 .put(VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class)
                 .build();
