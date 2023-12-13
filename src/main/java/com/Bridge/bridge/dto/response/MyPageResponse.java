@@ -10,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 public class MyPageResponse {
 
+    private String name;
+
     private String profilePhoto;
 
     private List<String> field;
@@ -17,7 +19,8 @@ public class MyPageResponse {
     private int bookmarkNum;
 
     @Builder
-    public MyPageResponse(String profilePhoto, List<String> field, int bookmarkNum) {
+    public MyPageResponse(String name, String profilePhoto, List<String> field, int bookmarkNum) {
+        this.name = name;
         this.profilePhoto = profilePhoto;
         this.field = field;
         this.bookmarkNum = bookmarkNum;
