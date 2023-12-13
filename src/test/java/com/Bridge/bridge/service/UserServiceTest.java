@@ -501,6 +501,7 @@ class UserServiceTest {
         MyPageResponse myPage = userService.getMyPage(saveUser.getId());
 
         //then
+        assertEquals("bridge", myPage.getName());
         assertEquals("백엔드", myPage.getField().get(0));
         assertEquals("프론트엔드", myPage.getField().get(1));
         assertEquals(0, myPage.getBookmarkNum());
@@ -533,6 +534,7 @@ class UserServiceTest {
         MyPageResponse myPage = userService.getMyPage(saveUser.getId());
 
         //then
+        assertEquals("bridge", myPage.getName());
         assertEquals("백엔드", myPage.getField().get(0));
         assertEquals("프론트엔드", myPage.getField().get(1));
         assertEquals(1, myPage.getBookmarkNum());
