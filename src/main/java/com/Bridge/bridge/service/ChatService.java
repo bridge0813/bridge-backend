@@ -125,7 +125,7 @@ public class ChatService {
 
         // 나만 접속해 있는 경우 알람 발송
         if (connectStat == true) {
-            // alarmService.getChatAlarm(messageRequest);
+             alarmService.getChatAlarm(messageRequest);
         }
 
         return messageRequest;
