@@ -212,16 +212,14 @@ public class ProjectService {
         Parameter : projectID - 모집글 ID
         Return : projectResponse
     */
-    public ProjectResponseDto getProject(Long projectId, HttpServletRequest request){
-
-        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
+    public ProjectResponseDto getProject(Long userId, Long projectId){
 
         // 해당 모집글 찾기
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        if(!adminUserId.equals(project.getUser().getId()))  {
-            User user = userRepository.findById(adminUserId)
+        if(!userId.equals(project.getUser().getId()))  {
+            User user = userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException());
             Bookmark bookmark= bookmarkRepository.findByProjectAndUser(project, user);
             if(bookmark == null){

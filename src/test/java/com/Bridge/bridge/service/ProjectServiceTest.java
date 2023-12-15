@@ -432,7 +432,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        ProjectResponseDto result = projectService.getProject(theProject.getId(), request);
+        ProjectResponseDto result = projectService.getProject(user1.getId(), theProject.getId());
 
         // then
         assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
@@ -490,7 +490,7 @@ class ProjectServiceTest {
         // expected
         assertThrows(NotFoundProjectException.class,
                 () -> {
-                    ProjectResponseDto result = projectService.getProject(theProject.getId() + Long.valueOf(123), request);
+                    ProjectResponseDto result = projectService.getProject(user1.getId(), theProject.getId() + Long.valueOf(123));
                 });
     }
 
@@ -545,7 +545,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        ProjectResponseDto result = projectService.getProject(theProject.getId(), request);
+        ProjectResponseDto result = projectService.getProject(user2.getId(), theProject.getId());
 
         // then
         assertThat(result.isMyProject()).isEqualTo(false);
