@@ -8,6 +8,10 @@ import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.repository.AlarmRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.security.JwtTokenProvider;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.assertj.core.api.Assertions;
@@ -35,6 +39,9 @@ public class AlarmServiceTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private FirebaseMessaging firebaseMessaging;
 
     @BeforeEach
     void clean() {
@@ -241,6 +248,24 @@ public class AlarmServiceTest {
         Assertions.assertThat(responses.size()).isEqualTo(2);
         Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("지원자 등장? - 2");
         Assertions.assertThat(responses.get(1).getTitle()).isEqualTo("지원 결과 도착");
+
+    }
+
+    @DisplayName("알람 테스트")
+    @Test
+    void sendAlarm() throws FirebaseMessagingException {
+        Notification notification = Notification.builder()
+                .setTitle("알람 테스트 - 스프링")
+                .setBody("테스트테스트")
+                .build();
+
+        Message message = Message.builder()
+                .setToken("dMhu4U_m3El1vGsQ6ZjO5K:APA91bF5Pp7m2oHv3O4spjT6whrkQvbKVc6wnQQdb-DrhlB8xcf8Fwx6BTMlAfhnn1sLEomm-stZOW2xcEbzRGYtoFncFLCkTDooF7env6P2-Jw4IDR8srIt-1GFbhKBFblxD7oB1yU1")
+                .setNotification(notification)
+                .build();
+
+        firebaseMessaging.send(message);
+
 
     }
 
