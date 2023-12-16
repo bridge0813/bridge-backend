@@ -4,6 +4,7 @@ import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FieldUpdateRequest;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
@@ -106,6 +107,18 @@ public class UserService {
                 .refLink(profile.getRefLink())
                 .refFile(new FileResponse(refFile, originName))
                 .build();
+    }
+
+    /**
+     * 유저 관심분야 수정
+     */
+    @Transactional
+    public boolean updateField(FieldUpdateRequest fieldUpdateRequest) {
+        User findUser = find(fieldUpdateRequest.getUserId());
+
+        findUser.updateField(fieldUpdateRequest.getFields());
+
+        return true;
     }
 
     /**

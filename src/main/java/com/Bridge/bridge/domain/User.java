@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -98,5 +99,15 @@ public class User {
 
     public void updateDeviceToken(String deviceToken){
         this.deviceToken = deviceToken;
+    }
+
+    public void updateField(List<String> fields) {
+        this.getFields().clear();
+
+        List<Field> newFields = fields.stream()
+                .map(f -> Field.valueOf(f))
+                .collect(Collectors.toList());
+
+        this.getFields().addAll(newFields);
     }
 }
