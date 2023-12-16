@@ -29,11 +29,11 @@ public class AuthService {
     public OAuthTokenResponse appleOAuthLogin(AppleResponse response) throws Exception {
         // 1. 토큰을 통해 회원 정보 뺴기
         AppleMemberResponse appleUser = appleUtils.getAppleMember(response.getIdToken());
-        return generateOAuthTokenResponse(appleUser.getEmail(), Platform.APPLE, appleUser.getSubject(), response.getName());
+        return generateOAuthTokenResponse(Platform.APPLE, appleUser.getSubject(), response.getName());
     }
 
     @Transactional
-    public OAuthTokenResponse generateOAuthTokenResponse(String email, Platform platform, String platformId, String name) {
+    public OAuthTokenResponse generateOAuthTokenResponse(Platform platform, String platformId, String name) {
         return userRepository.findIdByPlatformAndPlatformId(platform, platformId)
                 .map(userId ->  {
                     User findUser = userRepository.findById(userId)
@@ -42,15 +42,15 @@ public class AuthService {
                     String refreshToken = jwtTokenProvider.createRefreshToken();
                     jwtTokenProvider.updateRefreshToken(userId, refreshToken);
 
-                    return new OAuthTokenResponse(accessToken, refreshToken, email, true, platformId, userId);
+                    return new OAuthTokenResponse(accessToken, refreshToken,true, platformId, userId);
                 })
                 .orElseGet(() -> {
-                    User saveUser = userRepository.save(new User(name, email, platform, platformId));
+                    User saveUser = userRepository.save(new User(name, platform, platformId));
                     String accessToken = jwtTokenProvider.createAccessToken(saveUser.getId());
                     String refreshToken = jwtTokenProvider.createRefreshToken();
                     jwtTokenProvider.updateRefreshToken(saveUser.getId(), refreshToken);
 
-                    return new OAuthTokenResponse(accessToken, refreshToken, email, false, platformId, saveUser.getId());
+                    return new OAuthTokenResponse(accessToken, refreshToken,false, platformId, saveUser.getId());
                 });
     }
 }

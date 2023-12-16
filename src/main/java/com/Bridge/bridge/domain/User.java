@@ -18,8 +18,6 @@ public class User {
 
     private String name;                // 이름
 
-    private String email;               // 이메일
-
     private String platformId;          // 소셜 로그인 고유 아이디
 
     private String refreshToken;
@@ -65,9 +63,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
 
-    public User(String name, String email, Platform platform, String platformId) {
+    public User(String name, Platform platform, String platformId) {
         this.name = name;
-        this.email = email;
         this.platform = platform;
         this.platformId = platformId;
     }
