@@ -84,7 +84,7 @@ class JwtTokenProviderTest {
     @DisplayName("리프레쉬 토큰 업데이트")
     void updateRefreshToken() {
         //given
-        User user = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
+        User user = new User("bridge", Platform.APPLE, "11");
         User saveUser = userRepository.save(user);
 
         String token = Jwts.builder()
@@ -229,7 +229,7 @@ class JwtTokenProviderTest {
     @DisplayName("리프레쉬 토큰 일치하는 경우")
     void matchRefreshToken() {
         //given
-        User user = new User("bridge", "bridge@apple.com", Platform.APPLE, "22");
+        User user = new User("bridge", Platform.APPLE, "22");
 
         String token = Jwts.builder()
                 .setSubject("refresh")
@@ -250,7 +250,7 @@ class JwtTokenProviderTest {
     @DisplayName("리프레쉬 토큰 일치하지 않아 예외 반환")
     void matchRefreshTokenException() {
         //given
-        User user = new User("bridge", "bridge@apple.com", Platform.APPLE, "22");
+        User user = new User("bridge", Platform.APPLE, "22");
 
         String token = Jwts.builder()
                 .setSubject("refresh")

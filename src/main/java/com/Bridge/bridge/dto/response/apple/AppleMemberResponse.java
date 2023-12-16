@@ -7,10 +7,8 @@ public class AppleMemberResponse {
 
     private String subject;
 
-    private String email;
 
-    public AppleMemberResponse(String subject, String email) {
+    public AppleMemberResponse(String subject) {
         this.subject = subject;
-        this.email = email;
     }
 }

@@ -1,5 +1,6 @@
 package com.Bridge.bridge.controller;
 
+import com.Bridge.bridge.dto.request.FieldUpdateRequest;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
@@ -76,6 +77,15 @@ public class UserController {
         UserProfileResponse profile = userService.getProfile(userId);
 
         return ResponseEntity.ok(profile);
+    }
+
+    /**
+     * 유저 관심분야 수정
+     */
+    @PutMapping("/users/field")
+    public ResponseEntity<?> updateFields(@RequestBody FieldUpdateRequest request) {
+        boolean res = userService.updateField(request);
+        return ResponseEntity.ok(res);
     }
 
     /**

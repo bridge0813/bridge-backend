@@ -38,7 +38,7 @@ public class SearchWordServiceTest {
     @Test
     void resentSearchWord() {
         // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user1", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
         SearchWord newSearch1 = SearchWord.builder()
@@ -85,7 +85,7 @@ public class SearchWordServiceTest {
     @Test
     void deleteSearchWord() {
         // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user1", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
         SearchWord newSearch1 = SearchWord.builder()

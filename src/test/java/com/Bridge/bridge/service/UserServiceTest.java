@@ -69,7 +69,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 관심분야 등록")
     void registerField() {
         //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
@@ -93,7 +93,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 관심분야 등록 - 아무것도 등록 안하는 경우")
     void registerFieldEmpty() {
         //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
@@ -112,7 +112,7 @@ class UserServiceTest {
     @DisplayName("처음 로그인 시 개인 관심분야 등록 - 예외 반환")
     void registerFieldEX() {
         //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> fields = new ArrayList<>();
@@ -132,7 +132,7 @@ class UserServiceTest {
     @DisplayName("개인 프로필 등록 - 파일 없는 경우")
     void registerProfile() {
         //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -164,7 +164,7 @@ class UserServiceTest {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
 
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -189,7 +189,7 @@ class UserServiceTest {
     @DisplayName("개인 프로필 등록 - 예외반환")
     void registerProfileEX() {
         //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -211,7 +211,7 @@ class UserServiceTest {
     @DisplayName("개인 프로필 확인 - 등록되어 있는 경우")
     void getProfile() throws MalformedURLException {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
@@ -241,7 +241,7 @@ class UserServiceTest {
     @DisplayName("개인 프로필 확인 - 예외반환")
     void getProfileEX() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
         User saveUser = userRepository.save(newUser);
 
         //expected
@@ -254,7 +254,7 @@ class UserServiceTest {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
 
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
@@ -282,7 +282,7 @@ class UserServiceTest {
         MockMultipartFile oldFile = new MockMultipartFile("file", "old.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
         MockMultipartFile newFile = new MockMultipartFile("file", "update.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
 
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
@@ -307,7 +307,7 @@ class UserServiceTest {
     @DisplayName("프로필 수정 - 파일 없는 경우")
     void updateProfile() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
@@ -345,7 +345,7 @@ class UserServiceTest {
     @DisplayName("북마크 프로젝트 목록 조회 - 모집인원 로직 검증")
     void getBookmarkProjects_RecruitNum() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Part> recruits = new ArrayList<>();
         recruits.add(new Part(null, 3, null, null, null));
@@ -376,7 +376,7 @@ class UserServiceTest {
     @DisplayName("북마크 프로젝트 목록 조회 - 개수 검증")
     void getBookmarkProjects_Num() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Part> recruits = new ArrayList<>();
 
@@ -406,7 +406,7 @@ class UserServiceTest {
     @DisplayName("북마크 프로젝트 목록 조회 - 내용 검증")
     void getBookmarkProjects_Detail() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
         LocalDateTime now = LocalDateTime.now();
 
         Project project = Project.builder()
@@ -435,7 +435,7 @@ class UserServiceTest {
     @DisplayName("회원 탈퇴 기능")
     void deleteUser() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
         User saveUser = userRepository.save(newUser);
 
         //when
@@ -449,7 +449,7 @@ class UserServiceTest {
     @DisplayName("회원 탈퇴 시 프로젝트 DB도 지워지는 지 검증")
     void deleteUserWithProjectDB() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         Project project = Project.builder()
                 .title("title")
@@ -474,7 +474,7 @@ class UserServiceTest {
     @DisplayName("로그아웃 기능")
     void logout() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
         newUser.updateRefreshToken("refreshToken");
         User saveUser = userRepository.save(newUser);
 
@@ -490,7 +490,7 @@ class UserServiceTest {
     @DisplayName("마이페이지 조회 - 관심분야만 등록 시")
     void myPage() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         newUser.getFields().add(Field.BACKEND);
         newUser.getFields().add(Field.FRONTEND);
@@ -511,7 +511,7 @@ class UserServiceTest {
     @DisplayName("마이페이지 조회 - 관심분야 + 북마크 시")
     void myPageHasBookmark() {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         newUser.getFields().add(Field.BACKEND);
         newUser.getFields().add(Field.FRONTEND);
