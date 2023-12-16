@@ -31,18 +31,16 @@ class AuthServiceTest {
     @DisplayName("로그인 후 회원가입 - 처음 가입하는 경우")
     void signup() {
         //given
-        String email = "bridge@apple.com";
         String platformId = "1";
         String name = "bridge";
 
         //when
-        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(email, Platform.APPLE, platformId, name);
+        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(Platform.APPLE, platformId, name);
 
         //then
         assertEquals(1L, userRepository.count());
         assertTrue(oAuthTokenResponse.getAccessToken().length() > 0);
         assertTrue(oAuthTokenResponse.getRefreshToken().length() > 0);
-        assertEquals("bridge@apple.com", oAuthTokenResponse.getEmail());
         assertEquals(false, oAuthTokenResponse.isRegistered());
         assertEquals("1", oAuthTokenResponse.getPlatformId());
     }
@@ -51,20 +49,18 @@ class AuthServiceTest {
     @DisplayName("로그인 후 회원가입 - 이미 가입한 경우")
     void signin() {
         //given
-        String email = "bridge@apple.com";
         String platformId = "11";
         String name = "bridge";
 
-        userRepository.save(new User("bridge", "bridge@apple.com", Platform.APPLE, "11"));
+        userRepository.save(new User("bridge", Platform.APPLE, "11"));
 
         //when
-        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(email, Platform.APPLE, platformId, name);
+        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(Platform.APPLE, platformId, name);
 
         //then
         assertEquals(1L, userRepository.count());
         assertTrue(oAuthTokenResponse.getAccessToken().length() > 0);
         assertTrue(oAuthTokenResponse.getRefreshToken().length() > 0);
-        assertEquals("bridge@apple.com", oAuthTokenResponse.getEmail());
         assertEquals(true, oAuthTokenResponse.isRegistered());
         assertEquals("11", oAuthTokenResponse.getPlatformId());
     }

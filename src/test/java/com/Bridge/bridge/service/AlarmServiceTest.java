@@ -46,7 +46,7 @@ public class AlarmServiceTest {
     @Test
     void getAllAlarm() {
         // given
-        User user = new User("user", "user@gmaiil.com", Platform.APPLE, "alarm");
+        User user = new User("user", Platform.APPLE, "alarm");
         userRepository.save(user);
 
         Alarm alarm1 = Alarm.builder()
@@ -95,7 +95,7 @@ public class AlarmServiceTest {
     @Test
     void deleteAllAlarm() {
         // given
-        User user = new User("user", "user@gmaiil.com", Platform.APPLE, "alarm");
+        User user = new User("user", Platform.APPLE, "alarm");
         userRepository.save(user);
 
         Alarm alarm1 = Alarm.builder()
@@ -141,8 +141,8 @@ public class AlarmServiceTest {
     @Test
     void deleteAllAlarm_diffrentUser() {
         // given
-        User user1 = new User("user1", "user1@gmaiil.com", Platform.APPLE, "alarm");
-        User user2 = new User("user2", "user2@gmaiil.com", Platform.APPLE, "alarm");
+        User user1 = new User("user1", Platform.APPLE, "alarm");
+        User user2 = new User("user2", Platform.APPLE, "alarm");
         userRepository.save(user1);
         userRepository.save(user2);
 
@@ -191,7 +191,7 @@ public class AlarmServiceTest {
     @Test
     void deleteAlarm() {
         // given
-        User user1 = new User("user1", "user1@gmaiil.com", Platform.APPLE, "alarm");
+        User user1 = new User("user1", Platform.APPLE, "alarm");
         userRepository.save(user1);
 
         Alarm alarm1 = Alarm.builder()

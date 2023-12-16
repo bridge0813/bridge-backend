@@ -72,7 +72,7 @@ class ProjectServiceTest {
     @Test
     public void findProjects() {
         // given
-        User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
+        User user = new User("create", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<Stack> skill1 = new ArrayList<>();
@@ -155,7 +155,7 @@ class ProjectServiceTest {
     void createProject() {
         // given
 
-        User user = new User("create", "create@gmail.com", Platform.APPLE, "updateTest");
+        User user = new User("create", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<String> skill = new ArrayList<>();
@@ -199,7 +199,7 @@ class ProjectServiceTest {
     void deleteProject() {
         // given
 
-        User user = new User("delete", "delete@gmail.com", Platform.APPLE, "updateTest");
+        User user = new User("delete", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<Stack> skill1 = new ArrayList<>();
@@ -244,7 +244,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트")
     void updateProject() {
         // given
-        User user = new User("update", "update@gmail.com", Platform.APPLE, "updateTest");
+        User user = new User("update", Platform.APPLE, "updateTest");
         userRepository.save(user);
 
         List<Stack> skill = new ArrayList<>();
@@ -318,7 +318,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 모집글 수정 테스트 _ 잘못된 프로젝트ID")
     void updateProject_wrongProjectId() {
         // given
-        User user1 = new User("update", "update2@gmail.com", Platform.APPLE, "update1Test");
+        User user1 = new User("update", Platform.APPLE, "update1Test");
         userRepository.save(user1);
 
         List<Stack> skill = new ArrayList<>();
@@ -389,7 +389,7 @@ class ProjectServiceTest {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        User user1 = new User("find", "find@gmail.com", Platform.APPLE, "find1Test");
+        User user1 = new User("find", Platform.APPLE, "find1Test");
         User saveUser = userRepository.save(user1);
 
         List<Stack> skill = new ArrayList<>();
@@ -445,7 +445,7 @@ class ProjectServiceTest {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        User user1 = new User("detail_wrong", "detail_wrong@gmail.com", Platform.APPLE, "detail_wrongTest");
+        User user1 = new User("detail_wrong", Platform.APPLE, "detail_wrongTest");
         User saveUser = userRepository.save(user1);
 
         List<Stack> skill = new ArrayList<>();
@@ -500,8 +500,8 @@ class ProjectServiceTest {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        User user1 = new User("find", "find@gmail.com", Platform.APPLE, "find1Test");
-        User user2 = new User("user2", "user2@gmail.com", Platform.APPLE, "find2Test");
+        User user1 = new User("find", Platform.APPLE, "find1Test");
+        User user2 = new User("user2", Platform.APPLE, "find2Test");
         User saveUser = userRepository.save(user1);
         userRepository.save(user2);
 
@@ -558,7 +558,7 @@ class ProjectServiceTest {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<Stack> skill1 = new ArrayList<>();
@@ -661,8 +661,8 @@ class ProjectServiceTest {
     @DisplayName("지원한 프로젝트 목록 반환 - 개수 확인")
     void getApplyProjectsNum() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "1");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
+        User user2 = new User("bridge2", Platform.APPLE, "1");
         userRepository.save(user1);
 
         Project project1 = Project.builder()
@@ -715,7 +715,7 @@ class ProjectServiceTest {
     @DisplayName("지원한 프로젝트 목록 반환 - 내용 확인")
     void getApplyProjectsDetail() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
 
         Project project1 = Project.builder()
                 .title("title1")
@@ -757,8 +757,8 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 지원하기")
     void apply() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "1");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
+        User user2 = new User("bridge2", Platform.APPLE, "1");
         userRepository.save(user1);
 
         Project project1 = Project.builder()
@@ -795,7 +795,7 @@ class ProjectServiceTest {
     @Test
     void findMyProject() {
         // given
-        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", Platform.APPLE, "Test");
         userRepository.save(user);
 
         List<Stack> skill1 = new ArrayList<>();
@@ -879,7 +879,7 @@ class ProjectServiceTest {
     @Test
     void NoProjects() {
         // given
-        User user = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", Platform.APPLE, "Test");
         userRepository.save(user);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -901,13 +901,13 @@ class ProjectServiceTest {
     @Test
     void findAllProject() {
         // given
-        User user1 = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        User user1 = new User("user1", Platform.APPLE, "Test");
         userRepository.save(user1);
 
-        User user2 = new User("user2", "user2@gmail.com", Platform.APPLE, "Test");
+        User user2 = new User("user2", Platform.APPLE, "Test");
         userRepository.save(user2);
 
-        User user3 = new User("user3", "user3@gmail.com", Platform.APPLE, "Test");
+        User user3 = new User("user3", Platform.APPLE, "Test");
         userRepository.save(user3);
 
         List<Stack> skill1 = new ArrayList<>();
@@ -1032,7 +1032,7 @@ class ProjectServiceTest {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        User user1 = new User("user", "user2@gmail.com", Platform.APPLE, "Test");
+        User user1 = new User("user", Platform.APPLE, "Test");
         userRepository.save(user1);
 
         List<Stack> skill1 = new ArrayList<>();
@@ -1145,7 +1145,7 @@ class ProjectServiceTest {
     @Test
     void deadline() {
         // given
-        User user = new User("updateDeadline", "updateDeadline@gmail.com", Platform.APPLE, "updateDeadlineTest");
+        User user = new User("updateDeadline", Platform.APPLE, "updateDeadlineTest");
         userRepository.save(user);
 
         List<Stack> skill = new ArrayList<>();
@@ -1191,7 +1191,7 @@ class ProjectServiceTest {
     @Test
     void alreadyClosed() {
         // given
-        User user = new User("alreadyClosed", "alreadyClosed@gmail.com", Platform.APPLE, "alreadyClosedTest");
+        User user = new User("alreadyClosed", Platform.APPLE, "alreadyClosedTest");
         userRepository.save(user);
 
         List<Stack> skill = new ArrayList<>();
@@ -1232,7 +1232,7 @@ class ProjectServiceTest {
     @Test
     void scrap() {
         // given
-        User user = new User("scrap", "scrap@gmail.com", Platform.APPLE, "scrapTest");
+        User user = new User("scrap", Platform.APPLE, "scrapTest");
         user = userRepository.save(user);
 
         List<Stack> skill = new ArrayList<>();
@@ -1284,7 +1284,7 @@ class ProjectServiceTest {
     @Test
     void unscrap() {
         // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user1", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
         List<Stack> skill = new ArrayList<>();
@@ -1350,7 +1350,7 @@ class ProjectServiceTest {
     @Transactional
     void cancelApply() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
 
         Project project1 = Project.builder()
                 .title("title1")
@@ -1391,9 +1391,9 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 지원자 목록 - 지원자 수 확인")
     void getApplyUsersNum() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "2");
-        User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "3");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
+        User user2 = new User("bridge2", Platform.APPLE, "2");
+        User user3 = new User("bridge3", Platform.APPLE, "3");
 
         user1.getFields().add(Field.BACKEND);
         user2.getFields().add(Field.FRONTEND);
@@ -1442,9 +1442,9 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 지원자 목록 - 수락 or 거절한 지원자는 반영x 확인")
     void getApplyUsersNumAcceptOrReject() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "2");
-        User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "3");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
+        User user2 = new User("bridge2", Platform.APPLE, "2");
+        User user3 = new User("bridge3", Platform.APPLE, "3");
 
         user1.getFields().add(Field.BACKEND);
         user2.getFields().add(Field.FRONTEND);
@@ -1495,7 +1495,7 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 지원자 목록 - 지원자 내용 확인")
     void getApplyUsersDetail() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user1 = new User("bridge1", Platform.APPLE, "1");
 
         user1.getFields().add(Field.BACKEND);
 
@@ -1535,8 +1535,8 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 수락하기 - 일치하는 경우")
     void acceptApply() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "test2");
+        User user1 = new User("bridge1", Platform.APPLE, "test");
+        User user2 = new User("bridge2", Platform.APPLE, "test2");
         User saveUser2 = userRepository.save(user2);
 
         Project project1 = Project.builder()
@@ -1567,8 +1567,8 @@ class ProjectServiceTest {
     @DisplayName("프로젝트 거절하기 - 일치하는 경우")
     void rejectApply() {
         //given
-        User user1 = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "test");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "test2");
+        User user1 = new User("bridge1", Platform.APPLE, "test");
+        User user2 = new User("bridge2", Platform.APPLE, "test2");
         User saveUser2 = userRepository.save(user2);
 
         Project project1 = Project.builder()
@@ -1599,7 +1599,7 @@ class ProjectServiceTest {
     @Transactional
     void topProjects() {
         // given
-        User user = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user = new User("bridge1", Platform.APPLE, "1");
         userRepository.save(user);
 
         for(int i=1; i<26; i++){
@@ -1640,7 +1640,7 @@ class ProjectServiceTest {
     @Test
     void topProjects_dateOption() {
         // given
-        User user = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user = new User("bridge1", Platform.APPLE, "1");
         userRepository.save(user);
 
         LocalDateTime localDateTime = LocalDateTime.now();
@@ -1687,7 +1687,7 @@ class ProjectServiceTest {
     @Transactional
     void getImminentProjects() {
         // given
-        User user = new User("bridge1", "bridge1@apple.com", Platform.APPLE, "1");
+        User user = new User("bridge1", Platform.APPLE, "1");
         userRepository.save(user);
 
         for (int i=0; i<20; i++){

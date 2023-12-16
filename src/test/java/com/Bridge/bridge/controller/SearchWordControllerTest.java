@@ -50,7 +50,7 @@ public class SearchWordControllerTest {
     @Transactional
     void resentSearch() throws Exception {
         // given
-        User user = new User("user1", "user1@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user1", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
         SearchWord newSearch1 = SearchWord.builder()
@@ -97,7 +97,7 @@ public class SearchWordControllerTest {
     @DisplayName("최근 검색어 삭제")
     void deleteSearchWord() throws Exception {
         // given
-        User user = new User("searchWord", "searchWord@gmail.com", Platform.APPLE, "searchWordTest");
+        User user = new User("searchWord", Platform.APPLE, "searchWordTest");
         user = userRepository.save(user);
 
         SearchWord newSearch1 = SearchWord.builder()

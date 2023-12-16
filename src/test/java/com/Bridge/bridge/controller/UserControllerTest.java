@@ -57,7 +57,7 @@ class UserControllerTest {
     @DisplayName("회원 가입시 관심 분야 등록")
     void registerField() throws Exception {
         //given
-        User newUser = new User("bridge","bridge@apple.com", Platform.APPLE,"3d");
+        User newUser = new User("bridge", Platform.APPLE,"3d");
         User saveUser = userRepository.save(newUser);
 
 
@@ -80,7 +80,7 @@ class UserControllerTest {
     @DisplayName("프로필 등록")
     void createProfile() throws Exception {
         //given
-        User newUser = new User("bridge", "kyukyu@apple.com", Platform.APPLE, "3d");
+        User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
         List<String> stack = new ArrayList<>();
@@ -110,7 +110,7 @@ class UserControllerTest {
     @DisplayName("개인 프로필 확인")
     void getProfile() throws Exception {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
@@ -141,7 +141,7 @@ class UserControllerTest {
     @DisplayName("프로필 수정")
     void updateProfile() throws Exception {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
@@ -179,7 +179,7 @@ class UserControllerTest {
     @DisplayName("북마크 프로젝트 목록 조회")
     void showBookmarkProjects() throws Exception {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         List<Part> recruits = new ArrayList<>();
         recruits.add(new Part(null, 3, null, null, null));
@@ -215,7 +215,7 @@ class UserControllerTest {
     @DisplayName("회원 탈퇴")
     void deleteUser() throws Exception {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         Project project = Project.builder()
                 .title("title")
@@ -240,7 +240,7 @@ class UserControllerTest {
     @DisplayName("로그아웃 기능")
     void logout() throws Exception {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
         newUser.updateRefreshToken("refreshToken");
         User saveUser = userRepository.save(newUser);
 
@@ -257,7 +257,7 @@ class UserControllerTest {
     @DisplayName("마이페이지 조회")
     void myPage() throws Exception {
         //given
-        User newUser = new User("bridge", "bridge@apple.com", Platform.APPLE, "test");
+        User newUser = new User("bridge", Platform.APPLE, "test");
 
         newUser.getFields().add(Field.BACKEND);
         newUser.getFields().add(Field.FRONTEND);
