@@ -35,7 +35,7 @@ class AuthServiceTest {
         String name = "bridge";
 
         //when
-        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(Platform.APPLE, platformId, name);
+        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(Platform.APPLE, platformId, name, null);
 
         //then
         assertEquals(1L, userRepository.count());
@@ -55,7 +55,7 @@ class AuthServiceTest {
         userRepository.save(new User("bridge", Platform.APPLE, "11"));
 
         //when
-        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(Platform.APPLE, platformId, name);
+        OAuthTokenResponse oAuthTokenResponse = authService.generateOAuthTokenResponse(Platform.APPLE, platformId, name, null);
 
         //then
         assertEquals(1L, userRepository.count());
