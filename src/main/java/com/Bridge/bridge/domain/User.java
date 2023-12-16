@@ -54,8 +54,6 @@ public class User {
     @OneToMany(mappedBy = "rcvUser", cascade = CascadeType.ALL)
     private List<Alarm> rcvAlarms = new ArrayList<>();              // 알림 수신 목록
 
-//    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
-//    private List<Alarm> sendAlarms = new ArrayList<>();             // 알림 발신 목록
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StaticMessage> staticMessages = new ArrayList<>();         // 유저가 만든 지정 메세지 목록
@@ -63,10 +61,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
 
-    public User(String name, Platform platform, String platformId) {
+    public User(String name, Platform platform, String platformId, String deviceToken) {
         this.name = name;
         this.platform = platform;
         this.platformId = platformId;
+        this.deviceToken = deviceToken;
     }
 
     public User(String deviceToken){

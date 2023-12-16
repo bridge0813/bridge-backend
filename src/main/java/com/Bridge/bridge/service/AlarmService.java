@@ -44,23 +44,15 @@ public class AlarmService {
     private final JwtTokenProvider jwtTokenProvider;
 
     /*
-       Func : 알림 받을 디바이스 토큰 저장하기
+       Func : 알림 받을 디바이스 토큰 업데이트
        Parameter: deviceToken
     */
     @Transactional
-    public void saveDeviceToken(String deviceToken){
+    public void updateDeviceToken(User user, String deviceToken){
 
-        User user = userRepository.findByDeviceToken(deviceToken);
-
-        if(user != null){ // 이미 등록된 유저라면
+        if(user.getDeviceToken() != deviceToken){ // 이미 등록된 유저라면
             user.updateDeviceToken(deviceToken);
-            return;
         }
-
-        // 새로운 유저라면 등록하기
-        User newUser = new User(deviceToken);
-        userRepository.save(newUser);
-        return;
     }
 
     /*
