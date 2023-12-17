@@ -50,6 +50,10 @@ public class Part {
     }
 
     public PartResponseDto toDto() {
+        List<String> recruitSkill = this.getRecruitSkill().stream()
+                .map((stack -> stack.getValue()))
+                .collect(Collectors.toList());
+
         return PartResponseDto.builder()
                 .recruitPart(this.getRecruitPart())
                 .recruitNum(this.getRecruitNum())
