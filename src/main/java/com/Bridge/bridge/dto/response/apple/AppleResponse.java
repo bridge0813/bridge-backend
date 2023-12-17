@@ -11,4 +11,7 @@ public class AppleResponse {
 
     @NotBlank(message = "id token을 입력해 주세요!")
     private String idToken;
+
+    @NotBlank(message = "device token을 입력해 주세요!")
+    private String deviceToken;
 }

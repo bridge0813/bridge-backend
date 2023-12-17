@@ -24,16 +24,16 @@ public class AlarmController {
 
     private final AlarmService alarmService;
 
-    @Operation(summary = "디바이스 토큰 설정", description = "개별 기기마다 존재하는 고유 디바이스 토큰을 저장한다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "디바이스 토큰 저장 완료"),
-            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)")
-    })
-    @PostMapping("/device/token")
-    public void saveDeviceToken(@RequestBody DeviceTokenRequest deviceToken){
-        alarmService.saveDeviceToken(deviceToken.getDeviceToken());
-        return;
-    }
+//    @Operation(summary = "디바이스 토큰 설정", description = "개별 기기마다 존재하는 고유 디바이스 토큰을 저장한다.")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "디바이스 토큰 저장 완료"),
+//            @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)")
+//    })
+//    @PostMapping("/device/token")
+//    public void saveDeviceToken(@RequestBody DeviceTokenRequest deviceToken){
+//        alarmService.saveDeviceToken(deviceToken.getDeviceToken());
+//        return;
+//    }
 
     @Operation(summary = "전체 알람 조회 기능", description = "유저가 받은 모든 알람 조회할 수 있다.")
     @ApiResponses({

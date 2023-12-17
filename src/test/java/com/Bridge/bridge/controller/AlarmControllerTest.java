@@ -54,7 +54,7 @@ public class AlarmControllerTest {
     @DisplayName("전체 알람 조회")
     void getAllOfAlarms() throws Exception {
         // given
-        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", Platform.APPLE, "Test");
         User newUser = userRepository.save(user);
 
         Alarm alarm1 = Alarm.builder()
@@ -101,7 +101,7 @@ public class AlarmControllerTest {
     @DisplayName("전체 알람 삭제")
     void deleteAllOfAlarms() throws Exception {
         // given
-        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", Platform.APPLE, "Test");
         User newUser = userRepository.save(user);
 
         Alarm alarm1 = Alarm.builder()
@@ -146,7 +146,7 @@ public class AlarmControllerTest {
     @DisplayName("개별 알람 삭제")
     void deleteAlarm() throws Exception {
         // given
-        User user = new User("user", "user@gmail.com", Platform.APPLE, "Test");
+        User user = new User("user", Platform.APPLE, "Test");
         userRepository.save(user);
 
         Alarm alarm1 = Alarm.builder()

@@ -11,7 +11,6 @@ public class OAuthTokenResponse {
 
     private String refreshToken;
 
-    private String email;
 
     private boolean isRegistered;
 
@@ -19,11 +18,10 @@ public class OAuthTokenResponse {
 
     private Long userId;
 
-    public OAuthTokenResponse(String accessToken, String refreshToken, String email, boolean isRegistered, String platformId, Long userId) {
+    public OAuthTokenResponse(String accessToken, String refreshToken, boolean isRegistered, String platformId, Long userId) {
         this.grantType = "Bearer";
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.email = email;
         this.isRegistered = isRegistered;
         this.platformId = platformId;
         this.userId = userId;

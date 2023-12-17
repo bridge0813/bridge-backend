@@ -49,8 +49,8 @@ class ChatServiceTest {
     @DisplayName("채팅방 개설")
     void createRoom() {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -72,9 +72,9 @@ class ChatServiceTest {
     @DisplayName("채팅방 목록 조회")
     void findAllChat() {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
-        User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "13");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
+        User user3 = new User("bridge3", Platform.APPLE, "13");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -108,8 +108,8 @@ class ChatServiceTest {
     @Transactional
     void findChat() {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -154,8 +154,8 @@ class ChatServiceTest {
     @Transactional
     void findChatNoMessage() {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -261,8 +261,8 @@ class ChatServiceTest {
     @Transactional
     void readNotMessage() {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -308,8 +308,8 @@ class ChatServiceTest {
     @Transactional
     void readNotMessageMine() {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);

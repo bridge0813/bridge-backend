@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -17,8 +18,6 @@ public class User {
     private Long id;
 
     private String name;                // 이름
-
-    private String email;               // 이메일
 
     private String platformId;          // 소셜 로그인 고유 아이디
 
@@ -56,8 +55,6 @@ public class User {
     @OneToMany(mappedBy = "rcvUser", cascade = CascadeType.ALL)
     private List<Alarm> rcvAlarms = new ArrayList<>();              // 알림 수신 목록
 
-//    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
-//    private List<Alarm> sendAlarms = new ArrayList<>();             // 알림 발신 목록
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StaticMessage> staticMessages = new ArrayList<>();         // 유저가 만든 지정 메세지 목록
@@ -65,11 +62,16 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SearchWord> searchWords = new ArrayList<>();         // 유저가 검색한 검색어 목록
 
-    public User(String name, String email, Platform platform, String platformId) {
+    public User(String name, Platform platform, String platformId) {
         this.name = name;
-        this.email = email;
         this.platform = platform;
         this.platformId = platformId;
+    }
+    public User(String name, Platform platform, String platformId, String deviceToken) {
+        this.name = name;
+        this.platform = platform;
+        this.platformId = platformId;
+        this.deviceToken = deviceToken;
     }
 
     public User(String deviceToken){
@@ -97,5 +99,15 @@ public class User {
 
     public void updateDeviceToken(String deviceToken){
         this.deviceToken = deviceToken;
+    }
+
+    public void updateField(List<String> fields) {
+        this.getFields().clear();
+
+        List<Field> newFields = fields.stream()
+                .map(f -> Field.valueOf(f))
+                .collect(Collectors.toList());
+
+        this.getFields().addAll(newFields);
     }
 }

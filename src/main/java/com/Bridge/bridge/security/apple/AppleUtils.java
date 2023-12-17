@@ -65,7 +65,7 @@ public class AppleUtils {
             throw new Exception("Claim 값이 올바르지 않음");
         }
 
-        return new AppleMemberResponse(claims.getSubject(), claims.get("email", String.class));
+        return new AppleMemberResponse(claims.getSubject());
     }
 
     /**

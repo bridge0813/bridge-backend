@@ -56,8 +56,8 @@ class ChatControllerTest {
     @DisplayName("채팅방 개설")
     void createChat() throws Exception {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -78,9 +78,9 @@ class ChatControllerTest {
     @DisplayName("채팅방 목록 조회")
     void getChatList() throws Exception {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
-        User user3 = new User("bridge3", "bridge3@apple.com", Platform.APPLE, "13");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
+        User user3 = new User("bridge3", Platform.APPLE, "13");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
@@ -113,8 +113,8 @@ class ChatControllerTest {
     @Transactional
     void getChat() throws Exception {
         //given
-        User user1 = new User("bridge", "bridge@apple.com", Platform.APPLE, "11");
-        User user2 = new User("bridge2", "bridge2@apple.com", Platform.APPLE, "12");
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
 
         User saveUser1 = userRepository.save(user1);
         User saveUser2 = userRepository.save(user2);
