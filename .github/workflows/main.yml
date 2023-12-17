@@ -41,7 +41,7 @@ jobs:
       id: create-json
       uses: jsdaniell/create-json@v1.2.2
       with:
-        name: "bridge-dbecf-firebase-adminsdk-25cwj-d885e23f45.json"
+        name: "bridge-79c01-firebase-adminsdk-mpsb0-dd17f808a6.json"
         json: ${{ secrets.FIREBASE_JSON }}
         dir: './src//main/resources/firebase'
         
