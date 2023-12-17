@@ -218,7 +218,10 @@ public class ProjectService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        if(!userId.equals(project.getUser().getId()))  {
+        if(userId == null){ // 로그인 안 한 유저일 경우
+            return project.toDto(false, false);
+        }
+        else if(!userId.equals(project.getUser().getId()))  { // 로그인한 유저인데 글쓴이가 아닐 경우
             User user = userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException());
             Bookmark bookmark= bookmarkRepository.findByProjectAndUser(project, user);
@@ -227,6 +230,7 @@ public class ProjectService {
             }
             return project.toDto(false, true);
         }
+
         return project.toDto(true, false);
     }
 

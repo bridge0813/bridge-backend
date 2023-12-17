@@ -91,12 +91,31 @@ public class Project {
                 .map((part) -> part.toDto())
                 .collect(Collectors.toList());
 
+        LocalDateTime startDate = this.startDate;
+        LocalDateTime endDate = this.endDate;
+        String s_startDate = "";
+        String s_endDate = "";
+
+        if(startDate == null){
+            s_startDate = "미정";
+        }
+        else {
+            s_startDate = startDate.toString();
+        }
+        if(endDate == null){
+            s_endDate = "미정";
+        }
+        else {
+            s_endDate = endDate.toString();
+        }
+
+
         return ProjectResponseDto.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
                 .dueDate(this.getDueDate().toString())
-                .startDate(this.getStartDate().toString())
-                .endDate(this.getEndDate().toString())
+                .startDate(s_startDate)
+                .endDate(s_endDate)
                 .recruit(recruit)
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())

@@ -98,8 +98,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "모집글 상세보기 조회 실패"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public ProjectResponseDto detailProject(@RequestParam(required = false) Long userId, @RequestBody Long projectId){
-        return projectService.getProject(userId, projectId);
+    public ProjectResponseDto detailProject(@RequestParam(required = false) Long userId, @RequestBody ProjectIdRequest projectId){
+        return projectService.getProject(userId, projectId.getProjectId());
     }
 
     // 프로젝트 모집글 필터링 조회
