@@ -47,7 +47,7 @@ public class ChatService {
         User makeUser = userService.find(chatRoomRequest.getMakeUserId());
         User receiveUser = userService.find(chatRoomRequest.getReceiveUserId());
 
-        Chat newChat = chatRoomRequest.toEntity(receiveUser);
+        Chat newChat = chatRoomRequest.toEntity();
 
         newChat.setChatUser(makeUser, receiveUser);
 

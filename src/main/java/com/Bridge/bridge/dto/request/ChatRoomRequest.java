@@ -14,10 +14,8 @@ public class ChatRoomRequest {
 
     private Long receiveUserId;
 
-    public Chat toEntity(User receiveUser) {
-        return Chat.builder()
-                .chatRoomId(randomUUID().toString())
-                .build();
-    }
+    public Chat toEntity() {
+        return new Chat(randomUUID().toString());
 
+    }
 }
