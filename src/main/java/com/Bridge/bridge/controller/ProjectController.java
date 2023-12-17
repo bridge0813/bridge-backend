@@ -161,8 +161,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
     })
-    public ProjectResponseDto closeProject(@RequestBody Long projectId){
-        return projectService.closeProject(projectId);
+    public ProjectResponseDto closeProject(@RequestBody ProjectIdRequest projectId){
+        return projectService.closeProject(projectId.getProjectId());
     }
 
     // 모집글 스크랩하기
