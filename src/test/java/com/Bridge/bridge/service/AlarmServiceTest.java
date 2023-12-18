@@ -255,12 +255,12 @@ public class AlarmServiceTest {
     @Test
     void sendAlarm() throws FirebaseMessagingException {
         Notification notification = Notification.builder()
-                .setTitle("알람 테스트 - 스프링")
+                .setTitle("알람 테스트 - 백엔드")
                 .setBody("테스트테스트")
                 .build();
 
         Message message = Message.builder()
-                .setToken("dMhu4U_m3El1vGsQ6ZjO5K:APA91bF5Pp7m2oHv3O4spjT6whrkQvbKVc6wnQQdb-DrhlB8xcf8Fwx6BTMlAfhnn1sLEomm-stZOW2xcEbzRGYtoFncFLCkTDooF7env6P2-Jw4IDR8srIt-1GFbhKBFblxD7oB1yU1")
+                .setToken("fWa2w03tNUIDpFj9SIZtsl:APA91bEF04ezUG7b05OgnZ0G4o91Qx0EpOyXfbTqE8_C1gxxI7dwE9YGvWhUKHOnuqT0mb1HZB7LQaJnvbELDvBdgxzrT0cGaZ0_eUnJpOe8UB3d8qzVRcyMYAHlF-RK5hphGAYs4dBm")
                 .setNotification(notification)
                 .build();
 

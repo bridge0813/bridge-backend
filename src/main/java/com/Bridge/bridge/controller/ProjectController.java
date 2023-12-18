@@ -225,24 +225,13 @@ public class ProjectController {
      * 프로젝트 수락하기
      */
     @PutMapping("/projects/accept")
-    public ResponseEntity<?> acceptApply(HttpServletRequest request,
+    public ResponseEntity<?> acceptApply(@RequestParam("userId") Long userId,
                                          @RequestParam("projectId") Long projectId) throws FirebaseMessagingException {
-
-        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
         projectService.acceptApply(projectId, userId);
 
         // 지원 결과 알림 보내기
         alarmService.getApplyResultAlarm(userId);
-
-        // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(userId)
-                .title("지원 결과 도착")
-                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-                .build();
-
-        alarmService.sendNotification(notificationRequestDto);
 
         return ResponseEntity.ok(true);
     }
@@ -251,24 +240,13 @@ public class ProjectController {
      * 프로젝트 거절하기
      */
     @PutMapping("/projects/reject")
-    public ResponseEntity<?> rejectApply(HttpServletRequest request,
+    public ResponseEntity<?> rejectApply(@RequestParam("userId") Long userId,
                                          @RequestParam("projectId") Long projectId) throws FirebaseMessagingException {
-
-        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
         projectService.rejectApply(projectId, userId);
 
         // 지원 결과 알림 보내기
         alarmService.getApplyResultAlarm(userId);
-
-        // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(userId)
-                .title("지원 결과 도착")
-                .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-                .build();
-
-        alarmService.sendNotification(notificationRequestDto);
 
         return ResponseEntity.ok(true);
     }
