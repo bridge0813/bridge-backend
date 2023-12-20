@@ -1,19 +1,36 @@
 
 ## 브릿지 - Bridge
 
-- 프로젝트를 간편하게 모집하고 참여할 수 있는 어플
+> 🔥개발자 및 디자이너들이 모여 프로젝트를 간편하게 모집하고 참여할 수 있는 어플리케이션
+>
 
-<img width=150px src="https://github.com/bridge0813/bridge-backend/assets/102718303/9b7d03b8-5636-4b87-9a3a-56d97230d161">
+<br>
+
+<img src="https://github.com/bridge0813/bridge-backend/assets/102718303/ea6291f0-dc8d-4903-873c-7f6bc94eecf3">
+
+<br>
 
 ## 개발인원
 
+| 분야 | 이름 | 포지션 |
+|---| --- |-----|
+| 디자인 | 고경 | 서비스 및 UXUI 디자인 |
+| 디자인 | 김교연 | 서비스 및 UXUI 디자인 |
+| 개발 | [이규현](https://github.com/lalabulla) | Server 개발 |
+| 개발 | [이지민](https://github.com/dlwlals1289) | Server 개발 |
+| 개발 | [정호윤](https://github.com/stemmmm) | Android 개발 |
+| 개발 | [엄지호](https://github.com/jihojivenchy) | Android 개발 |
 
 
+<br>
 
 ## ERD
 
 ![브릿지 ERD](https://github.com/bridge0813/bridge-backend/assets/102718303/89a20b08-e3d5-431b-bdb6-9c1bee4b8c8e)
 
+
+
+## 시스템 아키텍처
 
 ## 💻 기술 스택
 

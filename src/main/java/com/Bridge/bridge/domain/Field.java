@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum Field {
 
     IOS("iOS"),
-    AOS("안드로이드"),
+    ANDROID("안드로이드"),
     FRONTEND("프론트엔드"),
     BACKEND("백엔드"),
     UIUX("UI/UX"),
