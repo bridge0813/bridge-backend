@@ -76,7 +76,7 @@ public class AlarmService {
                 .setToken(user.getDeviceToken())
                 .setNotification(notification)
                 .build();
-
+        System.out.println(message);
         try {
             firebaseMessaging.send(message);
         }
@@ -130,7 +130,7 @@ public class AlarmService {
                 .orElseThrow(() -> new NotFoundUserException());
 
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
-
+            System.out.println("testtesttesttest");
             // 알림보내기
             NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
                     .userID(chat.getReceiveUser().getId())
