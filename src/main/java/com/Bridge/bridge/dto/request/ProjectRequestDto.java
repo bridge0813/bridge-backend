@@ -76,12 +76,15 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
             endDate = LocalDateTime.of(e_year,e_month,e_date,23,59,59);
         }
 
+        LocalDateTime uploadTime = LocalDateTime.now();
+
         return Project.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
+                .uploadTime(uploadTime)
                 .recruit(new ArrayList<>())
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
