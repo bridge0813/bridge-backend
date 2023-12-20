@@ -62,7 +62,7 @@ public class AlarmService {
     public void sendNotification(NotificationRequestDto notificationRequestDto) throws FirebaseMessagingException {
 
         // 알림 받을 유저 찾기
-        User user = userRepository.findById(notificationRequestDto.getUserID())
+        User user = userRepository.findById(notificationRequestDto.getUserId())
                 .orElseThrow(() -> new NotFoundUserException());
 
         // 알림 생성하기
@@ -109,7 +109,7 @@ public class AlarmService {
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(userId)
+                .userId(userId)
                 .title("지원 결과 도착")
                 .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
                 .build();
@@ -133,7 +133,7 @@ public class AlarmService {
 
             // 알림보내기
             NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                    .userID(chat.getReceiveUser().getId())
+                    .userId(chat.getReceiveUser().getId())
                     .title(sender.getName())
                     .body(chatMessageRequest.getMessage())
                     .build();
@@ -145,7 +145,7 @@ public class AlarmService {
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(chat.getMakeUser().getId())
+                .userId(chat.getMakeUser().getId())
                 .title(sender.getName())
                 .body(chatMessageRequest.getMessage())
                 .build();
@@ -180,7 +180,7 @@ public class AlarmService {
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                .userID(getAlarmUser.getId())
+                .userId(getAlarmUser.getId())
                 .title("지원자 등장?")
                 .body("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
                 .build();
