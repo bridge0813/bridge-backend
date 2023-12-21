@@ -300,12 +300,13 @@ public class ProjectService {
         // 요청자가 작성한 작성글 모두 불러오기
         List<Project> myProjects = projectRepository.findAllByUser(user);
 
-        // 작성한 모집글이 없다면
-        if(myProjects.isEmpty()){
-            throw new NotFoundProjectException();
-        }
 
         List<MyProjectResponseDto> response = new ArrayList<>();
+
+        // 작성한 모집글이 없다면
+        if(myProjects.isEmpty()){
+            return response;
+        }
 
         for(int i =0; i<myProjects.size(); i++){
             final int[] total = {0};
@@ -343,12 +344,13 @@ public class ProjectService {
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
 
-        // 작성글이 하나도 없다면
-        if(allProjects.isEmpty()){
-            throw new NotFoundProjectException();
-        }
 
         List<ProjectListResponseDto> response = new ArrayList<>();
+
+        // 작성글이 하나도 없다면
+        if(allProjects.isEmpty()){
+            return response;
+        }
 
         if(userId == null){ // 로그인 안 된 상태
             for(int i =0; i<allProjects.size(); i++){
@@ -414,17 +416,16 @@ public class ProjectService {
 
         List<Part> parts = partRepository.findAllByRecruitPart(Field.valueOf(myPart).toString());
 
-        System.out.println(parts.size());
-
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
-        // 작성글이 하나도 없다면
-        if(myPartProjects.isEmpty()){
-            throw new NotFoundProjectException();
-        }
 
         List<ProjectListResponseDto> response = new ArrayList<>();
+
+        // 작성글이 하나도 없다면
+        if(myPartProjects.isEmpty()){
+            return response;
+        }
 
         for(int i =0; i<myPartProjects.size(); i++){
             final int[] total = {0};

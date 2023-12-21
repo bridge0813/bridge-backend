@@ -23,7 +23,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.mysql.cj.log.Log;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AlarmService {
 
     private final FirebaseMessaging firebaseMessaging;
@@ -129,8 +132,14 @@ public class AlarmService {
         User sender = userRepository.findById(chatMessageRequest.getSenderId())
                 .orElseThrow(() -> new NotFoundUserException());
 
+        log.info("Chat ID = {}", chat.getId());
+
+
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
+            log.info("Sender User(Maker) Name = {}", sender.getName());
+
             System.out.println("testtesttesttest");
+
             // 알림보내기
             NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
                     .userID(chat.getReceiveUser().getId())
@@ -142,6 +151,7 @@ public class AlarmService {
             return;
         }
         // 메세지를 보낸 사람이 채팅방에 초대된 사람이라면
+        log.info("Sender User(Receiver) Name = {}", sender.getName());
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
