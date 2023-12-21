@@ -24,6 +24,17 @@
 
 <br>
 
+## ✨ 주요 기능
+|프로젝트 확인|프로젝트 상세|프로젝트 관리|
+|---|---|---|
+|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/5301881a-7803-4050-9767-c82e874b98ba">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/c8918e94-32c0-4b5a-b3c1-056ef9f7d666">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/92c0b1ba-1390-4f9c-b479-31a891e871f1">
+
+|채팅|마이페이지|
+|---|---|
+|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/8733967d-ddaa-4841-a21d-2c0d40b863cb">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/bb31a2a3-7ba7-47e3-8937-8aa1ae9437eb">|
+
+<br>
+
 ## ERD
 
 ![브릿지 ERD](https://github.com/bridge0813/bridge-backend/assets/102718303/89a20b08-e3d5-431b-bdb6-9c1bee4b8c8e)
