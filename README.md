@@ -29,9 +29,9 @@
 |---|---|---|
 |<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/5301881a-7803-4050-9767-c82e874b98ba">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/c8918e94-32c0-4b5a-b3c1-056ef9f7d666">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/92c0b1ba-1390-4f9c-b479-31a891e871f1">
 
-|채팅|채팅방|마이페이지|
-|---|---|---|
-|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/733551b2-aca1-48e8-ae18-ed28ee073099">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/8733967d-ddaa-4841-a21d-2c0d40b863cb">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/bb31a2a3-7ba7-47e3-8937-8aa1ae9437eb">|
+|채팅|마이페이지|
+|---|---|
+|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/8733967d-ddaa-4841-a21d-2c0d40b863cb">|<img height ="470" src="https://github.com/bridge0813/bridge-ios/assets/65343417/bb31a2a3-7ba7-47e3-8937-8aa1ae9437eb">|
 
 <br>
 
