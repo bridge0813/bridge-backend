@@ -60,7 +60,7 @@ public class AlarmService {
        Parameter: NotificationRequestDto -> 알림 수신자, 알림 제목, 알림 내용
     */
     public void sendNotification(NotificationRequestDto notificationRequestDto) throws FirebaseMessagingException {
-
+        System.out.println();
         // 알림 받을 유저 찾기
         User user = userRepository.findById(notificationRequestDto.getUserId())
                 .orElseThrow(() -> new NotFoundUserException());
@@ -152,7 +152,6 @@ public class AlarmService {
 
         sendNotification(notificationRequestDto);
         return;
-
     }
 
     /*

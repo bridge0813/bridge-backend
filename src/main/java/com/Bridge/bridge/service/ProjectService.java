@@ -5,7 +5,6 @@ import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.exception.notfound.NotFoundSearchWordException;
 import com.Bridge.bridge.repository.*;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

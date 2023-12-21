@@ -20,7 +20,8 @@ public class Part {
     @Column(name = "part_id")
     private Long id;
 
-    private String recruitPart;     // 모집 파트
+    @Enumerated(EnumType.STRING)
+    private Field recruitPart; //모집 파트
 
     private int recruitNum;         //모집인원 수
 
@@ -36,7 +37,7 @@ public class Part {
     private Project project;
 
     @Builder
-    public Part(String recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement, Project project) {
+    public Part(Field recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement, Project project) {
         this.recruitPart = recruitPart;
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;
@@ -50,10 +51,6 @@ public class Part {
     }
 
     public PartResponseDto toDto() {
-        List<String> recruitSkill = this.getRecruitSkill().stream()
-                .map((stack -> stack.getValue()))
-                .collect(Collectors.toList());
-
         return PartResponseDto.builder()
                 .recruitPart(this.getRecruitPart())
                 .recruitNum(this.getRecruitNum())

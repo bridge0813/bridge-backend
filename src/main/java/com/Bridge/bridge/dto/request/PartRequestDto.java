@@ -1,5 +1,6 @@
 package com.Bridge.bridge.dto.request;
 
+import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Stack;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class PartRequestDto {
 
     public Part toEntity(){
         return Part.builder()
-                .recruitPart(this.getRecruitPart())
+                .recruitPart(Field.valueOf(this.getRecruitPart()))
                 .recruitNum(this.getRecruitNum())
                 .recruitSkill(this.getRecruitSkill().stream()
                         .map(s -> Stack.valueOf(s))
