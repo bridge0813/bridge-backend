@@ -62,11 +62,11 @@ class ProjectServiceTest {
     @Autowired
     private ApplyProjectRepository applyProjectRepository;
 
-    @BeforeEach
-    void clean() {
-        userRepository.deleteAll();
-        projectRepository.deleteAll();
-    }
+//    @BeforeEach
+//    void clean() {
+//        userRepository.deleteAll();
+//        projectRepository.deleteAll();
+//    }
 
     @DisplayName("모집글 검색 기능 test")
     @Test
@@ -496,13 +496,12 @@ class ProjectServiceTest {
 
     @DisplayName("모집글 상세보기 기능 - 내가 만든 프로젝트가 아닌 경우")
     @Test
+    @Transactional
     void detailProjectNotMine() {
         // given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        User user1 = new User("find", Platform.APPLE, "find1Test");
-        User user2 = new User("user2", Platform.APPLE, "find2Test");
-        User saveUser = userRepository.save(user1);
+        User user1 = new User("writer", Platform.APPLE, "find1Test");
+        User user2 = new User("reader", Platform.APPLE, "find2Test");
+        userRepository.save(user1);
         userRepository.save(user2);
 
         List<Stack> skill = new ArrayList<>();
@@ -535,20 +534,19 @@ class ProjectServiceTest {
                 .stage("Before Start")
                 .build();
 
-        Project theProject = projectRepository.save(newProject);
+        projectRepository.save(newProject);
+        Bookmark bookmark = Bookmark.builder()
+                .project(newProject)
+                .user(user2)
+                .build();
+        bookmarkRepository.save(bookmark);
 
-        String token = Jwts.builder()
-                .setSubject(String.valueOf(user2.getId()))
-                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
-                .compact();
-
-        request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        ProjectResponseDto result = projectService.getProject(user2.getId(), theProject.getId());
+        ProjectResponseDto result = projectService.getProject(user2.getId(), newProject.getId());
 
         // then
-        assertThat(result.isMyProject()).isEqualTo(false);
+        assertThat(result.isScrap()).isEqualTo(true);
     }
     
     @DisplayName("모집글 필터링")

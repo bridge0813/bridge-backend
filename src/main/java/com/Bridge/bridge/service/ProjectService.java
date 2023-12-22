@@ -230,7 +230,6 @@ public class ProjectService {
             }
             return project.toDto(false, true);
         }
-
         return project.toDto(true, false);
     }
 
