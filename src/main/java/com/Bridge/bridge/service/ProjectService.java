@@ -411,7 +411,7 @@ public class ProjectService {
         Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
         User user = userRepository.findById(adminUserId).orElseThrow(()-> new NotFoundUserException());
 
-        List<Part> parts = partRepository.findAllByRecruitPart(Field.valueOf(myPart).toString());
+        List<Part> parts = partRepository.findAllByRecruitPart(Field.valueOf(myPart));
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);

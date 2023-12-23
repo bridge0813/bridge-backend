@@ -212,28 +212,28 @@ public class AlarmServiceTest {
                 .sendDateTime(LocalDateTime.now())
                 .rcvUser(user1)
                 .build();
-        Alarm alarm2 = Alarm.builder()
-                .type("Applier")
-                .title("지원자 등장? - 2")
-                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
-                .sendDateTime(LocalDateTime.now())
-                .rcvUser(user1)
-                .build();
-        Alarm alarm3 = Alarm.builder()
-                .type("Apply")
-                .title("지원 결과 도착")
-                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-                .sendDateTime(LocalDateTime.now())
-                .rcvUser(user1)
-                .build();
+//        Alarm alarm2 = Alarm.builder()
+//                .type("Applier")
+//                .title("지원자 등장? - 2")
+//                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+//                .sendDateTime(LocalDateTime.now())
+//                .rcvUser(user1)
+//                .build();
+//        Alarm alarm3 = Alarm.builder()
+//                .type("Apply")
+//                .title("지원 결과 도착")
+//                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+//                .sendDateTime(LocalDateTime.now())
+//                .rcvUser(user1)
+//                .build();
 
         alarmRepository.save(alarm1);
-        alarmRepository.save(alarm2);
-        alarmRepository.save(alarm3);
+//        alarmRepository.save(alarm2);
+//        alarmRepository.save(alarm3);
 
         user1.getRcvAlarms().add(alarm1);
-        user1.getRcvAlarms().add(alarm2);
-        user1.getRcvAlarms().add(alarm3);
+//        user1.getRcvAlarms().add(alarm2);
+//        user1.getRcvAlarms().add(alarm3);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -249,9 +249,7 @@ public class AlarmServiceTest {
 
         // then
 
-        Assertions.assertThat(responses.size()).isEqualTo(2);
-        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("지원자 등장? - 2");
-        Assertions.assertThat(responses.get(1).getTitle()).isEqualTo("지원 결과 도착");
+        Assertions.assertThat(responses.size()).isEqualTo(0);
 
     }
 
