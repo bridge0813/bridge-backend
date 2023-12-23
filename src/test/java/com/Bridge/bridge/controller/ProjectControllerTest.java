@@ -258,7 +258,7 @@ class ProjectControllerTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -399,7 +399,7 @@ class ProjectControllerTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -407,7 +407,7 @@ class ProjectControllerTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -495,7 +495,7 @@ class ProjectControllerTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -503,7 +503,7 @@ class ProjectControllerTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -511,7 +511,7 @@ class ProjectControllerTest {
 
         List<Part> recruit3 = new ArrayList<>();
         recruit3.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(5)
                 .recruitSkill(skill3)
                 .requirement("skill3")
@@ -626,7 +626,7 @@ class ProjectControllerTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("BACKEND")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -634,7 +634,7 @@ class ProjectControllerTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("FRONTEND")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -642,7 +642,7 @@ class ProjectControllerTest {
 
         List<Part> recruit3 = new ArrayList<>();
         recruit3.add(Part.builder()
-                .recruitPart("BACKEND")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(5)
                 .recruitSkill(skill3)
                 .requirement("skill3")
@@ -750,7 +750,7 @@ class ProjectControllerTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -796,7 +796,7 @@ class ProjectControllerTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
