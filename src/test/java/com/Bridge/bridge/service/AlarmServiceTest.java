@@ -3,6 +3,7 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Alarm;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.ChatMessageRequest;
 import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.repository.AlarmRepository;
@@ -43,11 +44,14 @@ public class AlarmServiceTest {
     @Autowired
     private FirebaseMessaging firebaseMessaging;
 
-    @BeforeEach
-    void clean() {
-        userRepository.deleteAll();
-        alarmRepository.deleteAll();
-    }
+    @Autowired
+    private ChatService chatService;
+
+//    @BeforeEach
+//    void clean() {
+//        userRepository.deleteAll();
+//        alarmRepository.deleteAll();
+//    }
 
     @DisplayName("모든 알람 조회")
     @Test
@@ -255,17 +259,40 @@ public class AlarmServiceTest {
     @Test
     void sendAlarm() throws FirebaseMessagingException {
         Notification notification = Notification.builder()
-                .setTitle("알람 테스트 - 백엔드")
-                .setBody("테스트테스트")
+                .setTitle("알림 속 시간 테스트 - 백엔드")
+                .setBody("4시 55분에 보내는 알람입니다 시간 들어가 있나요???")
                 .build();
 
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         Message message = Message.builder()
-                .setToken("fWa2w03tNUIDpFj9SIZtsl:APA91bEF04ezUG7b05OgnZ0G4o91Qx0EpOyXfbTqE8_C1gxxI7dwE9YGvWhUKHOnuqT0mb1HZB7LQaJnvbELDvBdgxzrT0cGaZ0_eUnJpOe8UB3d8qzVRcyMYAHlF-RK5hphGAYs4dBm")
+                .setToken("dMhu4U_m3El1vGsQ6ZjO5K:APA91bF5Pp7m2oHv3O4spjT6whrkQvbKVc6wnQQdb-DrhlB8xcf8Fwx6BTMlAfhnn1sLEomm-stZOW2xcEbzRGYtoFncFLCkTDooF7env6P2-Jw4IDR8srIt-1GFbhKBFblxD7oB1yU1")
                 .setNotification(notification)
+                .putData("time", localDateTime.toString())
                 .build();
 
         firebaseMessaging.send(message);
 
+
+    }
+
+    @DisplayName("채팅 알람 테스트")
+    @Test
+    void chatAlarmTest() throws FirebaseMessagingException {
+        ChatMessageRequest chatMessageRequest = ChatMessageRequest.builder()
+                .messageId("afadfsdfasdfasdf")
+                .chatRoomId("21c09835-20f6-4c20-9589-97905febd7bd")
+                .type(ChatMessageRequest.MessageType.TALK)
+                .senderId(5L)
+                .message("chat alarm test")
+                .readStat(false)
+                .build();
+
+        //메세지 저장
+        ChatMessageRequest messageRequest = chatService.saveMessage(chatMessageRequest);
+
+//        //메세지 클라이언트로 전송
+//        chatService.sendMesssage(messageRequest);
 
     }
 

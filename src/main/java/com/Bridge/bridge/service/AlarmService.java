@@ -23,17 +23,21 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.mysql.cj.log.Log;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AlarmService {
 
     private final FirebaseMessaging firebaseMessaging;
@@ -65,6 +69,9 @@ public class AlarmService {
         User user = userRepository.findById(notificationRequestDto.getUserId())
                 .orElseThrow(() -> new NotFoundUserException());
 
+        // 알람 생성 시간 생성하기
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         // 알림 생성하기
         Notification notification = Notification.builder()
                 .setTitle(notificationRequestDto.getTitle())
@@ -75,6 +82,7 @@ public class AlarmService {
         Message message = Message.builder()
                 .setToken(user.getDeviceToken())
                 .setNotification(notification)
+                .putData("time", localDateTime.toString())
                 .build();
         System.out.println(message);
         try {
@@ -97,11 +105,14 @@ public class AlarmService {
         User rcvUser = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundUserException());
 
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         Alarm alarm = Alarm.builder()
                 .type("Apply")
                 .title("지원 결과 도착")
                 .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
                 .rcvUser(rcvUser)
+                .sendDateTime(localDateTime)
                 .build();
         alarmRepository.save(alarm);
 
@@ -129,8 +140,14 @@ public class AlarmService {
         User sender = userRepository.findById(chatMessageRequest.getSenderId())
                 .orElseThrow(() -> new NotFoundUserException());
 
+        log.info("Chat ID = {}", chat.getId());
+
+
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
+            log.info("Sender User(Maker) Name = {}", sender.getName());
+
             System.out.println("testtesttesttest");
+
             // 알림보내기
             NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
                     .userId(chat.getReceiveUser().getId())
@@ -142,6 +159,7 @@ public class AlarmService {
             return;
         }
         // 메세지를 보낸 사람이 채팅방에 초대된 사람이라면
+        log.info("Sender User(Receiver) Name = {}", sender.getName());
 
         // 알림보내기
         NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
@@ -166,11 +184,14 @@ public class AlarmService {
 
         User getAlarmUser = project.getUser();
 
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         Alarm alarm = Alarm.builder()
                 .type("Applier")
                 .title("지원자 등장?")
                 .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
                 .rcvUser(getAlarmUser)
+                .sendDateTime(localDateTime)
                 .build();
         alarmRepository.save(alarm);
 

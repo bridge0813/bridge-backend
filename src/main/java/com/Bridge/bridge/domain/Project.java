@@ -122,6 +122,7 @@ public class Project {
                 .stage(this.getStage())
                 .userName(this.getUser().getName())
                 .isMyProject(isMyProject)
+                .scrap(scrap)
                 .build();
     }
 
