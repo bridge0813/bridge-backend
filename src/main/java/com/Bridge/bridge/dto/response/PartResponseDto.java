@@ -1,5 +1,6 @@
 package com.Bridge.bridge.dto.response;
 
+import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.Stack;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +20,8 @@ public class PartResponseDto {
     private String requirement;
 
     @Builder
-    public PartResponseDto(String recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement) {
-        this.recruitPart = recruitPart;
+    public PartResponseDto(Field recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement) {
+        this.recruitPart = recruitPart.getValue();
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill.stream()
                 .map(s -> s.getValue())

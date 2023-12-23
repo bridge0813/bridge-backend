@@ -412,8 +412,11 @@ class UserServiceTest {
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate(now)
+                .uploadTime(now)
+                .dueDate(now.plusDays(24L))
                 .recruit(null)
+                .startDate(LocalDateTime.of(2023, 12, 24, 0, 0))
+                .endDate(LocalDateTime.of(2023, 12, 25, 0, 0))
                 .build();
 
         projectRepository.save(project);
@@ -427,8 +430,11 @@ class UserServiceTest {
         List<BookmarkListResponse> bookmarkProjects = userService.getBookmarkProjects(saveUser.getId());
 
         //then
-        assertEquals("title", bookmarkProjects.get(0).getTitle());
-        assertEquals(now, bookmarkProjects.get(0).getDueDate());
+        BookmarkListResponse bookmarkResponse = bookmarkProjects.get(0);
+        assertEquals("title", bookmarkResponse.getTitle());
+        assertEquals(24L, bookmarkResponse.getDDay());
+        assertEquals(LocalDateTime.of(2023,12,24,0,0), bookmarkResponse.getStartDate());
+        assertEquals(LocalDateTime.of(2023,12,25,0,0), bookmarkResponse.getEndDate());
     }
 
     @Test

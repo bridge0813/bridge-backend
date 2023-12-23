@@ -7,7 +7,6 @@ import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
-import com.Bridge.bridge.domain.SearchWord;
 import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FilterRequestDto;
@@ -85,7 +84,7 @@ class ProjectServiceTest {
 
         List<Part> recruit1 = new ArrayList<>();
         recruit1.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -93,7 +92,7 @@ class ProjectServiceTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(2)
                 .recruitSkill(skill2)
                 .requirement("아무거나")
@@ -208,7 +207,7 @@ class ProjectServiceTest {
 
         List<Part> recruit1 = new ArrayList<>();
         recruit1.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -253,7 +252,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -327,7 +326,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -398,7 +397,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -454,7 +453,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -510,7 +509,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -571,13 +570,13 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
                 .build());
         recruit.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -585,7 +584,7 @@ class ProjectServiceTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -808,7 +807,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -816,7 +815,7 @@ class ProjectServiceTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -926,7 +925,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -934,7 +933,7 @@ class ProjectServiceTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("frontend")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -942,7 +941,7 @@ class ProjectServiceTest {
 
         List<Part> recruit3 = new ArrayList<>();
         recruit3.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(5)
                 .recruitSkill(skill3)
                 .requirement("skill3")
@@ -1051,7 +1050,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("BACKEND")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("아무거나")
@@ -1059,7 +1058,7 @@ class ProjectServiceTest {
 
         List<Part> recruit2 = new ArrayList<>();
         recruit2.add(Part.builder()
-                .recruitPart("FRONTEND")
+                .recruitPart(Field.FRONTEND)
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("skill2")
@@ -1067,7 +1066,7 @@ class ProjectServiceTest {
 
         List<Part> recruit3 = new ArrayList<>();
         recruit3.add(Part.builder()
-                .recruitPart("BACKEND")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(5)
                 .recruitSkill(skill3)
                 .requirement("skill3")
@@ -1152,7 +1151,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -1198,7 +1197,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -1239,7 +1238,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -1291,7 +1290,7 @@ class ProjectServiceTest {
 
         List<Part> recruit = new ArrayList<>();
         recruit.add(Part.builder()
-                .recruitPart("backend")
+                .recruitPart(Field.BACKEND)
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -1603,13 +1602,13 @@ class ProjectServiceTest {
         for(int i=1; i<26; i++){
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
-                    .recruitPart("backend")
+                    .recruitPart(Field.BACKEND)
                     .recruitNum(3)
                     .recruitSkill(new ArrayList<>())
                     .requirement("아무거나")
                     .build());
             recruit.add(Part.builder()
-                    .recruitPart("frontend")
+                    .recruitPart(Field.FRONTEND)
                     .recruitNum(1)
                     .recruitSkill(new ArrayList<>())
                     .requirement("skill2")
@@ -1649,13 +1648,13 @@ class ProjectServiceTest {
         for(int i=1; i<31; i++){
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
-                    .recruitPart("backend")
+                    .recruitPart(Field.BACKEND)
                     .recruitNum(3)
                     .recruitSkill(new ArrayList<>())
                     .requirement("아무거나")
                     .build());
             recruit.add(Part.builder()
-                    .recruitPart("frontend")
+                    .recruitPart(Field.FRONTEND)
                     .recruitNum(1)
                     .recruitSkill(new ArrayList<>())
                     .requirement("skill2")
@@ -1691,7 +1690,7 @@ class ProjectServiceTest {
         for (int i=0; i<20; i++){
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
-                    .recruitPart("backend")
+                    .recruitPart(Field.BACKEND)
                     .recruitNum(3)
                     .recruitSkill(new ArrayList<>())
                     .requirement("아무거나")
