@@ -314,10 +314,10 @@ public class ProjectService {
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
             LocalDateTime localDateTime = LocalDateTime.now();
-            boolean status = false;
+            String status = "마감";
 
             if(myProjects.get(i).getDueDate().isAfter(localDateTime)){ // 마감되지 않았다면
-                status = true;
+                status = "모집중";
             }
 
             MyProjectResponseDto myProjectResponseDto = MyProjectResponseDto.builder()
