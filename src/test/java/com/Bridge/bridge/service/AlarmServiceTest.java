@@ -259,8 +259,8 @@ public class AlarmServiceTest {
     @Test
     void sendAlarm() throws FirebaseMessagingException {
         Notification notification = Notification.builder()
-                .setTitle("알람 테스트 - 백엔드")
-                .setBody("테스트테스트")
+                .setTitle("알림 속 시간 테스트 - 백엔드")
+                .setBody("4시 55분에 보내는 알람입니다 시간 들어가 있나요???")
                 .build();
 
         LocalDateTime localDateTime = LocalDateTime.now();
