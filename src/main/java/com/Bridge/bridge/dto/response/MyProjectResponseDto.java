@@ -18,10 +18,10 @@ public class MyProjectResponseDto {
 
     private int recruitTotalNum;             // 총 모집 인원
 
-    private boolean status;                 // 현재 모집 상황 -> 0 : 마감, 1 : 모집중
+    private String status;                 // 현재 모집 상황 -> 0 : 마감, 1 : 모집중
 
     @Builder
-    public MyProjectResponseDto(Long projectId, String title, String overview, String dueDate, int recruitTotalNum, boolean status) {
+    public MyProjectResponseDto(Long projectId, String title, String overview, String dueDate, int recruitTotalNum, String status) {
         this.projectId = projectId;
         this.title = title;
         this.overview = overview;

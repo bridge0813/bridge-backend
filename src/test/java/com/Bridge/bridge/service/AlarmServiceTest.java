@@ -259,13 +259,16 @@ public class AlarmServiceTest {
     @Test
     void sendAlarm() throws FirebaseMessagingException {
         Notification notification = Notification.builder()
-                .setTitle("알람 테스트 - 백엔드")
-                .setBody("테스트테스트")
+                .setTitle("알림 속 시간 테스트 - 백엔드")
+                .setBody("4시 55분에 보내는 알람입니다 시간 들어가 있나요???")
                 .build();
 
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         Message message = Message.builder()
-                .setToken("egYAYrC1rUQWrptN_lubfP:APA91bGyoJA_sw4RJxlxEUMX-9lUBOCKKlUR0rRvUBcAYrK53Nd0tOTHzVfTgBNJGJ3q1lfEXN3r4IuyjZqcOwgJS8x9DrgB40WwZNCspzIKPt0jKOhtOwmyrD0bvV6oUs6FFT-AJmuy")
+                .setToken("dMhu4U_m3El1vGsQ6ZjO5K:APA91bF5Pp7m2oHv3O4spjT6whrkQvbKVc6wnQQdb-DrhlB8xcf8Fwx6BTMlAfhnn1sLEomm-stZOW2xcEbzRGYtoFncFLCkTDooF7env6P2-Jw4IDR8srIt-1GFbhKBFblxD7oB1yU1")
                 .setNotification(notification)
+                .putData("time", localDateTime.toString())
                 .build();
 
         firebaseMessaging.send(message);
