@@ -675,11 +675,16 @@ public class ProjectService {
                             .map(f -> f.getValue())
                             .collect(Collectors.toList());
 
+                    String career = null;
+                    if(user.getProfile() != null && user.getProfile().getCareer() != null) {
+                        career = user.getProfile().getCareer();
+                    }
+
                     return ApplyUserResponse.builder()
                             .userId(user.getId())
                             .name(user.getName())
                             .fields(fields)
-                            .career(user.getProfile().getCareer())
+                            .career(career)
                             .build();
                 })
                 .collect(Collectors.toList());
