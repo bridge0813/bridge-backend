@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,9 @@ public class AlarmService {
         User user = userRepository.findById(notificationRequestDto.getUserID())
                 .orElseThrow(() -> new NotFoundUserException());
 
+        // 알람 생성 시간 생성하기
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         // 알림 생성하기
         Notification notification = Notification.builder()
                 .setTitle(notificationRequestDto.getTitle())
@@ -78,6 +82,7 @@ public class AlarmService {
         Message message = Message.builder()
                 .setToken(user.getDeviceToken())
                 .setNotification(notification)
+                .putData("time", localDateTime.toString())
                 .build();
         System.out.println(message);
         try {
