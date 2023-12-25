@@ -69,6 +69,35 @@ class ChatServiceTest {
     }
 
     @Test
+    @DisplayName("채팅방 개설 - 중복 체크")
+    void createRoomDup() {
+        //given
+        User user1 = new User("bridge", Platform.APPLE, "11");
+        User user2 = new User("bridge2", Platform.APPLE, "12");
+
+        User makeUser = userRepository.save(user1);
+        User receiveUser = userRepository.save(user2);
+
+        ChatRoomRequest request = new ChatRoomRequest();
+        request.setMakeUserId(makeUser.getId());
+        request.setReceiveUserId(receiveUser.getId());
+
+        Chat oldChat = Chat.builder()
+                .chatRoomId("chatroom").build();
+
+        oldChat.setChatUser(makeUser, receiveUser);
+        chatRepository.save(oldChat);
+
+        //when
+        chatService.createChat(request);
+
+        //then
+        Chat chat = chatRepository.findAll().get(0);
+        assertEquals("chatroom", chat.getChatRoomId());
+
+    }
+
+    @Test
     @DisplayName("채팅방 목록 조회")
     void findAllChat() {
         //given
