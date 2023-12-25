@@ -47,14 +47,15 @@ public class ChatService {
         User makeUser = userService.find(chatRoomRequest.getMakeUserId());
         User receiveUser = userService.find(chatRoomRequest.getReceiveUserId());
 
-        Chat newChat = chatRoomRequest.toEntity();
-
-        newChat.setChatUser(makeUser, receiveUser);
-
-        Chat saveChat = chatRepository.save(newChat);
+        Chat chat = chatRepository.findByMakeUserAndReceiveUser(makeUser, receiveUser)
+                .orElseGet(() -> {
+                   Chat newChat =  chatRoomRequest.toEntity();
+                   newChat.setChatUser(makeUser, receiveUser);
+                   return chatRepository.save(newChat);
+                });
 
         return ChatRoomResponse.builder()
-                .chatRoomId(saveChat.getChatRoomId())
+                .chatRoomId(chat.getChatRoomId())
                 .makeUserId(makeUser.getId())
                 .receiveUserId(receiveUser.getId())
                 .build();
