@@ -55,29 +55,28 @@ public class ProjectService {
     */
     @Transactional
     public Long createProject(ProjectRequestDto projectRequestDto){
-        try {
-            // 모집글 작성한 user 찾기
-            User user = userRepository.findById(projectRequestDto.getUserId())
-                    .orElseThrow(() -> new NotFoundUserException());
 
-            Project newProject = projectRequestDto.toEntityOfProject(user);
-
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(projectRequestDto.getUserId())
+                .orElseThrow(() -> new NotFoundUserException());
+        try{
             // 모집 분야, 인원 -> Part entity화 하기
             List<Part> recruit = projectRequestDto.getRecruit().stream()
                             .map((p) -> p.toEntity())
                             .collect(Collectors.toList());
 
+            Project newProject = projectRequestDto.toEntityOfProject(user, recruit);
+
             // Part- Project 매핑
             recruit.stream()
-                            .forEach((part -> part.setProject(newProject)));
+                    .forEach((part -> part.setProject(newProject)));
 
             // User - Project 매핑
             user.setProject(newProject);
 
             // 모집글 DB에 저장하기정
-            Project save = projectRepository.save(newProject);
-
-            return save.getId();
+            Project saveProject = projectRepository.save(newProject);
+            return saveProject.getId();
         }
         catch (Exception e){
             System.out.println(e);

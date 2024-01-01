@@ -1,5 +1,6 @@
 package com.Bridge.bridge.dto.request;
 
+import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.PartRequestDto;
@@ -50,7 +51,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
         this.userId= userId;
     }
 
-    public Project toEntityOfProject(User user){
+    public Project toEntityOfProject(User user, List<Part> parts){
 
         LocalDateTime dueDate = getTime(this.dueDate);
         LocalDateTime startDate = null;
@@ -72,7 +73,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
                 .startDate(startDate)
                 .endDate(endDate)
                 .uploadTime(uploadTime)
-                .recruit(new ArrayList<>())
+                .recruit(parts)
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
                 .stage(this.getStage())
