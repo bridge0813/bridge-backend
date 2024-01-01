@@ -5,6 +5,7 @@ import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.exception.BridgeException;
 import com.Bridge.bridge.repository.*;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
@@ -608,9 +609,9 @@ public class ProjectService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        List<ApplyProjectResponse> applyProjects = findUser.getApplyProjects().stream()
-                .map(p -> new ApplyProjectResponse(p.getProject(), p.getStage()))
-                .collect(Collectors.toList());
+        List<ApplyProjectResponse> applyProjects = new ArrayList<>();
+        findUser.getApplyProjects().stream()
+                .forEach(p -> applyProjects.add(ApplyProjectResponse.from(p)));
 
         return applyProjects;
     }
@@ -628,14 +629,14 @@ public class ProjectService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        Project applyProject = projectRepository.findById(projectId)
+        Project findProject = projectRepository.findById(projectId)
                         .orElseThrow(() -> new NotFoundProjectException());
 
-        ApplyProject project = new ApplyProject();
-        project.setUserAndProject(findUser, applyProject);
+        ApplyProject applyProject = new ApplyProject();
+        applyProject.setUserAndProject(findUser, findProject);
 
-        findUser.getApplyProjects().add(project);
-        applyProject.getApplyProjects().add(project);
+        findUser.getApplyProjects().add(applyProject);
+        findProject.getApplyProjects().add(applyProject);
 
         return true;
     }
@@ -653,16 +654,19 @@ public class ProjectService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        Project applyProject = projectRepository.findById(projectId)
+        Project appliedProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        ApplyProject findProject = applyProjectRepository.findByUserAndProject(findUser, applyProject)
+        ApplyProject cancleProject = applyProjectRepository.findByUserAndProject(findUser, appliedProject)
                         .orElseThrow(() -> new NotFoundProjectException());
 
-        findUser.getApplyProjects().remove(findProject);
-        applyProject.getApplyProjects().remove(findProject);
-        applyProjectRepository.deleteByUserAndProject(findUser, applyProject);
-
+        try {
+            findUser.getApplyProjects().remove(cancleProject);
+            appliedProject.getApplyProjects().remove(cancleProject);
+            applyProjectRepository.delete(cancleProject);
+        } catch (BridgeException e) {
+            e.getStackTrace();
+        }
         return true;
     }
 
