@@ -5,6 +5,7 @@ import com.Bridge.bridge.dto.request.FilterRequestDto;
 import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.exception.BridgeException;
 import com.Bridge.bridge.repository.*;
 import com.Bridge.bridge.dto.response.ProjectResponseDto;
 import com.Bridge.bridge.repository.BookmarkRepository;
@@ -48,35 +49,34 @@ public class ProjectService {
 
 
     /*
-        Func : 프로젝트 모집글 생성
+        Func : 프로젝트 모집글 생성 - 지민
         Parameter : 프로젝트 입력 폼
         Return : 새로 생성된 프로젝트 ID
     */
     @Transactional
     public Long createProject(ProjectRequestDto projectRequestDto){
-        try {
-            // 모집글 작성한 user 찾기
-            User user = userRepository.findById(projectRequestDto.getUserId())
-                    .orElseThrow(() -> new NotFoundUserException());
 
-            Project newProject = projectRequestDto.toEntityOfProject(user);
-
+        // 모집글 작성한 user 찾기
+        User user = userRepository.findById(projectRequestDto.getUserId())
+                .orElseThrow(() -> new NotFoundUserException());
+        try{
             // 모집 분야, 인원 -> Part entity화 하기
             List<Part> recruit = projectRequestDto.getRecruit().stream()
                             .map((p) -> p.toEntity())
                             .collect(Collectors.toList());
 
+            Project newProject = projectRequestDto.toEntityOfProject(user);
+
             // Part- Project 매핑
             recruit.stream()
-                            .forEach((part -> part.setProject(newProject)));
+                    .forEach((part -> part.setProject(newProject)));
 
             // User - Project 매핑
             user.setProject(newProject);
 
             // 모집글 DB에 저장하기정
-            Project save = projectRepository.save(newProject);
-
-            return save.getId();
+            Project saveProject = projectRepository.save(newProject);
+            return saveProject.getId();
         }
         catch (Exception e){
             System.out.println(e);
@@ -86,17 +86,17 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 모집글 삭제
+        Func : 프로젝트 모집글 삭제 - 지민
         Parameter : 프로젝트 모집글 ID
         Return : 삭제 여부 -> HttpStatus
     */
     @Transactional
     public Boolean deleteProject(Long projectId){
-        try {
-            // 삭제할 프로젝트 모집글 찾기
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new NotFoundProjectException());
 
+        // 삭제할 프로젝트 모집글 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+        try {
             // 해당 모집글 삭제하기
             projectRepository.delete(project);
             project.getUser().getProjects().remove(project);
@@ -105,12 +105,12 @@ public class ProjectService {
         }
         catch (Exception e){
             System.out.println(e);
+            return false;
         }
-        return null;
     }
 
     /*
-        Func : 프로젝트 모집글 수정
+        Func : 프로젝트 모집글 수정 - 지민
         Parameter : 프로젝트 모집글 수정폼
         Return : PrjectResponseDto -> 수정본
     */
@@ -128,17 +128,16 @@ public class ProjectService {
         // 모집분야, 인원 초기화
         partRepository.deleteAll(project.getRecruit());
 
-        // Part- Project 매핑
-        Project finalProject = project;
-        recruit.stream()
-                .forEach((part -> part.setProject(finalProject)));
 
-        project = project.update(projectUpdateRequestDto, recruit);
+        project.update(projectUpdateRequestDto);
+        recruit.stream()
+               .forEach((part -> part.setProject(project)));
+
         return project.toDto(true, false);
     }
 
     /*
-        Func : 프로젝트 모집글 검색(제목+내용)
+        Func : 프로젝트 모집글 검색(제목+내용) - 지민
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
@@ -206,7 +205,7 @@ public class ProjectService {
     }
 
      /*
-        Func : 프로젝트 모집글 상세보기
+        Func : 프로젝트 모집글 상세보기 - 지민
         Parameter : projectID - 모집글 ID
         Return : projectResponse
     */
@@ -232,7 +231,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 필터링 후 프로젝트 목록 반환
+        Func : 필터링 후 프로젝트 목록 반환 - 지민
         Parameter : List<String>,
         Return : projectResponse
     */
@@ -246,7 +245,8 @@ public class ProjectService {
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
 
-        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, filterRequestDto.getPart());
+        Field recruitPart = Field.valueOf(filterRequestDto.getPart());
+        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, recruitPart);
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
@@ -282,7 +282,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 자신이 작성한 모집글 리스트 보여주기
+        Func : 자신이 작성한 모집글 리스트 보여주기 - 지민
         Parameter : userId
         Return : List<projectListResponseDto>
     */
@@ -333,7 +333,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 모든 모집글 리스트 보여주기
+        Func : 모든 모집글 리스트 보여주기 - 지민
         Return : List<projectListResponseDto>
     */
     public List<ProjectListResponseDto> allProjects(Long userId){
@@ -402,7 +402,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 내 분야 모집글 리스트 보여주기
+        Func : 내 분야 모집글 리스트 보여주기 - 지민
         Parameter : String - 모집분야
         Return : List<projectListResponseDto>
     */
@@ -453,7 +453,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 모집글 마감 기능
+        Func : 모집글 마감 기능 - 지민
         Parameter : projectId
         Return : ProjectResponseDto
     */
@@ -475,7 +475,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 모집글 스크랩 기능
+        Func : 모집글 스크랩 기능 - 지민
         Parameter : projectId, userId
         Return : Boolean - 스크랩 여부
     */
@@ -530,7 +530,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 인기글 조회
+        Func : 인기글 조회 - 지민
         Parameter :
         Return : List<TopProjectResponseDto>
     */
@@ -596,9 +596,11 @@ public class ProjectService {
 
     }
 
-    /**
-     * 지원한 프로젝트 목록 반환
-     */
+    /*
+        Func : 지원한 프로젝트 목록 반환 - 규현
+        Parameter : HttpServletRequest
+        Return : List<ApplyProjectResponse>
+    */
     public List<ApplyProjectResponse> getApplyProjects(HttpServletRequest request) {
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
@@ -606,16 +608,18 @@ public class ProjectService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        List<ApplyProjectResponse> applyProjects = findUser.getApplyProjects().stream()
-                .map(p -> new ApplyProjectResponse(p.getProject(), p.getStage()))
-                .collect(Collectors.toList());
+        List<ApplyProjectResponse> applyProjects = new ArrayList<>();
+        findUser.getApplyProjects().stream()
+                .forEach(p -> applyProjects.add(ApplyProjectResponse.from(p)));
 
         return applyProjects;
     }
 
-    /**
-     * 프로젝트 지원하기
-     */
+    /*
+        Func : 프로젝트 지원하기 - 규현
+        Parameter : HttpServletRequest, projectId
+        Return : boolean
+    */
     @Transactional
     public boolean apply(HttpServletRequest request, Long projectId) {
 
@@ -624,21 +628,23 @@ public class ProjectService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        Project applyProject = projectRepository.findById(projectId)
+        Project findProject = projectRepository.findById(projectId)
                         .orElseThrow(() -> new NotFoundProjectException());
 
-        ApplyProject project = new ApplyProject();
-        project.setUserAndProject(findUser, applyProject);
+        ApplyProject applyProject = new ApplyProject();
+        applyProject.setUserAndProject(findUser, findProject);
 
-        findUser.getApplyProjects().add(project);
-        applyProject.getApplyProjects().add(project);
+        findUser.getApplyProjects().add(applyProject);
+        findProject.getApplyProjects().add(applyProject);
 
         return true;
     }
 
-    /**
-     * 프로젝트 지원 취소하기
-     */
+    /*
+        Func : 프로젝트 지원 취소하기 - 규현
+        Parameter : HttpServletRequest, projectId
+        Return : boolean
+    */
     @Transactional
     public boolean cancelApply(HttpServletRequest request, Long projectId) {
 
@@ -647,54 +653,44 @@ public class ProjectService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        Project applyProject = projectRepository.findById(projectId)
+        Project appliedProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        ApplyProject findProject = applyProjectRepository.findByUserAndProject(findUser, applyProject)
+        ApplyProject cancleProject = applyProjectRepository.findByUserAndProject(findUser, appliedProject)
                         .orElseThrow(() -> new NotFoundProjectException());
 
-        findUser.getApplyProjects().remove(findProject);
-        applyProject.getApplyProjects().remove(findProject);
-        applyProjectRepository.deleteByUserAndProject(findUser, applyProject);
-
+        try {
+            findUser.getApplyProjects().remove(cancleProject);
+            appliedProject.getApplyProjects().remove(cancleProject);
+            applyProjectRepository.delete(cancleProject);
+        } catch (BridgeException e) {
+            e.getStackTrace();
+        }
         return true;
     }
 
-    /**
-     * 프로젝트 지원자 목록
-     */
+    /*
+        Func : 프로젝트 지원자 목록 - 규현
+        Parameter : projectId
+        Return : List<ApplyUserResponse>
+    */
     public List<ApplyUserResponse> getApplyUsers(Long projectId) {
         Project findProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        List<ApplyUserResponse> applyUsers = findProject.getApplyProjects().stream()
+        List<ApplyUserResponse> applyUsers = new ArrayList<>();
+        findProject.getApplyProjects().stream()
                 .filter(applyProject -> applyProject.getStage().equals("결과 대기중"))
-                .map(p -> {
-                    User user = p.getUser();
-                    List<String> fields = user.getFields().stream()
-                            .map(f -> f.getValue())
-                            .collect(Collectors.toList());
-
-                    String career = null;
-                    if(user.getProfile() != null && user.getProfile().getCareer() != null) {
-                        career = user.getProfile().getCareer();
-                    }
-
-                    return ApplyUserResponse.builder()
-                            .userId(user.getId())
-                            .name(user.getName())
-                            .fields(fields)
-                            .career(career)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
+                .forEach(p -> applyUsers.add(ApplyUserResponse.from(p)));
         return applyUsers;
     }
 
-    /**
-     * 프로젝트 수락하기
-     */
+
+    /*
+        Func : 프로젝트 수락하기 - 규현
+        Parameter : projectId, userId
+        Return :
+    */
     @Transactional
     public void acceptApply(Long projectId, Long userId) {
 
@@ -711,9 +707,11 @@ public class ProjectService {
         applyProject.changeStage("수락");
     }
 
-    /**
-     * 프로젝트 거절하기
-     */
+    /*
+        Func : 프로젝트 거절하기 - 규현
+        Parameter : projectId, userId
+        Return :
+    */
     @Transactional
     public void rejectApply(Long projectId, Long userId) {
 
@@ -731,7 +729,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 마감 임박 40개 프로젝트 조회 기능
+        Func : 마감 임박 40개 프로젝트 조회 기능 - 지민
         Parameter :
         Return : List<imminentProjectResponseDto>
     */

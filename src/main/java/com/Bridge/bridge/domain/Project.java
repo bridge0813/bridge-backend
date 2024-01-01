@@ -62,15 +62,13 @@ public class Project {
     private int bookmarkNum; // 스크랩 횟수
 
     @Builder
-    public Project(Long id, String title, String overview, LocalDateTime dueDate, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime uploadTime, List<Part> recruit, List<String> tagLimit, String meetingWay, String stage, User user, int bookmarkNum) {
-        this.id = id;
+    public Project(String title, String overview, LocalDateTime dueDate, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime uploadTime, List<String> tagLimit, String meetingWay, String stage, User user, int bookmarkNum) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;
         this.startDate = startDate;
         this.endDate = endDate;
         this.uploadTime = uploadTime;
-        this.recruit = recruit;
         this.tagLimit = tagLimit;
         this.meetingWay = meetingWay;
         this.stage = stage;
@@ -78,9 +76,9 @@ public class Project {
         this.bookmarkNum = bookmarkNum;
     }
 
-    public void setRecruit(List<Part> recruit) {
-        this.recruit = recruit;
-    }
+//    public void setRecruit(List<Part> recruit) {
+//        this.recruit = recruit;
+//    }
 
     public void setBookmarks(Bookmark bookmark){
         this.bookmarks.add(bookmark);
@@ -126,17 +124,16 @@ public class Project {
                 .build();
     }
 
-    public Project update(ProjectUpdateRequestDto projectUpdateRequestDto, List<Part> recruit){
+    public void update(ProjectUpdateRequestDto projectUpdateRequestDto){
         this.title = projectUpdateRequestDto.getTitle();
         this.overview = projectUpdateRequestDto.getOverview();
         this.dueDate = projectUpdateRequestDto.getDueDate();
         this.startDate = projectUpdateRequestDto.getStartDate();
         this.endDate = projectUpdateRequestDto.getEndDate();
-        this.recruit = recruit;
+        this.recruit.clear();
         this.tagLimit = projectUpdateRequestDto.getTagLimit();
         this.meetingWay = projectUpdateRequestDto.getMeetingWay();
         this.stage = projectUpdateRequestDto.getStage();
-        return this;
     }
 
     public Project updateDeadline(){

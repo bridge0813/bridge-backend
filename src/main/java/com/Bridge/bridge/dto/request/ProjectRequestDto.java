@@ -1,5 +1,6 @@
 package com.Bridge.bridge.dto.request;
 
+import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.PartRequestDto;
@@ -52,31 +53,18 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
 
     public Project toEntityOfProject(User user){
 
-        int d_year = Integer.valueOf(this.getDueDate().substring(0,4));
-        int d_month = Integer.valueOf(this.getDueDate().substring(5,7));
-        int d_date = Integer.valueOf(this.getDueDate().substring(8,10));
-
-        LocalDateTime dueDate = LocalDateTime.of(d_year,d_month,d_date,23,59,59);
+        LocalDateTime dueDate = getTime(this.dueDate);
         LocalDateTime startDate = null;
         LocalDateTime endDate = null;
+        LocalDateTime uploadTime = LocalDateTime.now();
 
         if(this.startDate != null){
-            int s_year = Integer.valueOf(this.getStartDate().substring(0,4));
-            int s_month = Integer.valueOf(this.getStartDate().substring(5,7));
-            int s_date = Integer.valueOf(this.getStartDate().substring(8,10));
-
-            startDate = LocalDateTime.of(s_year,s_month,s_date,23,59,59);
+            startDate = getTime(this.startDate);
         }
 
         if(this.endDate != null){
-            int e_year = Integer.valueOf(this.getEndDate().substring(0,4));
-            int e_month = Integer.valueOf(this.getEndDate().substring(5,7));
-            int e_date = Integer.valueOf(this.getEndDate().substring(8,10));
-
-            endDate = LocalDateTime.of(e_year,e_month,e_date,23,59,59);
+            endDate = getTime(this.endDate);
         }
-
-        LocalDateTime uploadTime = LocalDateTime.now();
 
         return Project.builder()
                 .title(this.getTitle())
@@ -85,11 +73,18 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
                 .startDate(startDate)
                 .endDate(endDate)
                 .uploadTime(uploadTime)
-                .recruit(new ArrayList<>())
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
                 .stage(this.getStage())
                 .user(user)
                 .build();
+    }
+
+    private LocalDateTime getTime(String date) {
+        int d_year = Integer.valueOf(date.substring(0,4));
+        int d_month = Integer.valueOf(date.substring(5,7));
+        int d_date = Integer.valueOf(date.substring(8,10));
+
+        return LocalDateTime.of(d_year, d_month, d_date, 23, 59, 59);
     }
 }

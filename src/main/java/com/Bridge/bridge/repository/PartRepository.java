@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PartRepository extends JpaRepository<Part, Long> {
 
-    List<Part> findAllByRecruitSkillInAndAndRecruitPart(List<Stack> skills, String part);
+    List<Part> findAllByRecruitSkillInAndAndRecruitPart(List<Stack> skills, Field part);
 
     List<Part> findAllByRecruitPart(Field part);
 }
