@@ -49,7 +49,7 @@ public class ProjectService {
 
 
     /*
-        Func : 프로젝트 모집글 생성
+        Func : 프로젝트 모집글 생성 - 지민
         Parameter : 프로젝트 입력 폼
         Return : 새로 생성된 프로젝트 ID
     */
@@ -87,7 +87,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 모집글 삭제
+        Func : 프로젝트 모집글 삭제 - 지민
         Parameter : 프로젝트 모집글 ID
         Return : 삭제 여부 -> HttpStatus
     */
@@ -111,7 +111,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 모집글 수정
+        Func : 프로젝트 모집글 수정 - 지민
         Parameter : 프로젝트 모집글 수정폼
         Return : PrjectResponseDto -> 수정본
     */
@@ -139,7 +139,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 모집글 검색(제목+내용)
+        Func : 프로젝트 모집글 검색(제목+내용) - 지민
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */
@@ -207,7 +207,7 @@ public class ProjectService {
     }
 
      /*
-        Func : 프로젝트 모집글 상세보기
+        Func : 프로젝트 모집글 상세보기 - 지민
         Parameter : projectID - 모집글 ID
         Return : projectResponse
     */
@@ -233,7 +233,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 필터링 후 프로젝트 목록 반환
+        Func : 필터링 후 프로젝트 목록 반환 - 지민
         Parameter : List<String>,
         Return : projectResponse
     */
@@ -283,7 +283,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 자신이 작성한 모집글 리스트 보여주기
+        Func : 자신이 작성한 모집글 리스트 보여주기 - 지민
         Parameter : userId
         Return : List<projectListResponseDto>
     */
@@ -334,7 +334,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 모든 모집글 리스트 보여주기
+        Func : 모든 모집글 리스트 보여주기 - 지민
         Return : List<projectListResponseDto>
     */
     public List<ProjectListResponseDto> allProjects(Long userId){
@@ -403,7 +403,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 내 분야 모집글 리스트 보여주기
+        Func : 내 분야 모집글 리스트 보여주기 - 지민
         Parameter : String - 모집분야
         Return : List<projectListResponseDto>
     */
@@ -454,7 +454,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 모집글 마감 기능
+        Func : 모집글 마감 기능 - 지민
         Parameter : projectId
         Return : ProjectResponseDto
     */
@@ -476,7 +476,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 모집글 스크랩 기능
+        Func : 모집글 스크랩 기능 - 지민
         Parameter : projectId, userId
         Return : Boolean - 스크랩 여부
     */
@@ -531,7 +531,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 인기글 조회
+        Func : 인기글 조회 - 지민
         Parameter :
         Return : List<TopProjectResponseDto>
     */
@@ -598,7 +598,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 지원한 프로젝트 목록 반환
+        Func : 지원한 프로젝트 목록 반환 - 규현
         Parameter : HttpServletRequest
         Return : List<ApplyProjectResponse>
     */
@@ -617,7 +617,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 지원하기
+        Func : 프로젝트 지원하기 - 규현
         Parameter : HttpServletRequest, projectId
         Return : boolean
     */
@@ -642,7 +642,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 지원 취소하기
+        Func : 프로젝트 지원 취소하기 - 규현
         Parameter : HttpServletRequest, projectId
         Return : boolean
     */
@@ -671,7 +671,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 지원자 목록
+        Func : 프로젝트 지원자 목록 - 규현
         Parameter : projectId
         Return : List<ApplyUserResponse>
     */
@@ -688,7 +688,7 @@ public class ProjectService {
 
 
     /*
-        Func : 프로젝트 수락하기
+        Func : 프로젝트 수락하기 - 규현
         Parameter : projectId, userId
         Return :
     */
@@ -709,7 +709,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 거절하기
+        Func : 프로젝트 거절하기 - 규현
         Parameter : projectId, userId
         Return :
     */
@@ -730,7 +730,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 마감 임박 40개 프로젝트 조회 기능
+        Func : 마감 임박 40개 프로젝트 조회 기능 - 지민
         Parameter :
         Return : List<imminentProjectResponseDto>
     */
