@@ -596,9 +596,11 @@ public class ProjectService {
 
     }
 
-    /**
-     * 지원한 프로젝트 목록 반환
-     */
+    /*
+        Func : 지원한 프로젝트 목록 반환
+        Parameter : HttpServletRequest
+        Return : List<ApplyProjectResponse>
+    */
     public List<ApplyProjectResponse> getApplyProjects(HttpServletRequest request) {
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
@@ -613,9 +615,11 @@ public class ProjectService {
         return applyProjects;
     }
 
-    /**
-     * 프로젝트 지원하기
-     */
+    /*
+        Func : 프로젝트 지원하기
+        Parameter : HttpServletRequest, projectId
+        Return : boolean
+    */
     @Transactional
     public boolean apply(HttpServletRequest request, Long projectId) {
 
@@ -636,9 +640,11 @@ public class ProjectService {
         return true;
     }
 
-    /**
-     * 프로젝트 지원 취소하기
-     */
+    /*
+        Func : 프로젝트 지원 취소하기
+        Parameter : HttpServletRequest, projectId
+        Return : boolean
+    */
     @Transactional
     public boolean cancelApply(HttpServletRequest request, Long projectId) {
 
@@ -660,9 +666,11 @@ public class ProjectService {
         return true;
     }
 
-    /**
-     * 프로젝트 지원자 목록
-     */
+    /*
+        Func : 프로젝트 지원자 목록
+        Parameter : projectId
+        Return : List<ApplyUserResponse>
+    */
     public List<ApplyUserResponse> getApplyUsers(Long projectId) {
         Project findProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
@@ -692,9 +700,12 @@ public class ProjectService {
         return applyUsers;
     }
 
-    /**
-     * 프로젝트 수락하기
-     */
+
+    /*
+        Func : 프로젝트 수락하기
+        Parameter : projectId, userId
+        Return :
+    */
     @Transactional
     public void acceptApply(Long projectId, Long userId) {
 
@@ -711,9 +722,11 @@ public class ProjectService {
         applyProject.changeStage("수락");
     }
 
-    /**
-     * 프로젝트 거절하기
-     */
+    /*
+        Func : 프로젝트 거절하기
+        Parameter : projectId, userId
+        Return :
+    */
     @Transactional
     public void rejectApply(Long projectId, Long userId) {
 
