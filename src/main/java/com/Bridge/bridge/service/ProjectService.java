@@ -65,7 +65,7 @@ public class ProjectService {
                             .map((p) -> p.toEntity())
                             .collect(Collectors.toList());
 
-            Project newProject = projectRequestDto.toEntityOfProject(user, recruit);
+            Project newProject = projectRequestDto.toEntityOfProject(user);
 
             // Part- Project 매핑
             recruit.stream()
@@ -128,12 +128,11 @@ public class ProjectService {
         // 모집분야, 인원 초기화
         partRepository.deleteAll(project.getRecruit());
 
-        // Part- Project 매핑
-        Project finalProject = project;
-        recruit.stream()
-                .forEach((part -> part.setProject(finalProject)));
 
-        project = project.update(projectUpdateRequestDto, recruit);
+        project.update(projectUpdateRequestDto);
+        recruit.stream()
+               .forEach((part -> part.setProject(project)));
+
         return project.toDto(true, false);
     }
 
@@ -246,7 +245,8 @@ public class ProjectService {
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
 
-        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, filterRequestDto.getPart());
+        Field recruitPart = Field.valueOf(filterRequestDto.getPart());
+        List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, recruitPart);
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
