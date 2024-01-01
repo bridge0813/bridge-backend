@@ -51,7 +51,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
         this.userId= userId;
     }
 
-    public Project toEntityOfProject(User user, List<Part> parts){
+    public Project toEntityOfProject(User user){
 
         LocalDateTime dueDate = getTime(this.dueDate);
         LocalDateTime startDate = null;
@@ -73,7 +73,6 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
                 .startDate(startDate)
                 .endDate(endDate)
                 .uploadTime(uploadTime)
-                .recruit(parts)
                 .tagLimit(this.getTagLimit())
                 .meetingWay(this.getMeetingWay())
                 .stage(this.getStage())
