@@ -270,13 +270,13 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
                 .stage("Before Start")
                 .build();
 
+        recruit.get(0).setProject(newProject);
         Project theProject = projectRepository.save(newProject);
 
 
@@ -419,7 +419,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,2,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,3,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -435,7 +434,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user)
@@ -523,7 +521,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
@@ -539,7 +536,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user2)
@@ -555,7 +551,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user3)
@@ -654,7 +649,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -670,7 +664,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user)
@@ -686,7 +679,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user)
@@ -762,13 +754,13 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
                 .stage("Before Start")
                 .build();
 
+        recruit.get(0).setProject(newProject);
         Project theProject = projectRepository.save(newProject);
 
         Long projectId = theProject.getId();
@@ -809,7 +801,6 @@ class ProjectControllerTest {
                 .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)

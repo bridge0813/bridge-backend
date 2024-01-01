@@ -190,9 +190,9 @@ class UserControllerTest {
                 .title("title")
                 .overview("overview")
                 .dueDate(now)
-                .recruit(recruits)
                 .build();
 
+        recruits.stream().forEach(p -> p.setProject(project));
         projectRepository.save(project);
 
         Bookmark bookmark = new Bookmark(newUser, project);
@@ -221,7 +221,6 @@ class UserControllerTest {
                 .title("title")
                 .overview("overview")
                 .dueDate(LocalDateTime.now())
-                .recruit(null)
                 .user(newUser)
                 .build();
 

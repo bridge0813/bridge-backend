@@ -61,11 +61,11 @@ class ProjectServiceTest {
     @Autowired
     private ApplyProjectRepository applyProjectRepository;
 
-//    @BeforeEach
-//    void clean() {
-//        userRepository.deleteAll();
-//        projectRepository.deleteAll();
-//    }
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+        projectRepository.deleteAll();
+    }
 
     @DisplayName("모집글 검색 기능 test")
     @Test
@@ -108,12 +108,13 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
                 .stage("Before Start")
                 .build();
+        recruit1.get(0).setProject(newProject1);
+        projectRepository.save(newProject1);
 
         Project newProject2 = Project.builder()
                 .title("New project")
@@ -121,14 +122,12 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit2)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
                 .stage("Before Start")
                 .build();
-
-        projectRepository.save(newProject1);
+        recruit2.get(0).setProject(newProject2);
         projectRepository.save(newProject2);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -163,7 +162,7 @@ class ProjectServiceTest {
 
         List<PartRequestDto> recruit = new ArrayList<>();
         recruit.add(PartRequestDto.builder()
-                .recruitPart("backend")
+                .recruitPart("BACKEND")
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
@@ -223,13 +222,13 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit1)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
                 .stage("Before Start")
                 .build();
 
+        recruit1.get(0).setProject(newProject1);
         Project saveProject = projectRepository.save(newProject1);
 
         // when
@@ -269,13 +268,11 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
                 .stage("Before Start")
                 .build();
-
 
         recruit.get(0).setProject(newProject);
         projectRepository.save(newProject);
@@ -287,7 +284,7 @@ class ProjectServiceTest {
 
         List<PartRequestDto> updateRecruit = new ArrayList<>();
         updateRecruit.add(PartRequestDto.builder()
-                .recruitPart("frontend")
+                .recruitPart("FRONTEND")
                 .recruitNum(2)
                 .recruitSkill(updateSkill)
                 .requirement("화이팅")
@@ -343,12 +340,13 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
                 .stage("Before Start")
                 .build();
+
+        recruit.get(0).setProject(newProject);
         projectRepository.save(newProject);
 
 
@@ -414,13 +412,13 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
                 .stage("Before Start")
                 .build();
 
+        recruit.get(0).setProject(newProject);
         Project theProject = projectRepository.save(newProject);
 
         String token = Jwts.builder()
@@ -470,13 +468,13 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
                 .stage("Before Start")
                 .build();
 
+        recruit.get(0).setProject(newProject);
         Project theProject = projectRepository.save(newProject);
 
         String token = Jwts.builder()
@@ -526,13 +524,13 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
                 .stage("Before Start")
                 .build();
 
+        recruit.get(0).setProject(newProject);
         projectRepository.save(newProject);
         Bookmark bookmark = Bookmark.builder()
                 .project(newProject)
@@ -601,7 +599,6 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -617,7 +614,6 @@ class ProjectServiceTest {
                 .dueDate(dueDate)
                 .startDate(startDate)
                 .endDate(endDate)
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -635,7 +631,7 @@ class ProjectServiceTest {
         findSkills.add("SPRINGBOOT");
 
         FilterRequestDto filterRequestDto = FilterRequestDto.builder()
-                .part("backend")
+                .part("BACKEND")
                 .skills(findSkills)
                 .build();
 
@@ -827,7 +823,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,2,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,3,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -843,7 +838,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user)
@@ -877,21 +871,22 @@ class ProjectServiceTest {
     void NoProjects() {
         // given
         User user = new User("user", Platform.APPLE, "Test");
-        userRepository.save(user);
+        User newUser = userRepository.save(user);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         String token = Jwts.builder()
-                .setSubject(String.valueOf(user.getId()))
+                .setSubject(String.valueOf(newUser.getId()))
                 .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
                 .compact();
 
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
+        List<MyProjectResponseDto> myProjects = projectService.findMyProjects(request);
 
-        assertThrows(NotFoundProjectException.class, () -> projectService.findMyProjects(request));
-
+        //then
+        assertEquals(new ArrayList<>(), myProjects);
     }
 
     @DisplayName("모든 모집글")
@@ -953,7 +948,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
@@ -969,7 +963,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user2)
@@ -985,7 +978,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user3)
@@ -1078,7 +1070,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user1)
@@ -1094,7 +1085,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user1)
@@ -1110,7 +1100,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(new ArrayList<>())
                 .tagLimit(new ArrayList<>())
                 .meetingWay("ONline")
                 .user(user1)
@@ -1164,7 +1153,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -1210,7 +1198,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2023,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -1251,7 +1238,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -1303,7 +1289,6 @@ class ProjectServiceTest {
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
-                .recruit(recruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -1614,11 +1599,15 @@ class ProjectServiceTest {
                     .requirement("skill2")
                     .build());
 
-            Project project = projectRepository.save(Project.builder()
+            Project newProject = Project.builder()
                     .title("제목"+i)
                     .dueDate(LocalDateTime.of(2024, 11, i,0,0,0))
-                    .recruit(recruit)
-                    .build());
+                    .build();
+
+            recruit.stream().forEach(p -> p.setProject(newProject));
+
+            Project project = projectRepository.save(newProject);
+
             for(int j=i; j<21; j++){
                 project.increaseBookmarksNum();
             }
@@ -1645,7 +1634,7 @@ class ProjectServiceTest {
         int month = localDateTime.getMonthValue();
         int day = localDateTime.getDayOfMonth();
 
-        for(int i=1; i<31; i++){
+        for(int i=1; i<31; i++) {
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
                     .recruitPart(Field.BACKEND)
@@ -1660,11 +1649,14 @@ class ProjectServiceTest {
                     .requirement("skill2")
                     .build());
 
-            Project project = projectRepository.save(Project.builder()
-                    .title("제목"+i)
-                    .dueDate(LocalDateTime.of(2024, 11, i,0,0,0))
-                    .recruit(recruit)
-                    .build());
+            Project newProject = Project.builder()
+                    .title("제목" + i)
+                    .dueDate(LocalDateTime.of(2024, 11, i, 0, 0, 0))
+                    .build();
+
+            recruit.stream().forEach(p -> p.setProject(newProject));
+
+            Project project = projectRepository.save(newProject);
 
             for(int j=i; j<31; j++){
                 project.increaseBookmarksNum();
@@ -1699,15 +1691,16 @@ class ProjectServiceTest {
             Project project = Project.builder()
                     .title("project"+(i+1))
                     .dueDate(LocalDateTime.of(2023,9,30-(i%30),0,0,0))
-                    .recruit(recruit)
                     .build();
+
+            recruit.get(0).setProject(project);
             projectRepository.save(project);
 
             Project project2 = Project.builder()
                     .title("project"+(i+21))
                     .dueDate(LocalDateTime.of(2024,11,i+1,0,0,0))
-                    .recruit(recruit)
                     .build();
+            recruit.get(0).setProject(project2);
             projectRepository.save(project2);
         }
 

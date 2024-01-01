@@ -355,9 +355,9 @@ class UserServiceTest {
                 .title("title1")
                 .overview("overview1")
                 .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
-                .recruit(recruits)
                 .build();
 
+        recruits.stream().forEach(p -> p.setProject(project));
         projectRepository.save(project);
 
         Bookmark bookmark = new Bookmark(newUser, project);
@@ -414,7 +414,6 @@ class UserServiceTest {
                 .overview("overview")
                 .uploadTime(now)
                 .dueDate(now.plusDays(24L))
-                .recruit(null)
                 .startDate(LocalDateTime.of(2023, 12, 24, 0, 0))
                 .endDate(LocalDateTime.of(2023, 12, 25, 0, 0))
                 .build();
@@ -461,7 +460,6 @@ class UserServiceTest {
                 .title("title")
                 .overview("overview")
                 .dueDate(LocalDateTime.now())
-                .recruit(null)
                 .user(newUser)
                 .build();
 
