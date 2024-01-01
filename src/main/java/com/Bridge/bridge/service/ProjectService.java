@@ -675,28 +675,10 @@ public class ProjectService {
         Project findProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
-        List<ApplyUserResponse> applyUsers = findProject.getApplyProjects().stream()
+        List<ApplyUserResponse> applyUsers = new ArrayList<>();
+        findProject.getApplyProjects().stream()
                 .filter(applyProject -> applyProject.getStage().equals("결과 대기중"))
-                .map(p -> {
-                    User user = p.getUser();
-                    List<String> fields = user.getFields().stream()
-                            .map(f -> f.getValue())
-                            .collect(Collectors.toList());
-
-                    String career = null;
-                    if(user.getProfile() != null && user.getProfile().getCareer() != null) {
-                        career = user.getProfile().getCareer();
-                    }
-
-                    return ApplyUserResponse.builder()
-                            .userId(user.getId())
-                            .name(user.getName())
-                            .fields(fields)
-                            .career(career)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
+                .forEach(p -> applyUsers.add(ApplyUserResponse.from(p)));
         return applyUsers;
     }
 
