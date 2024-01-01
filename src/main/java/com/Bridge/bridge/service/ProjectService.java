@@ -92,11 +92,11 @@ public class ProjectService {
     */
     @Transactional
     public Boolean deleteProject(Long projectId){
-        try {
-            // 삭제할 프로젝트 모집글 찾기
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new NotFoundProjectException());
 
+        // 삭제할 프로젝트 모집글 찾기
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundProjectException());
+        try {
             // 해당 모집글 삭제하기
             projectRepository.delete(project);
             project.getUser().getProjects().remove(project);
@@ -105,8 +105,8 @@ public class ProjectService {
         }
         catch (Exception e){
             System.out.println(e);
+            return false;
         }
-        return null;
     }
 
     /*
