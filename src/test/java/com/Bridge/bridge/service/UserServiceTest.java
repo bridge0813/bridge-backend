@@ -354,15 +354,17 @@ class UserServiceTest {
         Project project = Project.builder()
                 .title("title1")
                 .overview("overview1")
-                .dueDate(LocalDateTime.of(2023,11,30,0,0,0))
+                .dueDate(LocalDateTime.now().plusDays(1L))
+                .uploadTime(LocalDateTime.now())
                 .build();
 
         recruits.stream().forEach(p -> p.setProject(project));
-        projectRepository.save(project);
+        Project saveProject = projectRepository.save(project);
 
-        Bookmark bookmark = new Bookmark(newUser, project);
+        Bookmark bookmark = new Bookmark(newUser, saveProject);
 
         newUser.getBookmarks().add(bookmark);
+        saveProject.getBookmarks().add(bookmark);
         User saveUser = userRepository.save(newUser);
 
         //when
@@ -378,11 +380,11 @@ class UserServiceTest {
         //given
         User newUser = new User("bridge", Platform.APPLE, "test");
 
-        List<Part> recruits = new ArrayList<>();
-
         List<Project> projects = IntStream.range(1, 11)
                 .mapToObj(i -> Project.builder()
                         .title("title" + i)
+                        .dueDate(LocalDateTime.now().plusDays(1))
+                        .uploadTime(LocalDateTime.now())
                         .overview("overview" + i).build())
                 .collect(Collectors.toList());
 
