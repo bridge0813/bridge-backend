@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -159,9 +160,11 @@ public class UserService {
     public List<BookmarkListResponse> getBookmarkProjects(Long userId) {
         User findUser = find(userId);
 
-        return findUser.getBookmarks().stream()
-                .map(b -> new BookmarkListResponse(b.getProject()))
-                .collect(Collectors.toList());
+        List<BookmarkListResponse> bookmarkLists = new ArrayList<>();
+        findUser.getBookmarks().stream()
+                .forEach(b -> bookmarkLists.add(new BookmarkListResponse(b.getProject())));
+        return bookmarkLists;
+
     }
 
     /**
