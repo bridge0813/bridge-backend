@@ -293,7 +293,7 @@ class UserServiceTest {
         User saveUser = userRepository.save(newUser);
 
         File file = fileService.uploadFile(oldFile);
-        profile.setProfilePhoto(file);
+        profile.setPhotoFile(file);
         //when
         userService.updatePhotoFile(profile, newFile);
 
