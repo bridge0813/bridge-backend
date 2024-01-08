@@ -18,8 +18,6 @@ public class MessageReceiver {
     @KafkaListener(topics = Constant.KAFKA_TOPIC, groupId = Constant.GROUP_ID,
     containerFactory = "kafkaListenerContainerFactory")
     public void receiveMessage(ChatMessageRequest message) {
-        log.info("전송 위치 = /sub/chat/room/" + message.getChatRoomId());
-        log.info("채팅 방으로 메세지 전송 - {}", message);
 
         // 메세지객체 내부의 채팅방 ID 참조 -> 구독자에게 메세지 발송
         template.convertAndSend("/sub/chat/room/" + message.getChatRoomId(), message);

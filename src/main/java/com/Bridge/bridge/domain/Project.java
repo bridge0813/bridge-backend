@@ -76,10 +76,6 @@ public class Project {
         this.bookmarkNum = bookmarkNum;
     }
 
-//    public void setRecruit(List<Part> recruit) {
-//        this.recruit = recruit;
-//    }
-
     public void setBookmarks(Bookmark bookmark){
         this.bookmarks.add(bookmark);
     }

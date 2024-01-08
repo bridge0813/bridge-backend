@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -147,11 +148,24 @@ public class UserService {
     @Transactional
     public void updatePhotoFile(Profile profile, MultipartFile file) {
         File newFile = fileService.uploadFile(file);
-        File oldFile = profile.setProfilePhoto(newFile);
+        File oldFile = profile.setPhotoFile(newFile);
         if(oldFile != null) {
             fileService.deleteFile(oldFile.getId());
         }
     }
+
+    /**
+     * 참조파일 업데이트
+     */
+    @Transactional
+    public void updateRefFile(Profile profile, MultipartFile file) {
+        File newFile = fileService.uploadFile(file);
+        File oldFile = profile.setRefFile(newFile);
+        if(oldFile != null) {
+            fileService.deleteFile(oldFile.getId());
+        }
+    }
+
 
     /**
      * 북마크한 프로젝트 목록
@@ -159,9 +173,10 @@ public class UserService {
     public List<BookmarkListResponse> getBookmarkProjects(Long userId) {
         User findUser = find(userId);
 
-        return findUser.getBookmarks().stream()
-                .map(b -> new BookmarkListResponse(b.getProject()))
-                .collect(Collectors.toList());
+        List<BookmarkListResponse> bookmarkLists = new ArrayList<>();
+        findUser.getBookmarks().stream()
+                .forEach(b -> bookmarkLists.add(BookmarkListResponse.from(b.getProject())));
+        return bookmarkLists;
     }
 
     /**
@@ -180,25 +195,12 @@ public class UserService {
     public MyPageResponse getMyPage(Long userId) {
         User findUser = find(userId);
 
+        // 프로필이 없거나 프로필 사진이 없는 경우
         if (findUser.getProfile() == null || findUser.getProfile().getProfilePhoto() == null) {
-            return MyPageResponse.builder()
-                    .name(findUser.getName())
-                    .profilePhoto(null)
-                    .field(findUser.getFields().stream()
-                            .map(f -> f.getValue())
-                            .collect(Collectors.toList()))
-                    .bookmarkNum(findUser.getBookmarks().size())
-                    .build();
+            return MyPageResponse.NoProfilePhoto(findUser);
         }
 
-        return MyPageResponse.builder()
-                .name(findUser.getName())
-                .profilePhoto(findUser.getProfile().getProfilePhoto().getUploadFileUrl())
-                .field(findUser.getFields().stream()
-                        .map(f -> f.getValue())
-                        .collect(Collectors.toList()))
-                .bookmarkNum(findUser.getBookmarks().size())
-                .build();
+        return MyPageResponse.YesProfilePhoto(findUser, findUser.getProfile().getProfilePhoto().getUploadFileUrl());
     }
 
     /**
@@ -210,19 +212,6 @@ public class UserService {
         userRepository.delete(findUser);
         return true;
     }
-
-    /**
-     * 참조파일 업데이트
-     */
-    @Transactional
-    public void updateRefFile(Profile profile, MultipartFile file) {
-        File newFile = fileService.uploadFile(file);
-        File oldFile = profile.setRefFile(newFile);
-        if(oldFile != null) {
-            fileService.deleteFile(oldFile.getId());
-        }
-    }
-
 
     /**
      * 유저 찾기 메소드

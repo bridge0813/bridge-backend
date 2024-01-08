@@ -63,11 +63,12 @@ public class Profile {
     }
 
     // --연관관계 메소드 -- //
-    public File setProfilePhoto(File file) {
-        // 프로필 자운 후 덥데이트
+    public File setPhotoFile(File file) {
+        // 프로필 자운 후 업데이트
         if(Objects.nonNull(this.profilePhoto)) {
            File oldPhoto = this.profilePhoto;
            this.profilePhoto = file;
+           file.setProfilePhoto(this);
            return oldPhoto;
         }
         this.profilePhoto = file;
@@ -76,10 +77,11 @@ public class Profile {
     }
 
     public File setRefFile(File file) {
-        // 프로필 자운 후 덥데이트
+        // 프로필 자운 후 업데이트
         if(Objects.nonNull(this.refFile)) {
             File photo = this.refFile;
             this.refFile = file;
+            file.setProfileRef(this);
             return photo;
         }
         this.refFile = file;

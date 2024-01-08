@@ -1,6 +1,7 @@
 package com.Bridge.bridge.dto.response;
 
 import com.Bridge.bridge.domain.Project;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,19 +24,39 @@ public class BookmarkListResponse {
 
     private int recruitTotalNum; // 총 모집 인원
 
-    public BookmarkListResponse(Project project) {
-        this.projectId = project.getId();
-        this.dDay = getBetweenDays(project.getUploadTime(), project.getDueDate());
-        this.title = project.getTitle();
-        this.startDate = project.getStartDate();
-        this.endDate = project.getEndDate();
-        int recruitTotalNum = project.getRecruit().stream()
-                .mapToInt(p -> p.getRecruitNum())
-                .sum();
+    @Builder
+    private BookmarkListResponse(Long projectId, long dDay, String title, LocalDateTime startDate, LocalDateTime endDate, int recruitTotalNum) {
+        this.projectId = projectId;
+        this.dDay = dDay;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.recruitTotalNum = recruitTotalNum;
     }
 
-    private long getBetweenDays(LocalDateTime start, LocalDateTime end) {
+    public static BookmarkListResponse from(Project project) {
+        int recruitTotalNum = project.getRecruit().stream()
+                .mapToInt(p -> p.getRecruitNum())
+                .sum();
+
+        return BookmarkListResponse.builder()
+                .projectId(project.getId())
+                .dDay(getBetweenDays(project.getUploadTime(), project.getDueDate()))
+                .title(project.getTitle())
+                .startDate(setTime(project.getStartDate()))
+                .endDate(setTime(project.getEndDate()))
+                .recruitTotalNum(recruitTotalNum)
+                .build();
+    }
+
+    private static LocalDateTime setTime(LocalDateTime time) {
+        if (time != null) {
+            return time;
+        }
+        return null;
+    }
+
+    private static long getBetweenDays(LocalDateTime start, LocalDateTime end) {
         return ChronoUnit.DAYS.between(start, end);
     }
 }
