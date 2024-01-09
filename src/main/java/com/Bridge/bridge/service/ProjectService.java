@@ -1,20 +1,20 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.*;
-import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
+import com.Bridge.bridge.dto.request.FilterRequest;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequest;
 import com.Bridge.bridge.dto.response.*;
-import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.dto.request.ProjectRequest;
 import com.Bridge.bridge.exception.BridgeException;
 import com.Bridge.bridge.repository.*;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.dto.response.ProjectResponse;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.domain.ApplyProject;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.response.ApplyProjectResponse;
 import com.Bridge.bridge.dto.response.ApplyUserResponse;
-import com.Bridge.bridge.dto.response.ProjectListResponseDto;
+import com.Bridge.bridge.dto.response.ProjectListResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
@@ -54,18 +54,18 @@ public class ProjectService {
         Return : 새로 생성된 프로젝트 ID
     */
     @Transactional
-    public Long createProject(ProjectRequestDto projectRequestDto){
+    public Long createProject(ProjectRequest projectRequest){
 
         // 모집글 작성한 user 찾기
-        User user = userRepository.findById(projectRequestDto.getUserId())
+        User user = userRepository.findById(projectRequest.getUserId())
                 .orElseThrow(() -> new NotFoundUserException());
         try{
             // 모집 분야, 인원 -> Part entity화 하기
-            List<Part> recruit = projectRequestDto.getRecruit().stream()
+            List<Part> recruit = projectRequest.getRecruit().stream()
                             .map((p) -> p.toEntity())
                             .collect(Collectors.toList());
 
-            Project newProject = projectRequestDto.toEntityOfProject(user);
+            Project newProject = projectRequest.toEntityOfProject(user);
 
             // Part- Project 매핑
             recruit.stream()
@@ -115,13 +115,13 @@ public class ProjectService {
         Return : PrjectResponseDto -> 수정본
     */
     @Transactional
-    public ProjectResponseDto updateProject(Long projectId, ProjectUpdateRequestDto projectUpdateRequestDto){
+    public ProjectResponse updateProject(Long projectId, ProjectUpdateRequest projectUpdateRequest){
         // 모집글 찾기
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
 
         // 모집 분야, 인원 -> Part entity화 하기
-        List<Part> recruit = projectUpdateRequestDto.getRecruit().stream()
+        List<Part> recruit = projectUpdateRequest.getRecruit().stream()
                 .map((p) -> p.toEntity())
                 .collect(Collectors.toList());
 
@@ -129,7 +129,7 @@ public class ProjectService {
         partRepository.deleteAll(project.getRecruit());
 
 
-        project.update(projectUpdateRequestDto);
+        project.update(projectUpdateRequest);
         recruit.stream()
                .forEach((part -> part.setProject(project)));
 
@@ -142,7 +142,7 @@ public class ProjectService {
         Return : 프로젝트 모집글 List
     */
     @Transactional
-    public List<ProjectListResponseDto> findByTitleAndContent(HttpServletRequest request, String theSearchWord){
+    public List<ProjectListResponse> findByTitleAndContent(HttpServletRequest request, String theSearchWord){
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
@@ -175,7 +175,7 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());
 
-        List<ProjectListResponseDto> response = new ArrayList<>();
+        List<ProjectListResponse> response = new ArrayList<>();
 
         for(int i =0; i<findProject.size(); i++){
             final int[] total = {0};
@@ -191,14 +191,14 @@ public class ProjectService {
                 isScrap = true;
             }
 
-            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+            ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(findProject.get(i).getId())
                     .title(findProject.get(i).getTitle())
                     .dueDate(findProject.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
-            response.add(projectListResponseDto);
+            response.add(projectListResponse);
         }
 
         return response;
@@ -209,7 +209,7 @@ public class ProjectService {
         Parameter : projectID - 모집글 ID
         Return : projectResponse
     */
-    public ProjectResponseDto getProject(Long userId, Long projectId){
+    public ProjectResponse getProject(Long userId, Long projectId){
 
         // 해당 모집글 찾기
         Project project = projectRepository.findById(projectId)
@@ -235,24 +235,24 @@ public class ProjectService {
         Parameter : List<String>,
         Return : projectResponse
     */
-    public List<ProjectListResponseDto> filterProjectList(HttpServletRequest request, FilterRequestDto filterRequestDto){
+    public List<ProjectListResponse> filterProjectList(HttpServletRequest request, FilterRequest filterRequest){
 
         Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
 
         User user = userRepository.findById(adminUserId).orElseThrow(()->new NotFoundUserException());
 
-        List<Stack> skills = filterRequestDto.getSkills().stream()
+        List<Stack> skills = filterRequest.getSkills().stream()
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
 
-        Field recruitPart = Field.valueOf(filterRequestDto.getPart());
+        Field recruitPart = Field.valueOf(filterRequest.getPart());
         List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, recruitPart);
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
 
-        List<ProjectListResponseDto> response = new ArrayList<>();
+        List<ProjectListResponse> response = new ArrayList<>();
 
         for(int i =0; i<projects.size(); i++){
             final int[] total = {0};
@@ -268,14 +268,14 @@ public class ProjectService {
                 isScrap = true;
             }
 
-            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+            ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(projects.get(i).getId())
                     .title(projects.get(i).getTitle())
                     .dueDate(projects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
-            response.add(projectListResponseDto);
+            response.add(projectListResponse);
         }
 
         return response;
@@ -286,7 +286,7 @@ public class ProjectService {
         Parameter : userId
         Return : List<projectListResponseDto>
     */
-    public List<MyProjectResponseDto> findMyProjects(HttpServletRequest request){
+    public List<MyProjectResponse> findMyProjects(HttpServletRequest request){
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
@@ -298,7 +298,7 @@ public class ProjectService {
         List<Project> myProjects = projectRepository.findAllByUser(user);
 
 
-        List<MyProjectResponseDto> response = new ArrayList<>();
+        List<MyProjectResponse> response = new ArrayList<>();
 
         // 작성한 모집글이 없다면
         if(myProjects.isEmpty()){
@@ -318,7 +318,7 @@ public class ProjectService {
                 status = "현재 모집중";
             }
 
-            MyProjectResponseDto myProjectResponseDto = MyProjectResponseDto.builder()
+            MyProjectResponse myProjectResponse = MyProjectResponse.builder()
                     .projectId(myProjects.get(i).getId())
                     .title(myProjects.get(i).getTitle())
                     .overview(myProjects.get(i).getOverview())
@@ -326,7 +326,7 @@ public class ProjectService {
                     .recruitTotalNum(total[0])
                     .status(status)
                     .build();
-            response.add(myProjectResponseDto);
+            response.add(myProjectResponse);
         }
 
         return response;
@@ -336,13 +336,13 @@ public class ProjectService {
         Func : 모든 모집글 리스트 보여주기 - 지민
         Return : List<projectListResponseDto>
     */
-    public List<ProjectListResponseDto> allProjects(Long userId){
+    public List<ProjectListResponse> allProjects(Long userId){
 
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> allProjects = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
 
 
-        List<ProjectListResponseDto> response = new ArrayList<>();
+        List<ProjectListResponse> response = new ArrayList<>();
 
         // 작성글이 하나도 없다면
         if(allProjects.isEmpty()){
@@ -356,14 +356,14 @@ public class ProjectService {
                 allProjects.get(i).getRecruit().stream()
                         .forEach((part -> total[0] += part.getRecruitNum()));
 
-                ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+                ProjectListResponse projectListResponse = ProjectListResponse.builder()
                         .projectId(allProjects.get(i).getId())
                         .title(allProjects.get(i).getTitle())
                         .dueDate(allProjects.get(i).getDueDate().toString())
                         .recruitTotalNum(total[0])
                         .scrap(false)
                         .build();
-                response.add(projectListResponseDto);
+                response.add(projectListResponse);
             }
 
             return response;
@@ -387,14 +387,14 @@ public class ProjectService {
                 isScrap = true;
             }
 
-            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+            ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(allProjects.get(i).getId())
                     .title(allProjects.get(i).getTitle())
                     .dueDate(allProjects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
-            response.add(projectListResponseDto);
+            response.add(projectListResponse);
         }
 
         return response;
@@ -406,7 +406,7 @@ public class ProjectService {
         Parameter : String - 모집분야
         Return : List<projectListResponseDto>
     */
-    public List<ProjectListResponseDto> findMyPartProjects(HttpServletRequest request, String myPart){
+    public List<ProjectListResponse> findMyPartProjects(HttpServletRequest request, String myPart){
 
         Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
         User user = userRepository.findById(adminUserId).orElseThrow(()-> new NotFoundUserException());
@@ -417,7 +417,7 @@ public class ProjectService {
         List<Project> myPartProjects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
 
-        List<ProjectListResponseDto> response = new ArrayList<>();
+        List<ProjectListResponse> response = new ArrayList<>();
 
         // 작성글이 하나도 없다면
         if(myPartProjects.isEmpty()){
@@ -438,14 +438,14 @@ public class ProjectService {
                 isScrap = true;
             }
 
-            ProjectListResponseDto projectListResponseDto = ProjectListResponseDto.builder()
+            ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(myPartProjects.get(i).getId())
                     .title(myPartProjects.get(i).getTitle())
                     .dueDate(myPartProjects.get(i).getDueDate().toString())
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
-            response.add(projectListResponseDto);
+            response.add(projectListResponse);
         }
 
         return response;
@@ -458,7 +458,7 @@ public class ProjectService {
         Return : ProjectResponseDto
     */
     @Transactional
-    public ProjectResponseDto closeProject(Long projectId){
+    public ProjectResponse closeProject(Long projectId){
         // 마감하고자 하는 프로젝트 찾기
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundProjectException());
@@ -480,7 +480,7 @@ public class ProjectService {
         Return : Boolean - 스크랩 여부
     */
     @Transactional
-    public BookmarkResponseDto scrap(HttpServletRequest request, Long projectId){
+    public BookmarkResponse scrap(HttpServletRequest request, Long projectId){
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
@@ -509,7 +509,7 @@ public class ProjectService {
             project.setBookmarks(newBookmark);
             project.increaseBookmarksNum();
 
-            return BookmarkResponseDto.builder()
+            return BookmarkResponse.builder()
                     .projectId(projectId)
                     .userId(userId)
                     .scrap("스크랩이 설정되었습니다.")
@@ -521,7 +521,7 @@ public class ProjectService {
 
             project.decreaseBookmarksNum();
 
-            return BookmarkResponseDto.builder()
+            return BookmarkResponse.builder()
                     .projectId(projectId)
                     .userId(userId)
                     .scrap("스크랩이 해제되었습니다.")
@@ -534,7 +534,7 @@ public class ProjectService {
         Parameter :
         Return : List<TopProjectResponseDto>
     */
-    public List<TopProjectResponseDto> topProjects(Long userId){
+    public List<TopProjectResponse> topProjects(Long userId){
 
         LocalDateTime localDateTime = LocalDateTime.now();
         int year = localDateTime.getYear();;
@@ -545,7 +545,7 @@ public class ProjectService {
 
         List<Project> top20 = projectRepository.findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(now);
 
-        List<TopProjectResponseDto> topProjectResponseDtos = new ArrayList<>();
+        List<TopProjectResponse> topProjectResponses = new ArrayList<>();
 
         if(userId != null){
             User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
@@ -564,7 +564,7 @@ public class ProjectService {
                     isScrap = true;
                 }
 
-                topProjectResponseDtos.add(TopProjectResponseDto.builder()
+                topProjectResponses.add(TopProjectResponse.builder()
                         .rank(i+1)
                         .projectId(top20.get(i).getId())
                         .title(top20.get(i).getTitle())
@@ -573,7 +573,7 @@ public class ProjectService {
                         .scrap(isScrap)
                         .build());
             }
-            return topProjectResponseDtos;
+            return topProjectResponses;
         }
 
         for (int i=0; i<top20.size(); i++){
@@ -582,7 +582,7 @@ public class ProjectService {
             top20.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
-            topProjectResponseDtos.add(TopProjectResponseDto.builder()
+            topProjectResponses.add(TopProjectResponse.builder()
                     .rank(i+1)
                     .projectId(top20.get(i).getId())
                     .title(top20.get(i).getTitle())
@@ -591,7 +591,7 @@ public class ProjectService {
                     .scrap(false)
                     .build());
         }
-        return topProjectResponseDtos;
+        return topProjectResponses;
 
 
     }

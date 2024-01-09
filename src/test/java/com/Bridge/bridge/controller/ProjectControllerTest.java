@@ -4,22 +4,20 @@ import com.Bridge.bridge.domain.*;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.request.PartRequestDto;
-import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
+import com.Bridge.bridge.dto.request.FilterRequest;
+import com.Bridge.bridge.dto.request.PartRequest;
+import com.Bridge.bridge.dto.request.ProjectRequest;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequest;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.security.JwtTokenProvider;
 import com.Bridge.bridge.service.ProjectService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.minidev.json.JSONObject;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,11 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -86,8 +81,8 @@ class ProjectControllerTest {
         skill.add("Java");
         skill.add("Spring boot");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<PartRequest> recruit = new ArrayList<>();
+        recruit.add(PartRequest.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
                 .recruitSkill(skill)
@@ -98,7 +93,7 @@ class ProjectControllerTest {
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
+        ProjectRequest newProject = ProjectRequest.builder()
                 .title("New project")
                 .overview("This is new Project.")
                 .dueDate(dueDate.toString())
@@ -133,8 +128,8 @@ class ProjectControllerTest {
         skill.add("JAVA");
         skill.add("SPRINGBOOT");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<PartRequest> recruit = new ArrayList<>();
+        recruit.add(PartRequest.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
                 .recruitSkill(skill)
@@ -145,7 +140,7 @@ class ProjectControllerTest {
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
+        ProjectRequest newProject = ProjectRequest.builder()
                 .title("New project")
                 .overview("This is new Project.")
                 .dueDate(dueDate.toString())
@@ -180,8 +175,8 @@ class ProjectControllerTest {
         skill.add("JAVA");
         skill.add("SPRINGBOOT");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<PartRequest> recruit = new ArrayList<>();
+        recruit.add(PartRequest.builder()
                 .recruitPart("backend")
                 .recruitNum(3)
                 .recruitSkill(skill)
@@ -192,7 +187,7 @@ class ProjectControllerTest {
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
+        ProjectRequest newProject = ProjectRequest.builder()
                 .title("New project")
                 .overview("This is new Project.")
                 .dueDate(dueDate.toString())
@@ -211,15 +206,15 @@ class ProjectControllerTest {
         updateSkill.add("JAVASCRIPT");
         updateSkill.add("REACT");
 
-        List<PartRequestDto> updateRecruit = new ArrayList<>();
-        updateRecruit.add(PartRequestDto.builder()
+        List<PartRequest> updateRecruit = new ArrayList<>();
+        updateRecruit.add(PartRequest.builder()
                 .recruitPart("frontend")
                 .recruitNum(2)
                 .recruitSkill(updateSkill)
                 .requirement("화이팅")
                 .build());
 
-        ProjectUpdateRequestDto updateProject = ProjectUpdateRequestDto.builder()
+        ProjectUpdateRequest updateProject = ProjectUpdateRequest.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
                 .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
@@ -306,23 +301,23 @@ class ProjectControllerTest {
         skill2.add("JAVA");
         skill2.add("SPRINGBOOT");
 
-        List<PartRequestDto> recruit1 = new ArrayList<>();
-        recruit1.add(PartRequestDto.builder()
+        List<PartRequest> recruit1 = new ArrayList<>();
+        recruit1.add(PartRequest.builder()
                 .recruitPart("Backend")
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("Backend")
                 .build());
 
-        List<PartRequestDto> recruit2 = new ArrayList<>();
-        recruit2.add(PartRequestDto.builder()
+        List<PartRequest> recruit2 = new ArrayList<>();
+        recruit2.add(PartRequest.builder()
                 .recruitPart("frontend")
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("frontend")
                 .build());
 
-        ProjectRequestDto newProject1 = ProjectRequestDto.builder()
+        ProjectRequest newProject1 = ProjectRequest.builder()
                 .title("This is what i find")
                 .overview("This is backend Project.")
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
@@ -335,7 +330,7 @@ class ProjectControllerTest {
                 .stage("Before Start")
                 .build();
 
-        ProjectRequestDto newProject2 = ProjectRequestDto.builder()
+        ProjectRequest newProject2 = ProjectRequest.builder()
                 .title("This is not what i find")
                 .overview("This is frontend Project.")
                 .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
@@ -355,12 +350,12 @@ class ProjectControllerTest {
         findSkills.add("JAVA");
         findSkills.add("SPRINGBOOT");
 
-        FilterRequestDto filterRequestDto = FilterRequestDto.builder()
+        FilterRequest filterRequest = FilterRequest.builder()
                 .part("Backend")
                 .skills(findSkills)
                 .build();
 
-        String body = objectMapper.writeValueAsString(filterRequestDto);
+        String body = objectMapper.writeValueAsString(filterRequest);
 
         String token = Jwts.builder()
                 .setSubject(String.valueOf(user.getId()))

@@ -2,7 +2,7 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.SearchWord;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.response.SearchWordResponseDto;
+import com.Bridge.bridge.dto.response.SearchWordResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundSearchWordException;
 import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.repository.SearchWordRepository;
@@ -30,7 +30,7 @@ public class SearchWordService {
         Parameter : userId
         Return : List<SearchWordResponseDto>
     */
-    public List<SearchWordResponseDto> resentSearchWord(HttpServletRequest request){
+    public List<SearchWordResponse> resentSearchWord(HttpServletRequest request){
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
@@ -44,7 +44,7 @@ public class SearchWordService {
             throw new NotFoundSearchWordException();
         }
         return searchWords.stream()
-                .map((searchWord -> SearchWordResponseDto.builder()
+                .map((searchWord -> SearchWordResponse.builder()
                         .searchWordId(searchWord.getId())
                         .searchWord(searchWord.getContent())
                         .build()))
@@ -57,7 +57,7 @@ public class SearchWordService {
         Return : List<SearchWordResponseDto>
     */
     @Transactional
-    public List<SearchWordResponseDto> deleteSearchWord(HttpServletRequest request, Long searchWordId){
+    public List<SearchWordResponse> deleteSearchWord(HttpServletRequest request, Long searchWordId){
 
         Long userId = jwtTokenProvider.getUserIdFromRequest(request);
 
@@ -73,7 +73,7 @@ public class SearchWordService {
         searchWordRepository.delete(theSearchWord);
 
         return user.getSearchWords().stream()
-                .map((searchWord -> SearchWordResponseDto.builder()
+                .map((searchWord -> SearchWordResponse.builder()
                         .searchWordId(searchWord.getId())
                         .searchWord(searchWord.getContent())
                         .build()))

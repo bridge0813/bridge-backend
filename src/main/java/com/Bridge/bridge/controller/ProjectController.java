@@ -37,9 +37,9 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
     })
     @PostMapping("/project")
-    public ResponseEntity<?> createProject(@RequestBody ProjectRequestDto projectRequestDto){
+    public ResponseEntity<?> createProject(@RequestBody ProjectRequest projectRequest){
         Map<String, Long> result = new HashMap<>();
-        Long projectId = projectService.createProject(projectRequestDto);
+        Long projectId = projectService.createProject(projectRequest);
         result.put("projectId", projectId);
         return ResponseEntity.ok(result);
     }
@@ -53,7 +53,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
     })
-    public List<ProjectListResponseDto> searchProject(HttpServletRequest request,@RequestBody SearchWordRequest searchWord){
+    public List<ProjectListResponse> searchProject(HttpServletRequest request, @RequestBody SearchWordRequest searchWord){
         return projectService.findByTitleAndContent(request, searchWord.getSearchWord());
     }
 
@@ -86,8 +86,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public ProjectResponseDto updateProject(@RequestParam Long projectId, @RequestBody ProjectUpdateRequestDto projectUpdateRequestDto){
-        return projectService.updateProject(projectId, projectUpdateRequestDto);
+    public ProjectResponse updateProject(@RequestParam Long projectId, @RequestBody ProjectUpdateRequest projectUpdateRequest){
+        return projectService.updateProject(projectId, projectUpdateRequest);
     }
 
     // 프로젝트 모집글 상세보기
@@ -98,8 +98,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "모집글 상세보기 조회 실패"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public ProjectResponseDto detailProject(@RequestParam(name = "userId",required = false, defaultValue = "") Long userId,
-                                            @RequestParam(name = "projectId") Long projectId){
+    public ProjectResponse detailProject(@RequestParam(name = "userId",required = false, defaultValue = "") Long userId,
+                                         @RequestParam(name = "projectId") Long projectId){
         return projectService.getProject(userId, projectId);
     }
 
@@ -110,8 +110,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "모집글 필터링 조회 완료"),
             @ApiResponse(responseCode = "400", description = "모집글 필터링 조회 실패")
     })
-    public List<ProjectListResponseDto> filterProjects(HttpServletRequest request, @RequestBody FilterRequestDto filterRequestDto){
-        return projectService.filterProjectList(request, filterRequestDto);
+    public List<ProjectListResponse> filterProjects(HttpServletRequest request, @RequestBody FilterRequest filterRequest){
+        return projectService.filterProjectList(request, filterRequest);
     }
 
 
@@ -124,7 +124,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public List<MyProjectResponseDto> findMyProjects(HttpServletRequest request){
+    public List<MyProjectResponse> findMyProjects(HttpServletRequest request){
         return projectService.findMyProjects(request);
     }
 
@@ -136,7 +136,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "전체 모집글 조회 실패"),
             @ApiResponse(responseCode = "404", description = "모집글이 존재하지 않는다.")
     })
-    public List<ProjectListResponseDto> allProjects(@RequestParam(required = false) Long userId){
+    public List<ProjectListResponse> allProjects(@RequestParam(required = false) Long userId){
         return projectService.allProjects(userId);
     }
 
@@ -149,7 +149,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public List<ProjectListResponseDto> findMyPartProjects(HttpServletRequest request, @RequestBody myPartProjectRequest myPartProjectRequest){
+    public List<ProjectListResponse> findMyPartProjects(HttpServletRequest request, @RequestBody MyPartProjectRequest myPartProjectRequest){
         return projectService.findMyPartProjects(request, myPartProjectRequest.getPart());
     }
 
@@ -162,7 +162,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
     })
-    public ProjectResponseDto closeProject(@RequestBody ProjectIdRequest projectId){
+    public ProjectResponse closeProject(@RequestBody ProjectIdRequest projectId){
         return projectService.closeProject(projectId.getProjectId());
     }
 
@@ -175,7 +175,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 모집글 찾기 실패")
     })
-    public BookmarkResponseDto scrap(HttpServletRequest request, @RequestBody ProjectIdRequest projectId){
+    public BookmarkResponse scrap(HttpServletRequest request, @RequestBody ProjectIdRequest projectId){
 
         return projectService.scrap(request, projectId.getProjectId());
 
@@ -258,7 +258,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "인기글 조회 실패"),
             @ApiResponse(responseCode = "404", description = "모집글 찾기 실패")
     })
-    public List<TopProjectResponseDto> topProjects(@RequestParam(required = false) Long userId){
+    public List<TopProjectResponse> topProjects(@RequestParam(required = false) Long userId){
         return projectService.topProjects(userId);
 
     }

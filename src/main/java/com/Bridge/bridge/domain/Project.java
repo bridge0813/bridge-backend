@@ -1,19 +1,15 @@
 package com.Bridge.bridge.domain;
 
-import com.Bridge.bridge.dto.request.ProjectRequestDto;
-import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
-import com.Bridge.bridge.dto.response.PartResponseDto;
-import com.Bridge.bridge.dto.response.ProjectResponseDto;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequest;
+import com.Bridge.bridge.dto.response.PartResponse;
+import com.Bridge.bridge.dto.response.ProjectResponse;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.awt.print.Book;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,8 +76,8 @@ public class Project {
         this.bookmarks.add(bookmark);
     }
 
-    public ProjectResponseDto toDto(boolean isMyProject, boolean scrap){
-        List<PartResponseDto> recruit = this.getRecruit().stream()
+    public ProjectResponse toDto(boolean isMyProject, boolean scrap){
+        List<PartResponse> recruit = this.getRecruit().stream()
                 .map((part) -> part.toDto())
                 .collect(Collectors.toList());
 
@@ -104,7 +100,7 @@ public class Project {
         }
 
 
-        return ProjectResponseDto.builder()
+        return ProjectResponse.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
                 .dueDate(this.getDueDate().toString())
@@ -120,16 +116,16 @@ public class Project {
                 .build();
     }
 
-    public void update(ProjectUpdateRequestDto projectUpdateRequestDto){
-        this.title = projectUpdateRequestDto.getTitle();
-        this.overview = projectUpdateRequestDto.getOverview();
-        this.dueDate = projectUpdateRequestDto.getDueDate();
-        this.startDate = projectUpdateRequestDto.getStartDate();
-        this.endDate = projectUpdateRequestDto.getEndDate();
+    public void update(ProjectUpdateRequest projectUpdateRequest){
+        this.title = projectUpdateRequest.getTitle();
+        this.overview = projectUpdateRequest.getOverview();
+        this.dueDate = projectUpdateRequest.getDueDate();
+        this.startDate = projectUpdateRequest.getStartDate();
+        this.endDate = projectUpdateRequest.getEndDate();
         this.recruit.clear();
-        this.tagLimit = projectUpdateRequestDto.getTagLimit();
-        this.meetingWay = projectUpdateRequestDto.getMeetingWay();
-        this.stage = projectUpdateRequestDto.getStage();
+        this.tagLimit = projectUpdateRequest.getTagLimit();
+        this.meetingWay = projectUpdateRequest.getMeetingWay();
+        this.stage = projectUpdateRequest.getStage();
     }
 
     public Project updateDeadline(){

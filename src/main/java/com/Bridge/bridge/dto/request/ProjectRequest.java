@@ -1,21 +1,17 @@
 package com.Bridge.bridge.dto.request;
 
-import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.request.PartRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관련 dto
+public class ProjectRequest { // 모집글 생성 시 받아올 데이터 관련 dto
 
     private String title;           //제목
 
@@ -27,7 +23,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
 
     private String endDate;         // 프로젝트 종료일
 
-    private List<PartRequestDto> recruit; // 모집 분야, 모집 인원
+    private List<PartRequest> recruit; // 모집 분야, 모집 인원
 
     private List<String> tagLimit;        //지원자 태그 제한록
 
@@ -38,7 +34,7 @@ public class ProjectRequestDto { // 모집글 생성 시 받아올 데이터 관
     private Long userId;        // 모집글을 작성한 유저 ID
 
     @Builder
-    public ProjectRequestDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequestDto> recruit, List<String> tagLimit, String meetingWay, String stage, Long userId) {
+    public ProjectRequest(String title, String overview, String dueDate, String startDate, String endDate, List<PartRequest> recruit, List<String> tagLimit, String meetingWay, String stage, Long userId) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;

@@ -8,14 +8,14 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class FilterRequestDto {
+public class FilterRequest {
 
     private String part;
 
     private List<String> skills;
 
     @Builder
-    public FilterRequestDto(String part, List<String> skills) {
+    public FilterRequest(String part, List<String> skills) {
         this.part = part;
         this.skills = skills;
     }

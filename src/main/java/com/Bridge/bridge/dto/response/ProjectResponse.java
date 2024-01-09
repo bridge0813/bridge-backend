@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ProjectResponseDto {
+public class ProjectResponse {
 
     private String title;           //제목
 
@@ -18,7 +18,7 @@ public class ProjectResponseDto {
 
     private String endDate;         // 프로젝트 종료일
 
-    private List<PartResponseDto> recruit; // 모집 분야, 모집 인원
+    private List<PartResponse> recruit; // 모집 분야, 모집 인원
 
     private List<String> tagLimit;        //지원자 태그 제한록
 
@@ -33,7 +33,7 @@ public class ProjectResponseDto {
     private boolean scrap;          // 스크랩 여부
 
     @Builder
-    public ProjectResponseDto(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponseDto> recruit, List<String> tagLimit, String meetingWay, String stage, String userName, boolean isMyProject, boolean scrap) {
+    public ProjectResponse(String title, String overview, String dueDate, String startDate, String endDate, List<PartResponse> recruit, List<String> tagLimit, String meetingWay, String stage, String userName, boolean isMyProject, boolean scrap) {
         this.title = title;
         this.overview = overview;
         this.dueDate = dueDate;

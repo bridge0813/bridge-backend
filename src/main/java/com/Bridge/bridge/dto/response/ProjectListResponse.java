@@ -1,13 +1,10 @@
 package com.Bridge.bridge.dto.response;
 
-import com.Bridge.bridge.domain.Part;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class ProjectListResponseDto {
+public class ProjectListResponse {
 
     private Long projectId;                 // 프로젝트 아이디
 
@@ -20,7 +17,7 @@ public class ProjectListResponseDto {
     private boolean scrap;                  // 스크랩 여부
 
     @Builder
-    public ProjectListResponseDto(Long projectId, String title, String dueDate, int recruitTotalNum, boolean scrap) {
+    public ProjectListResponse(Long projectId, String title, String dueDate, int recruitTotalNum, boolean scrap) {
         this.projectId = projectId;
         this.title = title;
         this.dueDate = dueDate;

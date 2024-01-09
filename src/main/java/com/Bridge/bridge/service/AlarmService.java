@@ -5,7 +5,7 @@ import com.Bridge.bridge.domain.Chat;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
-import com.Bridge.bridge.dto.request.NotificationRequestDto;
+import com.Bridge.bridge.dto.request.NotificationRequest;
 import com.Bridge.bridge.dto.response.AlarmResponse;
 import com.Bridge.bridge.dto.response.AllAlarmResponse;
 import com.Bridge.bridge.exception.BridgeException;
@@ -23,7 +23,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.mysql.cj.log.Log;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -63,10 +62,10 @@ public class AlarmService {
        Func : FCM 서버로 알림 보내기 -> 실질적으로 알림보내는 함수
        Parameter: NotificationRequestDto -> 알림 수신자, 알림 제목, 알림 내용
     */
-    public void sendNotification(NotificationRequestDto notificationRequestDto) throws FirebaseMessagingException {
+    public void sendNotification(NotificationRequest notificationRequest) throws FirebaseMessagingException {
         System.out.println();
         // 알림 받을 유저 찾기
-        User user = userRepository.findById(notificationRequestDto.getUserId())
+        User user = userRepository.findById(notificationRequest.getUserId())
                 .orElseThrow(() -> new NotFoundUserException());
 
         // 알람 생성 시간 생성하기
@@ -74,8 +73,8 @@ public class AlarmService {
 
         // 알림 생성하기
         Notification notification = Notification.builder()
-                .setTitle(notificationRequestDto.getTitle())
-                .setBody(notificationRequestDto.getBody())
+                .setTitle(notificationRequest.getTitle())
+                .setBody(notificationRequest.getBody())
                 .build();
 
         // 알림 메세지 생성하기
@@ -119,13 +118,13 @@ public class AlarmService {
         rcvUser.getRcvAlarms().add(alarm);
 
         // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+        NotificationRequest notificationRequest = NotificationRequest.builder()
                 .userId(userId)
                 .title("지원 결과 도착")
                 .body("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
                 .build();
 
-        sendNotification(notificationRequestDto);
+        sendNotification(notificationRequest);
     }
 
     /*
@@ -149,26 +148,26 @@ public class AlarmService {
             System.out.println("testtesttesttest");
 
             // 알림보내기
-            NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+            NotificationRequest notificationRequest = NotificationRequest.builder()
                     .userId(chat.getReceiveUser().getId())
                     .title(sender.getName())
                     .body(chatMessageRequest.getMessage())
                     .build();
 
-            sendNotification(notificationRequestDto);
+            sendNotification(notificationRequest);
             return;
         }
         // 메세지를 보낸 사람이 채팅방에 초대된 사람이라면
         log.info("Sender User(Receiver) Name = {}", sender.getName());
 
         // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+        NotificationRequest notificationRequest = NotificationRequest.builder()
                 .userId(chat.getMakeUser().getId())
                 .title(sender.getName())
                 .body(chatMessageRequest.getMessage())
                 .build();
 
-        sendNotification(notificationRequestDto);
+        sendNotification(notificationRequest);
         return;
     }
 
@@ -199,13 +198,13 @@ public class AlarmService {
         alarms.add(alarm);
 
         // 알림보내기
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
+        NotificationRequest notificationRequest = NotificationRequest.builder()
                 .userId(getAlarmUser.getId())
                 .title("지원자 등장?")
                 .body("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
                 .build();
 
-        sendNotification(notificationRequestDto);
+        sendNotification(notificationRequest);
     }
 
     /*

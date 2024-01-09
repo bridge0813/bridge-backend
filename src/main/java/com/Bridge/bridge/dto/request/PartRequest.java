@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-public class PartRequestDto {
+public class PartRequest {
 
     private String recruitPart;
 
@@ -23,7 +23,7 @@ public class PartRequestDto {
     private String requirement;
 
     @Builder
-    public PartRequestDto(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement) {
+    public PartRequest(String recruitPart, int recruitNum, List<String> recruitSkill, String requirement) {
         this.recruitPart = recruitPart;
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill;

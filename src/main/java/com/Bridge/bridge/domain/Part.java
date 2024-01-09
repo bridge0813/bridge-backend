@@ -1,6 +1,6 @@
 package com.Bridge.bridge.domain;
 
-import com.Bridge.bridge.dto.response.PartResponseDto;
+import com.Bridge.bridge.dto.response.PartResponse;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -50,8 +49,8 @@ public class Part {
         project.getRecruit().add(this);
     }
 
-    public PartResponseDto toDto() {
-        return PartResponseDto.builder()
+    public PartResponse toDto() {
+        return PartResponse.builder()
                 .recruitPart(this.getRecruitPart())
                 .recruitNum(this.getRecruitNum())
                 .recruitSkill(this.getRecruitSkill())

@@ -3,10 +3,8 @@ package com.Bridge.bridge.dto.response;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class MyProjectResponseDto {
+public class MyProjectResponse {
 
     private Long projectId;                 // 프로젝트 아이디
 
@@ -21,7 +19,7 @@ public class MyProjectResponseDto {
     private String status;                 // 현재 모집 상황 -> 0 : 마감, 1 : 모집중
 
     @Builder
-    public MyProjectResponseDto(Long projectId, String title, String overview, String dueDate, int recruitTotalNum, String status) {
+    public MyProjectResponse(Long projectId, String title, String overview, String dueDate, int recruitTotalNum, String status) {
         this.projectId = projectId;
         this.title = title;
         this.overview = overview;
