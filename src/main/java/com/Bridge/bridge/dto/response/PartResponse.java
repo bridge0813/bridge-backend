@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class PartResponseDto {
+public class PartResponse {
 
     private String recruitPart;
 
@@ -20,7 +20,7 @@ public class PartResponseDto {
     private String requirement;
 
     @Builder
-    public PartResponseDto(Field recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement) {
+    public PartResponse(Field recruitPart, int recruitNum, List<Stack> recruitSkill, String requirement) {
         this.recruitPart = recruitPart.getValue();
         this.recruitNum = recruitNum;
         this.recruitSkill = recruitSkill.stream()

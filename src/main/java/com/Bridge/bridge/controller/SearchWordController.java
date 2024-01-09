@@ -1,13 +1,11 @@
 package com.Bridge.bridge.controller;
 
-import com.Bridge.bridge.dto.response.SearchWordResponseDto;
-import com.Bridge.bridge.service.ProjectService;
+import com.Bridge.bridge.dto.response.SearchWordResponse;
 import com.Bridge.bridge.service.SearchWordService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +26,7 @@ public class SearchWordController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 검색어가 존재하지 않는다.")
     })
-    public List<SearchWordResponseDto> resentSearchWord(HttpServletRequest request){
+    public List<SearchWordResponse> resentSearchWord(HttpServletRequest request){
         return searchWordService.resentSearchWord(request);
     }
 
@@ -41,7 +39,7 @@ public class SearchWordController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패 OR 검색어 찾기 실패")
     })
-    public List<SearchWordResponseDto> deleteSearchWord(HttpServletRequest request, @RequestParam Long searchWordId){
+    public List<SearchWordResponse> deleteSearchWord(HttpServletRequest request, @RequestParam Long searchWordId){
         return searchWordService.deleteSearchWord(request, searchWordId);
     }
 }

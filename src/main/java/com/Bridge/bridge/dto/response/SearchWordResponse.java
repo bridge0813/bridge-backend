@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class SearchWordResponseDto {
+public class SearchWordResponse {
 
     Long searchWordId;
 
     String searchWord; // 검색어 내용
 
     @Builder
-    public SearchWordResponseDto(Long searchWordId, String searchWord) {
+    public SearchWordResponse(Long searchWordId, String searchWord) {
         this.searchWordId = searchWordId;
         this.searchWord = searchWord;
     }

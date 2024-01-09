@@ -4,11 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
-public class TopProjectResponseDto {
+public class TopProjectResponse {
 
     int rank; // 인기 순위
 
@@ -23,7 +21,7 @@ public class TopProjectResponseDto {
     boolean scrap; // 스크랩 여부
 
     @Builder
-    public TopProjectResponseDto(int rank, Long projectId, String title, String dueDate, int recruitNum, boolean scrap) {
+    public TopProjectResponse(int rank, Long projectId, String title, String dueDate, int recruitNum, boolean scrap) {
         this.rank = rank;
         this.projectId = projectId;
         this.title = title;

@@ -9,11 +9,11 @@ import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.request.FilterRequestDto;
-import com.Bridge.bridge.dto.request.ProjectUpdateRequestDto;
+import com.Bridge.bridge.dto.request.FilterRequest;
+import com.Bridge.bridge.dto.request.ProjectUpdateRequest;
 import com.Bridge.bridge.dto.response.*;
-import com.Bridge.bridge.dto.request.PartRequestDto;
-import com.Bridge.bridge.dto.request.ProjectRequestDto;
+import com.Bridge.bridge.dto.request.PartRequest;
+import com.Bridge.bridge.dto.request.ProjectRequest;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
@@ -141,7 +141,7 @@ class ProjectServiceTest {
 
 
         // When
-        List<ProjectListResponseDto> result = projectService.findByTitleAndContent(request,"어플");
+        List<ProjectListResponse> result = projectService.findByTitleAndContent(request,"어플");
 
         // Then
         assertEquals(result.get(0).getTitle(),"어플 프로젝트" );
@@ -160,8 +160,8 @@ class ProjectServiceTest {
         skill.add("JAVA");
         skill.add("SPRINGBOOT");
 
-        List<PartRequestDto> recruit = new ArrayList<>();
-        recruit.add(PartRequestDto.builder()
+        List<PartRequest> recruit = new ArrayList<>();
+        recruit.add(PartRequest.builder()
                 .recruitPart("BACKEND")
                 .recruitNum(3)
                 .recruitSkill(skill)
@@ -172,7 +172,7 @@ class ProjectServiceTest {
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
-        ProjectRequestDto newProject = ProjectRequestDto.builder()
+        ProjectRequest newProject = ProjectRequest.builder()
                 .title("New project")
                 .overview("This is new Project.")
                 .dueDate(dueDate.toString())
@@ -282,15 +282,15 @@ class ProjectServiceTest {
         updateSkill.add("JAVASCRIPT");
         updateSkill.add("REACT");
 
-        List<PartRequestDto> updateRecruit = new ArrayList<>();
-        updateRecruit.add(PartRequestDto.builder()
+        List<PartRequest> updateRecruit = new ArrayList<>();
+        updateRecruit.add(PartRequest.builder()
                 .recruitPart("FRONTEND")
                 .recruitNum(2)
                 .recruitSkill(updateSkill)
                 .requirement("화이팅")
                 .build());
 
-        ProjectUpdateRequestDto updateProject = ProjectUpdateRequestDto.builder()
+        ProjectUpdateRequest updateProject = ProjectUpdateRequest.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
                 .dueDate(dueDate)
@@ -304,7 +304,7 @@ class ProjectServiceTest {
 
 
         // when
-        ProjectResponseDto result = projectService.updateProject(newProject.getId(), updateProject);
+        ProjectResponse result = projectService.updateProject(newProject.getId(), updateProject);
 
         // then
         assertThat(result.getTitle()).isEqualTo("Update project");
@@ -354,15 +354,15 @@ class ProjectServiceTest {
         updateSkill.add("Javascript");
         updateSkill.add("React");
 
-        List<PartRequestDto> updateRecruit = new ArrayList<>();
-        updateRecruit.add(PartRequestDto.builder()
+        List<PartRequest> updateRecruit = new ArrayList<>();
+        updateRecruit.add(PartRequest.builder()
                 .recruitPart("frontend")
                 .recruitNum(2)
                 .recruitSkill(updateSkill)
                 .requirement("화이팅")
                 .build());
 
-        ProjectUpdateRequestDto updateProject = ProjectUpdateRequestDto.builder()
+        ProjectUpdateRequest updateProject = ProjectUpdateRequest.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
                 .dueDate(dueDate)
@@ -429,7 +429,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        ProjectResponseDto result = projectService.getProject(user1.getId(), theProject.getId());
+        ProjectResponse result = projectService.getProject(user1.getId(), theProject.getId());
 
         // then
         assertThat(result.getTitle()).isEqualTo(newProject.getTitle());
@@ -487,7 +487,7 @@ class ProjectServiceTest {
         // expected
         assertThrows(NotFoundProjectException.class,
                 () -> {
-                    ProjectResponseDto result = projectService.getProject(user1.getId(), theProject.getId() + Long.valueOf(123));
+                    ProjectResponse result = projectService.getProject(user1.getId(), theProject.getId() + Long.valueOf(123));
                 });
     }
 
@@ -540,7 +540,7 @@ class ProjectServiceTest {
 
 
         // when
-        ProjectResponseDto result = projectService.getProject(user2.getId(), newProject.getId());
+        ProjectResponse result = projectService.getProject(user2.getId(), newProject.getId());
 
         // then
         assertThat(result.isScrap()).isEqualTo(true);
@@ -630,7 +630,7 @@ class ProjectServiceTest {
         findSkills.add("JAVA");
         findSkills.add("SPRINGBOOT");
 
-        FilterRequestDto filterRequestDto = FilterRequestDto.builder()
+        FilterRequest filterRequest = FilterRequest.builder()
                 .part("BACKEND")
                 .skills(findSkills)
                 .build();
@@ -643,7 +643,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        int result = projectService.filterProjectList(request, filterRequestDto).size();
+        int result = projectService.filterProjectList(request, filterRequest).size();
 
         // then
         assertThat(result).isEqualTo(1);
@@ -860,7 +860,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        List<MyProjectResponseDto> response = projectService.findMyProjects(request);
+        List<MyProjectResponse> response = projectService.findMyProjects(request);
 
         // then
         Assertions.assertThat(response.size()).isEqualTo(2);
@@ -883,7 +883,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        List<MyProjectResponseDto> myProjects = projectService.findMyProjects(request);
+        List<MyProjectResponse> myProjects = projectService.findMyProjects(request);
 
         //then
         assertEquals(new ArrayList<>(), myProjects);
@@ -1008,7 +1008,7 @@ class ProjectServiceTest {
         newProject3.getBookmarks().add(bookmark1);
 
         // when
-        List<ProjectListResponseDto> response = projectService.allProjects(null);
+        List<ProjectListResponse> response = projectService.allProjects(null);
 
         // then
         Assertions.assertThat(response.get(1).isScrap()).isEqualTo(false);
@@ -1121,7 +1121,7 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        List<ProjectListResponseDto> response = projectService.findMyPartProjects(request, "BACKEND");
+        List<ProjectListResponse> response = projectService.findMyPartProjects(request, "BACKEND");
 
         // then
         Assertions.assertThat(response.size()).isEqualTo(2);
@@ -1163,7 +1163,7 @@ class ProjectServiceTest {
         projectRepository.save(newProject);
 
         // when
-        ProjectResponseDto response = projectService.closeProject(newProject.getId());
+        ProjectResponse response = projectService.closeProject(newProject.getId());
 
         LocalDateTime localDateTime = LocalDateTime.now();
         String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
@@ -1258,8 +1258,8 @@ class ProjectServiceTest {
 
         // when
 
-        BookmarkResponseDto bookmarkResponseDto = projectService.scrap(request, newProject.getId());
-        Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
+        BookmarkResponse bookmarkResponse = projectService.scrap(request, newProject.getId());
+        Assertions.assertThat(bookmarkResponse.getScrap()).isEqualTo("스크랩이 설정되었습니다.");
 
     }
 
@@ -1323,8 +1323,8 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        BookmarkResponseDto bookmarkResponseDto = projectService.scrap(request, newProject.getId());
-        Assertions.assertThat(bookmarkResponseDto.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
+        BookmarkResponse bookmarkResponse = projectService.scrap(request, newProject.getId());
+        Assertions.assertThat(bookmarkResponse.getScrap()).isEqualTo("스크랩이 해제되었습니다.");
     }
 
     @Test
@@ -1614,7 +1614,7 @@ class ProjectServiceTest {
         }
 
         // when
-        List<TopProjectResponseDto> result = projectService.topProjects(null);
+        List<TopProjectResponse> result = projectService.topProjects(null);
 
         // then
         Assertions.assertThat(result.size()).isEqualTo(20);
@@ -1665,7 +1665,7 @@ class ProjectServiceTest {
         }
 
         // when
-        List<TopProjectResponseDto> result = projectService.topProjects(null);
+        List<TopProjectResponse> result = projectService.topProjects(null);
 
         // then
         Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목1");

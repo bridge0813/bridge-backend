@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class myPartProjectRequest {
+public class MyPartProjectRequest {
 
     private String part;        // 분야
 }

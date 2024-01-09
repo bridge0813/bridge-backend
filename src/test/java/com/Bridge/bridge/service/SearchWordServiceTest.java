@@ -3,7 +3,7 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.SearchWord;
 import com.Bridge.bridge.domain.User;
-import com.Bridge.bridge.dto.response.SearchWordResponseDto;
+import com.Bridge.bridge.dto.response.SearchWordResponse;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.security.JwtTokenProvider;
@@ -75,10 +75,10 @@ public class SearchWordServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        List<SearchWordResponseDto> searchWordResponseDto = searchWordService.resentSearchWord(request);
-        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어1");
-        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어2");
-        Assertions.assertThat(searchWordResponseDto.get(2).getSearchWord()).isEqualTo("검색어3");
+        List<SearchWordResponse> searchWordResponse = searchWordService.resentSearchWord(request);
+        Assertions.assertThat(searchWordResponse.get(0).getSearchWord()).isEqualTo("검색어1");
+        Assertions.assertThat(searchWordResponse.get(1).getSearchWord()).isEqualTo("검색어2");
+        Assertions.assertThat(searchWordResponse.get(2).getSearchWord()).isEqualTo("검색어3");
     }
 
     @DisplayName("최근 검색어 삭제")
@@ -122,8 +122,8 @@ public class SearchWordServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        List<SearchWordResponseDto> searchWordResponseDto = searchWordService.deleteSearchWord(request, newSearch1.getId());
-        Assertions.assertThat(searchWordResponseDto.get(0).getSearchWord()).isEqualTo("검색어2");
-        Assertions.assertThat(searchWordResponseDto.get(1).getSearchWord()).isEqualTo("검색어3");
+        List<SearchWordResponse> searchWordResponse = searchWordService.deleteSearchWord(request, newSearch1.getId());
+        Assertions.assertThat(searchWordResponse.get(0).getSearchWord()).isEqualTo("검색어2");
+        Assertions.assertThat(searchWordResponse.get(1).getSearchWord()).isEqualTo("검색어3");
     }
 }

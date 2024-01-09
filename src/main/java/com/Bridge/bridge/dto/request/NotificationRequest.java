@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class NotificationRequestDto {
+public class NotificationRequest {
 
     Long userId;                // 유저 아이디
 
@@ -15,7 +15,7 @@ public class NotificationRequestDto {
     String body;                // 알림 내용
 
     @Builder
-    public NotificationRequestDto(Long userId, String title, String body) {
+    public NotificationRequest(Long userId, String title, String body) {
         this.userId = userId;
         this.title = title;
         this.body = body;

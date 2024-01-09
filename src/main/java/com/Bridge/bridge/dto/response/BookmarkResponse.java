@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class BookmarkResponseDto {
+public class BookmarkResponse {
 
     private Long projectId;
 
@@ -13,7 +13,7 @@ public class BookmarkResponseDto {
     private String scrap;
 
     @Builder
-    public BookmarkResponseDto(Long projectId, Long userId, String scrap) {
+    public BookmarkResponse(Long projectId, Long userId, String scrap) {
         this.projectId = projectId;
         this.userId = userId;
         this.scrap = scrap;
