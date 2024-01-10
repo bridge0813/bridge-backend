@@ -140,8 +140,11 @@ class UserServiceTest {
         stack.add("SPRING");
         stack.add("JAVA");
 
+        List<String> refLinks = new ArrayList<>();
+        refLinks.add("link");
+
         UserProfileRequest request = UserProfileRequest.builder()
-                .refLink("link")
+                .refLinks(refLinks)
                 .selfIntro("자기 소개서")
                 .career("대학생")
                 .stack(stack)
@@ -250,7 +253,10 @@ class UserServiceTest {
         skills.add(Stack.SPRING);
         skills.add(Stack.REDIS);
 
-        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        List<String> refLinks = new ArrayList<>();
+        refLinks.add("testLink");
+
+        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -267,7 +273,7 @@ class UserServiceTest {
         assertEquals("Spring", profileResponse.getStacks().get(0));
         assertEquals("Redis", profileResponse.getStacks().get(1));
         assertEquals("career", profileResponse.getCareer());
-        assertEquals("testLink", profileResponse.getRefLink());
+        assertEquals("testLink", profileResponse.getRefLinks().get(0));
     }
 
     @Test
@@ -293,7 +299,11 @@ class UserServiceTest {
         skills.add(Stack.SPRING);
         skills.add(Stack.REDIS);
 
-        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        List<String> refLinks = new ArrayList<>();
+        refLinks.add("testLink");
+
+
+        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -321,7 +331,11 @@ class UserServiceTest {
         skills.add(Stack.SPRING);
         skills.add(Stack.REDIS);
 
-        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        List<String> refLinks = new ArrayList<>();
+        refLinks.add("testLink");
+
+
+        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
         newUser.updateProfile(profile);
         User saveUser = userRepository.save(newUser);
 
@@ -346,7 +360,11 @@ class UserServiceTest {
         skills.add(Stack.SPRING);
         skills.add(Stack.REDIS);
 
-        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        List<String> refLinks = new ArrayList<>();
+        refLinks.add("testLink");
+
+
+        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -356,11 +374,15 @@ class UserServiceTest {
         List<String> newSkills = new ArrayList<>();
         newSkills.add("MYSQL");
 
+        List<String> updateRefLinks = new ArrayList<>();
+        updateRefLinks.add("updateLink");
+
+
         ProfileUpdateRequest request = ProfileUpdateRequest.builder()
                 .selfIntro("updateIntro")
                 .career("updateCareer")
                 .stack(newSkills)
-                .refLink("updateLink")
+                .refLinks(updateRefLinks)
                 .build();
 
         //when

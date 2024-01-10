@@ -87,8 +87,10 @@ class UserControllerTest {
         stack.add("SPRING");
         stack.add("JAVA");
 
+
+
         UserProfileRequest request = UserProfileRequest.builder()
-                .refLink("link")
+                .refLinks(null)
                 .selfIntro("자기 소개서")
                 .career("대학생")
                 .stack(stack)
@@ -116,7 +118,10 @@ class UserControllerTest {
         skills.add(Stack.SPRING);
         skills.add(Stack.REDIS);
 
-        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        List<String> links = new ArrayList<>();
+        links.add("testLink");
+
+        Profile profile = new Profile(links, "selfIntro", "career", skills);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -133,7 +138,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.fields[0]").value("백엔드"))
                 .andExpect(jsonPath("$.stacks[0]").value("Spring"))
                 .andExpect(jsonPath("$.career").value("career"))
-                .andExpect(jsonPath("$.refLink").value("testLink"))
+                .andExpect(jsonPath("$.refLinks[0]").value("testLink"))
                 .andDo(print());
     }
 
@@ -147,7 +152,10 @@ class UserControllerTest {
         skills.add(Stack.SPRING);
         skills.add(Stack.REDIS);
 
-        Profile profile = new Profile("testLink", "selfIntro", "career", skills);
+        List<String> links = new ArrayList<>();
+        links.add("testLink");
+
+        Profile profile = new Profile(links, "selfIntro", "career", skills);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -157,9 +165,13 @@ class UserControllerTest {
         List<String> newSkills = new ArrayList<>();
         newSkills.add("MYSQL");
 
+        List<String> links2 = new ArrayList<>();
+        links.add("updateLink");
+
+
         ProfileUpdateRequest updateRequest = ProfileUpdateRequest.builder()
                 .selfIntro("updateIntro")
-                .refLink("updateLink")
+                .refLinks(links2)
                 .career("updateCareer")
                 .stack(newSkills)
                 .build();
