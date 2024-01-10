@@ -31,10 +31,6 @@ public class Message {
 
     private String type;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id")
-    private File file;              // 첨부 파일
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id")
     private Chat chat;              // 해당 메세지가 포함된 채팅방

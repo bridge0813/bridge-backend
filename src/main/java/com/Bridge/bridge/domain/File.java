@@ -24,9 +24,6 @@ public class File {
 
     private Long fileSize;              // 파일 사이즈
 
-    @OneToOne(mappedBy = "file")
-    private Message message;            // 해당 파일이 저장된 메세지
-
     @OneToOne(mappedBy = "profilePhoto")
     private Profile profilePhoto;            // 해당 파일이 저장된 프로필
 
