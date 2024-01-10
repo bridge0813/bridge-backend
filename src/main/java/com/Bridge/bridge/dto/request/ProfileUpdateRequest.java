@@ -18,13 +18,16 @@ public class ProfileUpdateRequest {
 
     private List<String> stack;
 
-    private String refLink;
+    private List<String> refLinks;
+
+    private List<Long> fileIds;
 
     @Builder
-    public ProfileUpdateRequest(String selfIntro, String career, List<String> stack, String refLink) {
+    public ProfileUpdateRequest(String selfIntro, String career, List<String> stack, List<String> refLinks, List<Long> fileIds) {
         this.selfIntro = selfIntro;
         this.career = career;
         this.stack = stack;
-        this.refLink = refLink;
+        this.refLinks = refLinks;
+        this.fileIds = fileIds;
     }
 }

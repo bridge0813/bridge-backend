@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.net.URL;
 import java.util.List;
 
 @Data
@@ -22,19 +21,19 @@ public class UserProfileResponse {
 
     private String career;          // 경력 사항
 
-    private String refLink;         // 참고 링크
+    private List<String> refLinks;         // 참고 링크
 
-    private FileResponse refFile;         // 첨부 파일
+    private List<FileResponse> refFiles;         // 첨부 파일
 
     @Builder
-    public UserProfileResponse(String name, String profilePhotoURL, String selfIntro, List<String> fields, List<String> stacks, String career, String refLink, FileResponse refFile) {
+    public UserProfileResponse(String name, String profilePhotoURL, String selfIntro, List<String> fields, List<String> stacks, String career, List<String> refLinks, List<FileResponse> refFiles) {
         this.name = name;
         this.profilePhotoURL = profilePhotoURL;
         this.selfIntro = selfIntro;
         this.fields = fields;
         this.stacks = stacks;
         this.career = career;
-        this.refLink = refLink;
-        this.refFile = refFile;
+        this.refLinks = refLinks;
+        this.refFiles = refFiles;
     }
 }

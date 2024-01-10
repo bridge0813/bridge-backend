@@ -2,6 +2,7 @@ package com.Bridge.bridge.security;
 
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.exception.notfound.NotFoundUserException;
 import com.Bridge.bridge.exception.unauthorized.InvalidTokenException;
 import com.Bridge.bridge.exception.unauthorized.TokenExpiredException;
 import com.Bridge.bridge.repository.UserRepository;
@@ -262,7 +263,7 @@ class JwtTokenProviderTest {
 
         String fakeToken = "fake-refresh";
         //expected
-        assertThrows(EntityNotFoundException.class, () ->jwtTokenProvider.matchRefreshToken(fakeToken));
+        assertThrows(NotFoundUserException.class, () ->jwtTokenProvider.matchRefreshToken(fakeToken));
     }
 
     private HttpServletRequest setRequest(String accessToken, String refreshToken) {
