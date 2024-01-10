@@ -50,7 +50,7 @@ public class UserService {
      * 개인 프로필 등록
      */
     @Transactional
-    public boolean saveProfile(Long userId, UserProfileRequest request, MultipartFile profilePhoto, MultipartFile refFile) {
+    public boolean saveProfile(Long userId, UserProfileRequest request, MultipartFile profilePhoto, List<MultipartFile> refFiles) {
 
         User findUser = find(userId);
 
@@ -62,11 +62,14 @@ public class UserService {
             updatePhotoFile(profile, profilePhoto);
         }
 
-        // 첨부파일 등록
-        if (refFile != null) {
-            updateRefFile(profile, refFile);
-        }
+        // 첨부파일 리스트 등록
+        if (refFiles != null) {
+            List<File> newFiles = refFiles.stream()
+                    .map(f -> fileService.uploadFile(f))
+                    .collect(Collectors.toList());
 
+            profile.setRefFiles(newFiles);
+        }
         return true;
     }
 
@@ -76,22 +79,24 @@ public class UserService {
     public UserProfileResponse getProfile(Long userId) {
         User findUser = find(userId);
 
+        // 프로필이 없는 경우
         Profile profile = findUser.getProfile();
         if (profile == null) {
             throw new NotFoundProfileException();
         }
 
-       String photo = null;
+        // 프로필 사진 url 불러오기
+        String photo = null;
         if (profile.getProfilePhoto() != null) {
             photo = profile.getProfilePhoto().getUploadFileUrl();
         }
 
-        String refFile = null;
-        String originName = null;
-        File findRefFile = profile.getRefFile();
-        if (findRefFile != null) {
-            refFile = profile.getRefFile().getUploadFileUrl();
-            originName = findRefFile.getOriginName();
+        // 첨부파일 리스트 불러오기
+        List<FileResponse> fileResponseList = new ArrayList<>();
+        List<File> refFiles = profile.getRefFiles();
+        if(!refFiles.isEmpty()) {
+            refFiles.stream()
+                    .forEach(f -> fileResponseList.add(FileResponse.from(f)));
         }
 
         return UserProfileResponse.builder()
@@ -106,7 +111,7 @@ public class UserService {
                         .collect(Collectors.toList()))
                 .career(profile.getCareer())
                 .refLink(profile.getRefLink())
-                .refFile(new FileResponse(refFile, originName))
+                .refFiles(fileResponseList)
                 .build();
     }
 
@@ -127,18 +132,27 @@ public class UserService {
      */
     @Transactional
     public void updateProfile(Long userId, ProfileUpdateRequest profileUpdateRequest, MultipartFile profilePhoto,
-                              MultipartFile refFile) {
+                              List<MultipartFile> refFiles) {
         User findUser = find(userId);
         Profile profile = findUser.getProfile();
-        profile.updateProfile(profileUpdateRequest);
+        List<Long> oldFileIds = profile.updateProfile(profileUpdateRequest);
+        if (!oldFileIds.isEmpty()) {
+            oldFileIds.stream()
+                    .forEach(id -> {
+                        File file = fileService.find(id);
+                        profile.getRefFiles().remove(file);
+                        fileService.deleteFile(id);
+                    });
+        }
 
-        //파일 업데이트
+        //프로필 사진 업데이트
         if(profilePhoto != null) {
             updatePhotoFile(profile, profilePhoto);
         }
 
-        if(refFile != null) {
-            updateRefFile(profile, refFile);
+        // 첨부파일 리스트 업데이트
+        if(refFiles != null) {
+            updateRefFiles(profile, refFiles);
         }
     }
 
@@ -155,15 +169,14 @@ public class UserService {
     }
 
     /**
-     * 참조파일 업데이트
+     * 참조파일 리스트 업데이트
      */
     @Transactional
-    public void updateRefFile(Profile profile, MultipartFile file) {
-        File newFile = fileService.uploadFile(file);
-        File oldFile = profile.setRefFile(newFile);
-        if(oldFile != null) {
-            fileService.deleteFile(oldFile.getId());
-        }
+    public void updateRefFiles(Profile profile, List<MultipartFile> files) {
+        List<File> newFiles = files.stream()
+                .map(f -> fileService.uploadFile(f))
+                .collect(Collectors.toList());
+        profile.setRefFiles(newFiles);
     }
 
 

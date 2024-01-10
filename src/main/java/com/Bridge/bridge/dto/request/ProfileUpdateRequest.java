@@ -20,11 +20,14 @@ public class ProfileUpdateRequest {
 
     private String refLink;
 
+    private List<Long> fileIds;
+
     @Builder
-    public ProfileUpdateRequest(String selfIntro, String career, List<String> stack, String refLink) {
+    public ProfileUpdateRequest(String selfIntro, String career, List<String> stack, String refLink, List<Long> fileIds) {
         this.selfIntro = selfIntro;
         this.career = career;
         this.stack = stack;
         this.refLink = refLink;
+        this.fileIds = fileIds;
     }
 }

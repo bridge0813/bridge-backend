@@ -98,6 +98,13 @@ public class FileService {
         }
     }
 
+    public File find(Long fileId) {
+        File findFile = fileRepository.findById(fileId)
+                .orElseThrow(() -> new NotFoundFileException());
+
+        return findFile;
+    }
+
     // UUID 이용 파일 이름 반환
     private String getUuidFileName(String originalFilename) {
         String ext = extractExt(originalFilename);

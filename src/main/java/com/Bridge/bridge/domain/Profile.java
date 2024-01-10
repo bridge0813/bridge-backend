@@ -37,9 +37,8 @@ public class Profile {
     @JoinColumn(referencedColumnName = "file_id", name = "file_photo_id")
     private File profilePhoto;      // 프로필 사진
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "file_id", name = "file_ref_id")
-    private File refFile;           // 첨부 파일
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL)
+    private List<File> refFiles = new ArrayList<>();           // 첨부 파일
 
     @Builder
     public Profile(String refLink, String selfIntro, String career, List<Stack> skill) {
@@ -53,13 +52,29 @@ public class Profile {
         this.user = user;
     }
 
-    public void updateProfile(ProfileUpdateRequest request) {
+    public List<Long> updateProfile(ProfileUpdateRequest request) {
         this.selfIntro = request.getSelfIntro();
         this.career = request.getCareer();
         this.skill = request.getStack().stream()
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
         this.refLink = request.getRefLink();
+
+        //파일 업데이트
+        // id 중 기존과 비교, 없어진 파일은 삭제해야함
+        if (request.getFileIds() != null) {
+            List<Long> oldFileIds = this.getRefFiles().stream()
+                    .map(f -> f.getId())
+                    .collect(Collectors.toList());
+            System.out.println("oldFileIds" + oldFileIds.size());
+            System.out.println("want id" + request.getFileIds());
+
+            oldFileIds.removeAll(request.getFileIds());
+
+            System.out.println("oldFileIds" + oldFileIds.size());
+            return oldFileIds;
+        }
+        return null;
     }
 
     // --연관관계 메소드 -- //
@@ -76,16 +91,8 @@ public class Profile {
         return null;
     }
 
-    public File setRefFile(File file) {
-        // 프로필 자운 후 업데이트
-        if(Objects.nonNull(this.refFile)) {
-            File photo = this.refFile;
-            this.refFile = file;
-            file.setProfileRef(this);
-            return photo;
-        }
-        this.refFile = file;
-        file.setProfileRef(this);
-        return null;
+    public void setRefFiles(List<File> files) {
+        this.refFiles.addAll(files);
+        files.stream().forEach(f -> f.setProfile(this));
     }
 }

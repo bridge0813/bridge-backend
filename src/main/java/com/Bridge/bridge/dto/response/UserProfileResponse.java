@@ -24,10 +24,10 @@ public class UserProfileResponse {
 
     private String refLink;         // 참고 링크
 
-    private FileResponse refFile;         // 첨부 파일
+    private List<FileResponse> refFiles;         // 첨부 파일
 
     @Builder
-    public UserProfileResponse(String name, String profilePhotoURL, String selfIntro, List<String> fields, List<String> stacks, String career, String refLink, FileResponse refFile) {
+    public UserProfileResponse(String name, String profilePhotoURL, String selfIntro, List<String> fields, List<String> stacks, String career, String refLink, List<FileResponse> refFiles) {
         this.name = name;
         this.profilePhotoURL = profilePhotoURL;
         this.selfIntro = selfIntro;
@@ -35,6 +35,6 @@ public class UserProfileResponse {
         this.stacks = stacks;
         this.career = career;
         this.refLink = refLink;
-        this.refFile = refFile;
+        this.refFiles = refFiles;
     }
 }

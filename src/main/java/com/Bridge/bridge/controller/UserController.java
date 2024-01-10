@@ -62,10 +62,9 @@ public class UserController {
     public ResponseEntity<?> createProfile(@RequestParam("userId") Long userId,
                                            @RequestPart("profile") UserProfileRequest userProfileRequest,
                                            @RequestPart(value = "photo", required = false)MultipartFile photo,
-                                           @RequestPart(value = "refFile", required = false)MultipartFile refFile) {
-        userService.saveProfile(userId, userProfileRequest, photo, refFile);
+                                           @RequestPart(value = "refFiles", required = false)List<MultipartFile> refFiles) {
+        userService.saveProfile(userId, userProfileRequest, photo, refFiles);
 
-        // TODO : 리다이렉트?
         return ResponseEntity.ok(true);
     }
 
@@ -94,8 +93,8 @@ public class UserController {
     @PutMapping("/users/profile")
     public ResponseEntity<?> updateProfile(@RequestParam("userId") Long userId, @RequestPart("request") ProfileUpdateRequest request,
                                            @RequestPart(value = "photo", required = false) MultipartFile photo,
-                                           @RequestPart(value = "refFile", required = false) MultipartFile refFile) {
-        userService.updateProfile(userId, request, photo, refFile);
+                                           @RequestPart(value = "refFiles", required = false) List<MultipartFile> refFiles) {
+        userService.updateProfile(userId, request, photo, refFiles);
         return ResponseEntity.ok(true);
     }
 
