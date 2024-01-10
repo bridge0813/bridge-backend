@@ -110,7 +110,7 @@ public class UserService {
                         .map(s -> s.getValue())
                         .collect(Collectors.toList()))
                 .career(profile.getCareer())
-                .refLink(profile.getRefLink())
+                .refLinks(profile.getRefLinks())
                 .refFiles(fileResponseList)
                 .build();
     }
@@ -136,7 +136,7 @@ public class UserService {
         User findUser = find(userId);
         Profile profile = findUser.getProfile();
         List<Long> oldFileIds = profile.updateProfile(profileUpdateRequest);
-        if (!oldFileIds.isEmpty()) {
+        if (oldFileIds != null) {
             oldFileIds.stream()
                     .forEach(id -> {
                         File file = fileService.find(id);

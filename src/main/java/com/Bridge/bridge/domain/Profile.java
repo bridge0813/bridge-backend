@@ -20,12 +20,12 @@ public class Profile {
     @Column(name = "profile_id")
     private Long id;
 
-    private String refLink;         // 참고 링크
-
     private String selfIntro;       // 자기소개서
 
     private String career;          // 경력 사항
 
+    @ElementCollection
+    private List<String> refLinks = new ArrayList<>();         // 참고 링크
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<Stack> skill = new ArrayList<>();           // 기술 스택
@@ -41,8 +41,8 @@ public class Profile {
     private List<File> refFiles = new ArrayList<>();           // 첨부 파일
 
     @Builder
-    public Profile(String refLink, String selfIntro, String career, List<Stack> skill) {
-        this.refLink = refLink;
+    public Profile(List<String> refLinks, String selfIntro, String career, List<Stack> skill) {
+        this.refLinks = refLinks;
         this.selfIntro = selfIntro;
         this.career = career;
         this.skill = skill;
@@ -58,11 +58,11 @@ public class Profile {
         this.skill = request.getStack().stream()
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
-        this.refLink = request.getRefLink();
+
+        this.refLinks = request.getRefLinks() == null ? new ArrayList<>() : request.getRefLinks();
 
         //파일 업데이트
-        // id 중 기존과 비교, 없어진 파일은 삭제해야함
-        if (request.getFileIds() != null) {
+        if (request.getFileIds() != null && !request.getFileIds().isEmpty()) {
             List<Long> oldFileIds = this.getRefFiles().stream()
                     .map(f -> f.getId())
                     .collect(Collectors.toList());

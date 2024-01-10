@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,19 +22,23 @@ public class UserProfileRequest {
 
     private List<String> stack;     // 스택
 
-    private String refLink;         // 침고 링크
+    private List<String> refLinks;         // 침고 링크
 
     @Builder
-    public UserProfileRequest(String selfIntro, String career, List<String> stack, String refLink) {
+    public UserProfileRequest(String selfIntro, String career, List<String> stack, List<String> refLinks) {
         this.selfIntro = selfIntro;
         this.career = career;
         this.stack = stack;
-        this.refLink = refLink;
+        this.refLinks = refLinks;
     }
 
     public Profile toEntity() {
+        if (refLinks == null) {
+            refLinks = new ArrayList<>();
+        }
+
         return Profile.builder()
-                .refLink(refLink)
+                .refLinks(refLinks)
                 .selfIntro(selfIntro)
                 .career(career)
                 .skill(stack.stream()
