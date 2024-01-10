@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -159,7 +160,7 @@ class UserServiceTest {
 
     @Test
     @Transactional
-    @DisplayName("개인 프로필 등록 - 파일 있는 경우")
+    @DisplayName("개인 프로필 등록 - 프로필 사진 있는 경우")
     void registerProfileFile() throws IOException {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
@@ -183,6 +184,38 @@ class UserServiceTest {
         //then
         User user = userRepository.findAll().get(0);
         assertNotNull(user.getProfile().getProfilePhoto());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("개인 프로필 등록 - 첨부파일 있는 경우")
+    void registerRefFiles() throws IOException {
+        //given
+        List<MultipartFile> refFiles = new ArrayList<>();
+        MockMultipartFile file1 = new MockMultipartFile("file", "test1.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
+        MockMultipartFile file2 = new MockMultipartFile("file", "test2.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
+        refFiles.add(file1);
+        refFiles.add(file2);
+
+        User newUser = new User("bridge", Platform.APPLE, "3d");
+        User saveUser = userRepository.save(newUser);
+
+        List<String> stack = new ArrayList<>();
+        stack.add("SPRING");
+        stack.add("JAVA");
+
+        UserProfileRequest request = UserProfileRequest.builder()
+                .selfIntro("자기 소개서")
+                .career("대학생")
+                .stack(stack)
+                .build();
+
+        //when
+        userService.saveProfile(saveUser.getId(), request, null, refFiles);
+
+        //then
+        User user = userRepository.findAll().get(0);
+        assertEquals(2L, user.getProfile().getRefFiles().size());
     }
 
     @Test
