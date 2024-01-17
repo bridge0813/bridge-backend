@@ -6,7 +6,7 @@
 
 <br>
 
-<img src="https://github.com/bridge0813/bridge-backend/assets/102718303/ea6291f0-dc8d-4903-873c-7f6bc94eecf3">
+<img width="800px" src="https://github.com/bridge0813/bridge-backend/assets/102718303/ea6291f0-dc8d-4903-873c-7f6bc94eecf3">
 
 <br>
 
@@ -37,11 +37,16 @@
 
 ## ERD
 
-![브릿지 ERD](https://github.com/bridge0813/bridge-backend/assets/102718303/89a20b08-e3d5-431b-bdb6-9c1bee4b8c8e)
+<img width="830px" src="https://github.com/bridge0813/bridge-backend/assets/102718303/89a20b08-e3d5-431b-bdb6-9c1bee4b8c8e">
 
-
+</br>
 
 ## 시스템 아키텍처
+
+<img width="650px" src="https://github.com/bridge0813/bridge-backend/assets/102718303/87193b9c-a469-4855-94f5-5d113edb31e6">
+
+
+<br>
 
 ## 💻 기술 스택
 
