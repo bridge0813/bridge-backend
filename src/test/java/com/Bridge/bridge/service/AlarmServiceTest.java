@@ -212,28 +212,28 @@ public class AlarmServiceTest {
                 .sendDateTime(LocalDateTime.now())
                 .rcvUser(user1)
                 .build();
-//        Alarm alarm2 = Alarm.builder()
-//                .type("Applier")
-//                .title("지원자 등장? - 2")
-//                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
-//                .sendDateTime(LocalDateTime.now())
-//                .rcvUser(user1)
-//                .build();
-//        Alarm alarm3 = Alarm.builder()
-//                .type("Apply")
-//                .title("지원 결과 도착")
-//                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
-//                .sendDateTime(LocalDateTime.now())
-//                .rcvUser(user1)
-//                .build();
+        Alarm alarm2 = Alarm.builder()
+                .type("Applier")
+                .title("지원자 등장? - 2")
+                .content("내 프로젝트에 누군가 지원했어요 지원자 프로필을 확인하고 채팅을 시작해보세요!")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user1)
+                .build();
+        Alarm alarm3 = Alarm.builder()
+                .type("Apply")
+                .title("지원 결과 도착")
+                .content("내가 지원한 프로젝트의 결과가 나왔어요. 관리 페이지에서 확인해보세요.")
+                .sendDateTime(LocalDateTime.now())
+                .rcvUser(user1)
+                .build();
 
         alarmRepository.save(alarm1);
-//        alarmRepository.save(alarm2);
-//        alarmRepository.save(alarm3);
+        alarmRepository.save(alarm2);
+        alarmRepository.save(alarm3);
 
         user1.getRcvAlarms().add(alarm1);
-//        user1.getRcvAlarms().add(alarm2);
-//        user1.getRcvAlarms().add(alarm3);
+        user1.getRcvAlarms().add(alarm2);
+        user1.getRcvAlarms().add(alarm3);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -253,44 +253,6 @@ public class AlarmServiceTest {
 
     }
 
-    @DisplayName("알람 테스트")
-    @Test
-    void sendAlarm() throws FirebaseMessagingException {
-        Notification notification = Notification.builder()
-                .setTitle("알림 속 시간 테스트 - 백엔드")
-                .setBody("4시 55분에 보내는 알람입니다 시간 들어가 있나요???")
-                .build();
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        Message message = Message.builder()
-                .setToken("dMhu4U_m3El1vGsQ6ZjO5K:APA91bF5Pp7m2oHv3O4spjT6whrkQvbKVc6wnQQdb-DrhlB8xcf8Fwx6BTMlAfhnn1sLEomm-stZOW2xcEbzRGYtoFncFLCkTDooF7env6P2-Jw4IDR8srIt-1GFbhKBFblxD7oB1yU1")
-                .setNotification(notification)
-                .putData("time", localDateTime.toString())
-                .build();
-
-        firebaseMessaging.send(message);
 
 
-    }
-
-    @DisplayName("채팅 알람 테스트")
-    @Test
-    void chatAlarmTest() throws FirebaseMessagingException {
-        ChatMessageRequest chatMessageRequest = ChatMessageRequest.builder()
-                .messageId("afadfsdfasdfasdf")
-                .chatRoomId("21c09835-20f6-4c20-9589-97905febd7bd")
-                .type(ChatMessageRequest.MessageType.TALK)
-                .senderId(5L)
-                .message("chat alarm test")
-                .readStat(false)
-                .build();
-
-        //메세지 저장
-        ChatMessageRequest messageRequest = chatService.saveMessage(chatMessageRequest);
-
-//        //메세지 클라이언트로 전송
-//        chatService.sendMesssage(messageRequest);
-
-    }
 }
