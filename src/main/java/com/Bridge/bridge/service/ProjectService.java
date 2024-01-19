@@ -137,7 +137,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 모집글 검색(제목+내용) - 지민
+        Func : 프로젝트 모집글 검색(제목+내용)
         Parameter : 검색어
         Return : 프로젝트 모집글 List
     */

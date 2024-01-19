@@ -69,6 +69,7 @@ class ProjectServiceTest {
 
     @DisplayName("모집글 검색 기능 test")
     @Test
+    @Transactional
     public void findProjects() {
         // given
         User user = new User("create", Platform.APPLE, "updateTest");
@@ -98,16 +99,15 @@ class ProjectServiceTest {
                 .requirement("아무거나")
                 .build());
 
-        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
-        LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
-        LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
+        LocalDateTime time = LocalDateTime.of(2100, 1,1,0,0,0);
 
         Project newProject1 = Project.builder()
                 .title("어플 프로젝트")
                 .overview("This is new Project.")
-                .dueDate(dueDate)
-                .startDate(startDate)
-                .endDate(endDate)
+                .dueDate(time)
+                .startDate(time)
+                .endDate(time)
+                .uploadTime(time)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -119,9 +119,10 @@ class ProjectServiceTest {
         Project newProject2 = Project.builder()
                 .title("New project")
                 .overview("This is 맛집 어프")
-                .dueDate(dueDate)
-                .startDate(startDate)
-                .endDate(endDate)
+                .dueDate(time)
+                .startDate(time)
+                .endDate(time)
+                .uploadTime(time)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
                 .user(user)
@@ -168,7 +169,7 @@ class ProjectServiceTest {
                 .requirement("아무거나")
                 .build());
 
-        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(2050,1,12,0,0,0);
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
@@ -588,7 +589,7 @@ class ProjectServiceTest {
                 .requirement("skill2")
                 .build());
 
-        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(2050,1,12,0,0,0);
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
@@ -663,7 +664,7 @@ class ProjectServiceTest {
                 .overview("overview1")
                 .user(user1)
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         Project project2 = Project.builder()
@@ -671,7 +672,7 @@ class ProjectServiceTest {
                 .overview("overview2")
                 .user(user1)
                 .stage("stage2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         projectRepository.save(project1);
@@ -714,7 +715,7 @@ class ProjectServiceTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         projectRepository.save(project1);
@@ -743,7 +744,7 @@ class ProjectServiceTest {
         assertEquals("결과 대기중", response.getStage());
         assertEquals("title1", response.getTitle());
         assertEquals("overview1", response.getOverview());
-        assertEquals(String.valueOf(LocalDateTime.of(2024,1,12,0,0,0)), response.getDueDate());
+        assertEquals(String.valueOf(LocalDateTime.of(2050,1,12,0,0,0)), response.getDueDate());
     }
     @Test
     @Transactional
@@ -759,7 +760,7 @@ class ProjectServiceTest {
                 .overview("overview1")
                 .user(user1)
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -820,7 +821,7 @@ class ProjectServiceTest {
         Project newProject1 = Project.builder()
                 .title("Find MyProject1")
                 .overview("This is My Project1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,2,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,3,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -835,7 +836,7 @@ class ProjectServiceTest {
         Project newProject2 = Project.builder()
                 .title("Find MyProject2")
                 .overview("This is My Project2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -945,7 +946,7 @@ class ProjectServiceTest {
         Project newProject1 = Project.builder()
                 .title("Find AllProject1")
                 .overview("This is My Project1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -960,7 +961,7 @@ class ProjectServiceTest {
         Project newProject2 = Project.builder()
                 .title("Find AllProject2")
                 .overview("This is My Project2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -975,7 +976,7 @@ class ProjectServiceTest {
         Project newProject3 = Project.builder()
                 .title("Find AllProject3")
                 .overview("This is My Project3")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1067,7 +1068,7 @@ class ProjectServiceTest {
         Project newProject1 = Project.builder()
                 .title("Find AllProject1")
                 .overview("This is My Project1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1082,7 +1083,7 @@ class ProjectServiceTest {
         Project newProject2 = Project.builder()
                 .title("Find AllProject2")
                 .overview("This is My Project2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1097,7 +1098,7 @@ class ProjectServiceTest {
         Project newProject3 = Project.builder()
                 .title("Find AllProject3")
                 .overview("This is My Project3")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1150,7 +1151,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1164,9 +1165,6 @@ class ProjectServiceTest {
 
         // when
         ProjectResponse response = projectService.closeProject(newProject.getId());
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-        String formatedNow = localDateTime.format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss"));
 
         // then
         Assertions.assertThat(response.getDueDate()).isNotEqualTo(newProject.getDueDate());
@@ -1235,7 +1233,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1286,7 +1284,7 @@ class ProjectServiceTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -1338,7 +1336,7 @@ class ProjectServiceTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -1400,7 +1398,7 @@ class ProjectServiceTest {
                 .overview("overview1")
                 .stage("stage1")
                 .user(user3)
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         ApplyProject applyProject1 = new ApplyProject();
@@ -1452,7 +1450,7 @@ class ProjectServiceTest {
                 .overview("overview1")
                 .stage("stage1")
                 .user(user3)
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         ApplyProject applyProject1 = new ApplyProject();
@@ -1526,7 +1524,7 @@ class ProjectServiceTest {
                 .overview("overview1")
                 .user(user2)
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -1558,7 +1556,7 @@ class ProjectServiceTest {
                 .overview("overview1")
                 .stage("stage1")
                 .user(saveUser2)
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -1601,7 +1599,7 @@ class ProjectServiceTest {
 
             Project newProject = Project.builder()
                     .title("제목"+i)
-                    .dueDate(LocalDateTime.of(2024, 11, i,0,0,0))
+                    .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
                     .build();
 
             recruit.stream().forEach(p -> p.setProject(newProject));
@@ -1651,7 +1649,7 @@ class ProjectServiceTest {
 
             Project newProject = Project.builder()
                     .title("제목" + i)
-                    .dueDate(LocalDateTime.of(2024, 11, i, 0, 0, 0))
+                    .dueDate(LocalDateTime.of(year, month, i, 23, 59, 59))
                     .build();
 
             recruit.stream().forEach(p -> p.setProject(newProject));
@@ -1668,7 +1666,7 @@ class ProjectServiceTest {
         List<TopProjectResponse> result = projectService.topProjects(null);
 
         // then
-        Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목1");
+        Assertions.assertThat(result.size()).isEqualTo(31 - day);
     }
 
     @DisplayName("마감 임박 프로젝트 조회 기능")
@@ -1698,7 +1696,7 @@ class ProjectServiceTest {
 
             Project project2 = Project.builder()
                     .title("project"+(i+21))
-                    .dueDate(LocalDateTime.of(2024,11,i+1,0,0,0))
+                    .dueDate(LocalDateTime.of(2050,11,i+1,0,0,0))
                     .build();
             recruit.get(0).setProject(project2);
             projectRepository.save(project2);
@@ -1709,9 +1707,9 @@ class ProjectServiceTest {
 
         // then
         Assertions.assertThat(responses.size()).isEqualTo(20);
-        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(2024,11,1,0,0,0).toString());
+        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(2050,11,1,0,0,0).toString());
         Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project21");
-        Assertions.assertThat(responses.get(19).getDueDate()).isEqualTo(LocalDateTime.of(2024,11,20,0,0,0).toString());
+        Assertions.assertThat(responses.get(19).getDueDate()).isEqualTo(LocalDateTime.of(2050,11,20,0,0,0).toString());
         Assertions.assertThat(responses.get(19).getTitle()).isEqualTo("project40");
     }
 
