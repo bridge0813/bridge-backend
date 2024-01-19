@@ -89,7 +89,7 @@ class ProjectControllerTest {
                 .requirement("아무거나")
                 .build());
 
-        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(2050,1,12,0,0,0);
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
@@ -130,13 +130,13 @@ class ProjectControllerTest {
 
         List<PartRequest> recruit = new ArrayList<>();
         recruit.add(PartRequest.builder()
-                .recruitPart("backend")
+                .recruitPart("BACKEND")
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
                 .build());
 
-        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(2050,1,12,0,0,0);
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
@@ -177,13 +177,13 @@ class ProjectControllerTest {
 
         List<PartRequest> recruit = new ArrayList<>();
         recruit.add(PartRequest.builder()
-                .recruitPart("backend")
+                .recruitPart("BACKEND")
                 .recruitNum(3)
                 .recruitSkill(skill)
                 .requirement("아무거나")
                 .build());
 
-        LocalDateTime dueDate = LocalDateTime.of(2024,1,12,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(2050,1,12,0,0,0);
         LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
         LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
 
@@ -208,7 +208,7 @@ class ProjectControllerTest {
 
         List<PartRequest> updateRecruit = new ArrayList<>();
         updateRecruit.add(PartRequest.builder()
-                .recruitPart("frontend")
+                .recruitPart("FRONTEND")
                 .recruitNum(2)
                 .recruitSkill(updateSkill)
                 .requirement("화이팅")
@@ -217,7 +217,7 @@ class ProjectControllerTest {
         ProjectUpdateRequest updateProject = ProjectUpdateRequest.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .recruit(updateRecruit)
@@ -262,7 +262,7 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("Find project")
                 .overview("This is the project that i find")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -303,7 +303,7 @@ class ProjectControllerTest {
 
         List<PartRequest> recruit1 = new ArrayList<>();
         recruit1.add(PartRequest.builder()
-                .recruitPart("Backend")
+                .recruitPart("BACKEND")
                 .recruitNum(3)
                 .recruitSkill(skill1)
                 .requirement("Backend")
@@ -311,7 +311,7 @@ class ProjectControllerTest {
 
         List<PartRequest> recruit2 = new ArrayList<>();
         recruit2.add(PartRequest.builder()
-                .recruitPart("frontend")
+                .recruitPart("FRONTEND")
                 .recruitNum(1)
                 .recruitSkill(skill2)
                 .requirement("frontend")
@@ -320,7 +320,7 @@ class ProjectControllerTest {
         ProjectRequest newProject1 = ProjectRequest.builder()
                 .title("This is what i find")
                 .overview("This is backend Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit1)
@@ -333,7 +333,7 @@ class ProjectControllerTest {
         ProjectRequest newProject2 = ProjectRequest.builder()
                 .title("This is not what i find")
                 .overview("This is frontend Project.")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0).toString())
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0).toString())
                 .startDate("2023-09-11")
                 .endDate("2023-09-30")
                 .recruit(recruit2)
@@ -351,7 +351,7 @@ class ProjectControllerTest {
         findSkills.add("SPRINGBOOT");
 
         FilterRequest filterRequest = FilterRequest.builder()
-                .part("Backend")
+                .part("BACKEND")
                 .skills(findSkills)
                 .build();
 
@@ -363,8 +363,6 @@ class ProjectControllerTest {
                 .compact();
 
         // when
-        String expectByTitle = "$.[?(@.title == '%s')]";
-
         mockMvc.perform(post("/projects/category")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -411,7 +409,7 @@ class ProjectControllerTest {
         Project newProject1 = Project.builder()
                 .title("Find MyProject1")
                 .overview("This is My Project1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,2,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,3,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -426,7 +424,7 @@ class ProjectControllerTest {
         Project newProject2 = Project.builder()
                 .title("Find MyProject2")
                 .overview("This is My Project2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -513,7 +511,7 @@ class ProjectControllerTest {
         Project newProject1 = Project.builder()
                 .title("Find AllProject1")
                 .overview("This is My Project1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -528,7 +526,7 @@ class ProjectControllerTest {
         Project newProject2 = Project.builder()
                 .title("Find AllProject2")
                 .overview("This is My Project2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -543,7 +541,7 @@ class ProjectControllerTest {
         Project newProject3 = Project.builder()
                 .title("Find AllProject3")
                 .overview("This is My Project3")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -641,7 +639,7 @@ class ProjectControllerTest {
         Project newProject1 = Project.builder()
                 .title("Find AllProject1")
                 .overview("This is My Project1")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -656,7 +654,7 @@ class ProjectControllerTest {
         Project newProject2 = Project.builder()
                 .title("Find AllProject2")
                 .overview("This is My Project2")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -671,7 +669,7 @@ class ProjectControllerTest {
         Project newProject3 = Project.builder()
                 .title("Find AllProject3")
                 .overview("This is My Project3")
-                .dueDate(LocalDateTime.of(2024,1,12,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .endDate(LocalDateTime.of(2024,1,12,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -746,7 +744,7 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("Find project")
                 .overview("This is the project that i find")
-                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -758,12 +756,13 @@ class ProjectControllerTest {
         recruit.get(0).setProject(newProject);
         Project theProject = projectRepository.save(newProject);
 
-        Long projectId = theProject.getId();
+        JSONObject body = new JSONObject();
+        body.appendField("projectId", theProject.getId());
 
         // when
         mockMvc.perform(post("/project/deadline")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(projectId)))
+                        .content(objectMapper.writeValueAsString(body)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(newProject.getTitle()))
                 .andDo(print());
@@ -793,7 +792,7 @@ class ProjectControllerTest {
         Project newProject = Project.builder()
                 .title("New project")
                 .overview("This is new Project.")
-                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .startDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .endDate(LocalDateTime.of(2023,11,1,0,0,0))
                 .tagLimit(new ArrayList<>())
@@ -805,18 +804,20 @@ class ProjectControllerTest {
         recruit.get(0).setProject(newProject);
         newProject = projectRepository.save(newProject);
 
-        Long projectId = newProject.getId();
+        JSONObject body = new JSONObject();
+        body.appendField("projectId", newProject.getId());
 
         String token = Jwts.builder()
                 .setSubject(String.valueOf(user.getId()))
                 .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
                 .compact();
 
+
         // when
         mockMvc.perform(post("/project/scrap")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(projectId)))
+                        .content(objectMapper.writeValueAsString(body)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.scrap").value("스크랩이 설정되었습니다."))
                 .andDo(print());
@@ -834,7 +835,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .build();
 
         projectRepository.save(project1);
@@ -859,7 +860,7 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].stage").value("결과 대기중"))
                 .andExpect(jsonPath("$[0].title").value("title1"))
                 .andExpect(jsonPath("$[0].overview").value("overview1"))
-                .andExpect(jsonPath("$[0].dueDate").value(LocalDateTime.of(2024,11,1,0,0,0).toString()))
+                .andExpect(jsonPath("$[0].dueDate").value(LocalDateTime.of(2050,11,1,0,0,0).toString()))
                 .andDo(print());
     }
 
@@ -878,7 +879,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .user(user1)
                 .build();
 
@@ -909,7 +910,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2024,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .build();
 
         Project saveProject = projectRepository.save(project1);
@@ -955,7 +956,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .build();
 
         ApplyProject applyProject1 = new ApplyProject();
@@ -987,7 +988,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .user(user1)
                 .build();
 
@@ -1026,7 +1027,7 @@ class ProjectControllerTest {
                 .title("title1")
                 .overview("overview1")
                 .stage("stage1")
-                .dueDate(LocalDateTime.of(2023,11,1,0,0,0))
+                .dueDate(LocalDateTime.of(2050,11,1,0,0,0))
                 .user(user1)
                 .build();
 

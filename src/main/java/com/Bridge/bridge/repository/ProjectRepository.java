@@ -27,7 +27,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query(value = "SELECT distinct p FROM Project AS p LEFT JOIN FETCH p.recruit WHERE p.dueDate >= :dueDate ORDER BY p.uploadTime")
     List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(@Param("dueDate") LocalDateTime dueDate);
-    //List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(LocalDateTime dueDate);
+//    List<Project> findAllByDueDateGreaterThanEqualOrderByUploadTime(LocalDateTime dueDate);
 
     List<Project> findTop20ByDueDateGreaterThanEqualOrderByBookmarkNumDesc(LocalDateTime dueDate);
 
