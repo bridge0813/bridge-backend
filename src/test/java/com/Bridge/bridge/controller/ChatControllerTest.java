@@ -7,7 +7,10 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatRoomRequest;
 import com.Bridge.bridge.repository.ChatRepository;
 import com.Bridge.bridge.repository.UserRepository;
+import com.Bridge.bridge.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,6 +48,9 @@ class ChatControllerTest {
 
     @Autowired
     private ChatRepository chatRepository;
+
+    @Autowired
+    private JwtTokenProvider provider;
 
     @BeforeEach
     void clean() {
@@ -99,8 +106,11 @@ class ChatControllerTest {
         chatRepository.save(room1);
         chatRepository.save(room2);
 
+        String accessToken = provider.createAccessToken(saveUser1.getId());
+
         //expected
         mockMvc.perform(get("/chat/{userId}", saveUser1.getId())
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].roomName").value("bridge2"))

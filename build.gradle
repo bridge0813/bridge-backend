@@ -46,6 +46,7 @@ dependencies {
 
 	implementation 'com.mysql:mysql-connector-j'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	implementation 'org.projectlombok:lombok:1.18.22'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"

@@ -22,7 +22,12 @@ public class FCMConfig {
                         firebaseResource.getInputStream()))
                 .build();
 
-        return FirebaseApp.initializeApp(options);
+        if (FirebaseApp.getApps().isEmpty()) {
+            return FirebaseApp.initializeApp(options);
+        }
+        else {
+            return FirebaseApp.getApps().get(0);
+        }
     }
 
     @Bean

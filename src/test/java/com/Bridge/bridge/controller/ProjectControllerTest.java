@@ -53,10 +53,10 @@ class ProjectControllerTest {
     private ProjectRepository projectRepository;
 
     @Autowired
-    SearchWordRepository searchWordRepository;
+    private SearchWordRepository searchWordRepository;
 
     @Autowired
-    BookmarkRepository bookmarkRepository;
+    private BookmarkRepository bookmarkRepository;
 
     @Autowired
     private ProjectService projectService;

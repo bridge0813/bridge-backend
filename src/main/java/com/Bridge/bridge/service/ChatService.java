@@ -186,7 +186,7 @@ public class ChatService {
                 message.setMessage("소중한 지원 감사드립니다!\n아쉽지만 다음 기회에..");
                 break;
         }
-        LocalDateTime sendTime = LocalDateTime.now(ZoneId.of("Asia/Tokyo")).withNano(0);
+        LocalDateTime sendTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")).withNano(0);
         message.setSendTime(sendTime);
 
         // 현 인원에 따른 메세지 읽음 여부 변경
