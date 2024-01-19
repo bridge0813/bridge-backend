@@ -47,11 +47,11 @@ public class AlarmServiceTest {
     @Autowired
     private ChatService chatService;
 
-//    @BeforeEach
-//    void clean() {
-//        userRepository.deleteAll();
-//        alarmRepository.deleteAll();
-//    }
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+        alarmRepository.deleteAll();
+    }
 
     @DisplayName("모든 알람 조회")
     @Test
@@ -249,7 +249,7 @@ public class AlarmServiceTest {
 
         // then
 
-        Assertions.assertThat(responses.size()).isEqualTo(0);
+        Assertions.assertThat(responses.size()).isEqualTo(2);
 
     }
 
