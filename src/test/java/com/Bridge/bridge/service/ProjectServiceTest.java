@@ -1666,7 +1666,7 @@ class ProjectServiceTest {
         List<TopProjectResponse> result = projectService.topProjects(null);
 
         // then
-        Assertions.assertThat(result.size()).isEqualTo(31 - day);
+        Assertions.assertThat(result.size()).isEqualTo(30 - day + 1);
     }
 
     @DisplayName("마감 임박 프로젝트 조회 기능")
@@ -1677,7 +1677,12 @@ class ProjectServiceTest {
         User user = new User("bridge1", Platform.APPLE, "1");
         userRepository.save(user);
 
-        for (int i=0; i<20; i++){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        int day = now.getDayOfMonth();
+
+        for (int i=1; i<31; i++){
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
                     .recruitPart(Field.BACKEND)
@@ -1687,30 +1692,28 @@ class ProjectServiceTest {
                     .build());
 
             Project project = Project.builder()
-                    .title("project"+(i+1))
-                    .dueDate(LocalDateTime.of(2023,9,30-(i%30),0,0,0))
+                    .title("project"+i)
+                    .dueDate(LocalDateTime.of(year, month, i,23,59,59))
                     .build();
 
             recruit.get(0).setProject(project);
             projectRepository.save(project);
 
-            Project project2 = Project.builder()
-                    .title("project"+(i+21))
-                    .dueDate(LocalDateTime.of(2050,11,i+1,0,0,0))
-                    .build();
-            recruit.get(0).setProject(project2);
-            projectRepository.save(project2);
+//            Project project2 = Project.builder()
+//                    .title("project"+(i+21))
+//                    .dueDate(LocalDateTime.of(2050,11,i+1,0,0,0))
+//                    .build();
+//            recruit.get(0).setProject(project2);
+//            projectRepository.save(project2);
         }
 
         // when
         List<imminentProjectResponse> responses = projectService.getdeadlineImminentProejcts(user.getId());
 
         // then
-        Assertions.assertThat(responses.size()).isEqualTo(20);
-        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(2050,11,1,0,0,0).toString());
-        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project21");
-        Assertions.assertThat(responses.get(19).getDueDate()).isEqualTo(LocalDateTime.of(2050,11,20,0,0,0).toString());
-        Assertions.assertThat(responses.get(19).getTitle()).isEqualTo("project40");
+        Assertions.assertThat(responses.size()).isEqualTo(30 - day + 1);
+        Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(year,month,day,23,59,59).toString());
+        Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project" + day);
     }
 
 }
