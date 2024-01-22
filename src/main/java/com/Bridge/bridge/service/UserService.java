@@ -3,12 +3,14 @@ package com.Bridge.bridge.service;
 import com.Bridge.bridge.domain.Field;
 import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Profile;
+import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.FieldUpdateRequest;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.BookmarkListResponse;
+import com.Bridge.bridge.dto.response.FieldAndStackResponse;
 import com.Bridge.bridge.dto.response.FileResponse;
 import com.Bridge.bridge.dto.response.MyPageResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,16 +102,16 @@ public class UserService {
                     .forEach(f -> fileResponseList.add(FileResponse.from(f)));
         }
 
+        //필드 + 스택 변환
+        List<FieldAndStackResponse> fieldAndStackResponses = new ArrayList<>();
+        profile.getFieldAndStacks().stream()
+                .forEach(l -> fieldAndStackResponses.add(FieldAndStackResponse.from(l)));
+
         return UserProfileResponse.builder()
                 .name(findUser.getName())
                 .profilePhotoURL(photo)
                 .selfIntro(profile.getSelfIntro())
-                .fields(findUser.getFields().stream()
-                        .map(f -> f.getValue())
-                        .collect(Collectors.toList()))
-                .stacks(profile.getSkill().stream()
-                        .map(s -> s.getValue())
-                        .collect(Collectors.toList()))
+                .fieldAndStacks(fieldAndStackResponses)
                 .career(profile.getCareer())
                 .refLinks(profile.getRefLinks())
                 .refFiles(fileResponseList)
