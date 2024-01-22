@@ -57,10 +57,14 @@ public class Profile {
         this.career = request.getCareer();
 
         //필드 + 스택 업데이트
+        this.fieldAndStacks.clear();
         List<FieldAndStack> newFieldAndStacks = request.getFieldAndStacks().stream()
                 .map(l -> l.toEntity())
                 .collect(Collectors.toList());
-        setFieldAndStacks(newFieldAndStacks);
+
+        this.fieldAndStacks.addAll(newFieldAndStacks);
+        newFieldAndStacks.stream()
+                .forEach(l -> l.setProfile(this));
 
         this.refLinks = request.getRefLinks() == null ? new ArrayList<>() : request.getRefLinks();
 
