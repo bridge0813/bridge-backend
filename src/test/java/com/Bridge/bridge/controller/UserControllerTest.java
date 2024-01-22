@@ -2,12 +2,14 @@ package com.Bridge.bridge.controller;
 
 import com.Bridge.bridge.domain.Bookmark;
 import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.FieldAndStack;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FieldAndStackRequest;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
@@ -29,7 +31,9 @@ import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -83,17 +87,20 @@ class UserControllerTest {
         User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
-        List<String> stack = new ArrayList<>();
-        stack.add("SPRING");
-        stack.add("JAVA");
 
+        List<String> stacks = new ArrayList<>();
+        stacks.add("SPRING");
+        stacks.add("JAVA");
 
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", stacks);
+        List<FieldAndStackRequest> list = new ArrayList<>();
+        list.add(fieldAndStackRequest);
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .refLinks(null)
                 .selfIntro("자기 소개서")
                 .career("대학생")
-                .stack(stack)
+                .fieldAndStacks(list)
                 .build();
         MockMultipartFile file = new MockMultipartFile("photo", "test.jpg", "image/jpg", new FileInputStream("/Users/kh/Desktop/file/테이블.jpg"));
         MockMultipartFile profile = new MockMultipartFile("profile", "profile", "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
@@ -116,12 +123,17 @@ class UserControllerTest {
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
-        skills.add(Stack.REDIS);
+        skills.add(Stack.JAVA);
+
+        FieldAndStack fieldAndStack = new FieldAndStack(Field.BACKEND, skills);
+        List<FieldAndStack> list = new ArrayList<>();
+        list.add(fieldAndStack);
 
         List<String> links = new ArrayList<>();
         links.add("testLink");
 
-        Profile profile = new Profile(links, "selfIntro", "career", skills);
+        Profile profile = new Profile(links, "selfIntro", "career");
+        profile.setFieldAndStacks(list);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -135,8 +147,6 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("bridge"))
                 .andExpect(jsonPath("$.selfIntro").value("selfIntro"))
-                .andExpect(jsonPath("$.fields[0]").value("백엔드"))
-                .andExpect(jsonPath("$.stacks[0]").value("Spring"))
                 .andExpect(jsonPath("$.career").value("career"))
                 .andExpect(jsonPath("$.refLinks[0]").value("testLink"))
                 .andDo(print());
@@ -150,12 +160,17 @@ class UserControllerTest {
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
-        skills.add(Stack.REDIS);
+        skills.add(Stack.JAVA);
+
+        FieldAndStack fieldAndStack = new FieldAndStack(Field.BACKEND, skills);
+        List<FieldAndStack> list = new ArrayList<>();
+        list.add(fieldAndStack);
 
         List<String> links = new ArrayList<>();
         links.add("testLink");
 
-        Profile profile = new Profile(links, "selfIntro", "career", skills);
+        Profile profile = new Profile(links, "selfIntro", "career");
+        profile.setFieldAndStacks(list);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -164,6 +179,11 @@ class UserControllerTest {
 
         List<String> newSkills = new ArrayList<>();
         newSkills.add("MYSQL");
+        newSkills.add("JAVA");
+
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", newSkills);
+        List<FieldAndStackRequest> newList = new ArrayList<>();
+        newList.add(fieldAndStackRequest);
 
         List<String> links2 = new ArrayList<>();
         links.add("updateLink");
@@ -173,7 +193,7 @@ class UserControllerTest {
                 .selfIntro("updateIntro")
                 .refLinks(links2)
                 .career("updateCareer")
-                .stack(newSkills)
+                .fieldAndStacks(newList)
                 .build();
 
         MockMultipartFile request = new MockMultipartFile("request", "profile", "application/json", objectMapper.writeValueAsString(updateRequest).getBytes(StandardCharsets.UTF_8));
@@ -201,7 +221,8 @@ class UserControllerTest {
         Project project = Project.builder()
                 .title("title")
                 .overview("overview")
-                .dueDate(now)
+                .dueDate(now.plusDays(1L))
+                .uploadTime(now)
                 .build();
 
         recruits.stream().forEach(p -> p.setProject(project));
@@ -218,7 +239,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("title"))
-                .andExpect(jsonPath("$[0].dueDate").value(String.valueOf(now)))
+                .andExpect(jsonPath("$[0].dday").value(1L))
                 .andExpect(jsonPath("$[0].recruitTotalNum").value(5))
                 .andDo(print());
     }

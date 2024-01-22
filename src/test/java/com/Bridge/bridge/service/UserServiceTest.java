@@ -2,6 +2,7 @@ package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Bookmark;
 import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.FieldAndStack;
 import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Part;
 import com.Bridge.bridge.domain.Platform;
@@ -9,10 +10,12 @@ import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Project;
 import com.Bridge.bridge.domain.Stack;
 import com.Bridge.bridge.domain.User;
+import com.Bridge.bridge.dto.request.FieldAndStackRequest;
 import com.Bridge.bridge.dto.request.ProfileUpdateRequest;
 import com.Bridge.bridge.dto.request.UserFieldRequest;
 import com.Bridge.bridge.dto.request.UserProfileRequest;
 import com.Bridge.bridge.dto.response.BookmarkListResponse;
+import com.Bridge.bridge.dto.response.FieldAndStackResponse;
 import com.Bridge.bridge.dto.response.MyPageResponse;
 import com.Bridge.bridge.dto.response.UserProfileResponse;
 import com.Bridge.bridge.exception.notfound.NotFoundProfileException;
@@ -34,7 +37,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -136,9 +141,13 @@ class UserServiceTest {
         User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
-        List<String> stack = new ArrayList<>();
-        stack.add("SPRING");
-        stack.add("JAVA");
+        List<String> stacks = new ArrayList<>();
+        stacks.add("SPRING");
+        stacks.add("JAVA");
+
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", stacks);
+        List<FieldAndStackRequest> list = new ArrayList<>();
+        list.add(fieldAndStackRequest);
 
         List<String> refLinks = new ArrayList<>();
         refLinks.add("link");
@@ -147,7 +156,7 @@ class UserServiceTest {
                 .refLinks(refLinks)
                 .selfIntro("자기 소개서")
                 .career("대학생")
-                .stack(stack)
+                .fieldAndStacks(list)
                 .build();
 
         //when
@@ -157,8 +166,10 @@ class UserServiceTest {
         User user = userRepository.findAll().get(0);
         assertEquals("자기 소개서", user.getProfile().getSelfIntro());
         assertEquals("대학생", user.getProfile().getCareer());
-        assertEquals(2, user.getProfile().getSkill().size());
-        assertEquals("Java", user.getProfile().getSkill().get(1).getValue());
+        assertEquals(1, user.getProfile().getFieldAndStacks().size());
+        FieldAndStack fieldAndStack = user.getProfile().getFieldAndStacks().get(0);
+        assertEquals(Field.BACKEND, fieldAndStack.getField());
+        assertEquals(Stack.SPRING, fieldAndStack.getStacks().get(0));
     }
 
     @Test
@@ -171,14 +182,18 @@ class UserServiceTest {
         User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
-        List<String> stack = new ArrayList<>();
-        stack.add("SPRING");
-        stack.add("JAVA");
+        List<String> stacks = new ArrayList<>();
+        stacks.add("SPRING");
+        stacks.add("JAVA");
+
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", stacks);
+        List<FieldAndStackRequest> list = new ArrayList<>();
+        list.add(fieldAndStackRequest);
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .selfIntro("자기 소개서")
                 .career("대학생")
-                .stack(stack)
+                .fieldAndStacks(list)
                 .build();
 
         //when
@@ -203,14 +218,18 @@ class UserServiceTest {
         User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
-        List<String> stack = new ArrayList<>();
-        stack.add("SPRING");
-        stack.add("JAVA");
+        List<String> stacks = new ArrayList<>();
+        stacks.add("SPRING");
+        stacks.add("JAVA");
+
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", stacks);
+        List<FieldAndStackRequest> list = new ArrayList<>();
+        list.add(fieldAndStackRequest);
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .selfIntro("자기 소개서")
                 .career("대학생")
-                .stack(stack)
+                .fieldAndStacks(list)
                 .build();
 
         //when
@@ -228,14 +247,18 @@ class UserServiceTest {
         User newUser = new User("bridge", Platform.APPLE, "3d");
         User saveUser = userRepository.save(newUser);
 
-        List<String> stack = new ArrayList<>();
-        stack.add("SPRING");
-        stack.add("JAVA");
+        List<String> stacks = new ArrayList<>();
+        stacks.add("SPRING");
+        stacks.add("JAVA");
+
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", stacks);
+        List<FieldAndStackRequest> list = new ArrayList<>();
+        list.add(fieldAndStackRequest);
 
         UserProfileRequest request = UserProfileRequest.builder()
                 .selfIntro("자기 소개서")
                 .career("대학생")
-                .stack(stack)
+                .fieldAndStacks(list)
                 .build();
 
         //expected
@@ -251,12 +274,17 @@ class UserServiceTest {
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
-        skills.add(Stack.REDIS);
+        skills.add(Stack.JAVA);
+
+        FieldAndStack fieldAndStack = new FieldAndStack(Field.BACKEND, skills);
+        List<FieldAndStack> list = new ArrayList<>();
+        list.add(fieldAndStack);
 
         List<String> refLinks = new ArrayList<>();
         refLinks.add("testLink");
 
-        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
+        Profile profile = new Profile(refLinks, "selfIntro", "career");
+        profile.setFieldAndStacks(list);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -269,9 +297,9 @@ class UserServiceTest {
         //then
         assertEquals("bridge", profileResponse.getName());
         assertEquals("selfIntro", profileResponse.getSelfIntro());
-        assertEquals("백엔드", profileResponse.getFields().get(0));
-        assertEquals("Spring", profileResponse.getStacks().get(0));
-        assertEquals("Redis", profileResponse.getStacks().get(1));
+        FieldAndStackResponse fieldAndStackResponse = profileResponse.getFieldAndStacks().get(0);
+        assertEquals("백엔드", fieldAndStackResponse.getField());
+        assertEquals("Spring", fieldAndStackResponse.getStacks().get(0));
         assertEquals("career", profileResponse.getCareer());
         assertEquals("testLink", profileResponse.getRefLinks().get(0));
     }
@@ -295,15 +323,11 @@ class UserServiceTest {
 
         User newUser = new User("bridge", Platform.APPLE, "test");
 
-        List<Stack> skills = new ArrayList<>();
-        skills.add(Stack.SPRING);
-        skills.add(Stack.REDIS);
-
         List<String> refLinks = new ArrayList<>();
         refLinks.add("testLink");
 
 
-        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
+        Profile profile = new Profile(refLinks, "selfIntro", "career");
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
@@ -327,15 +351,10 @@ class UserServiceTest {
 
         User newUser = new User("bridge", Platform.APPLE, "test");
 
-        List<Stack> skills = new ArrayList<>();
-        skills.add(Stack.SPRING);
-        skills.add(Stack.REDIS);
-
         List<String> refLinks = new ArrayList<>();
         refLinks.add("testLink");
 
-
-        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
+        Profile profile = new Profile(refLinks, "selfIntro", "career");
         newUser.updateProfile(profile);
         User saveUser = userRepository.save(newUser);
 
@@ -358,30 +377,39 @@ class UserServiceTest {
 
         List<Stack> skills = new ArrayList<>();
         skills.add(Stack.SPRING);
-        skills.add(Stack.REDIS);
+        skills.add(Stack.JAVA);
+
+        FieldAndStack oldFieldAndStack = new FieldAndStack(Field.BACKEND, skills);
+        List<FieldAndStack> list = new ArrayList<>();
+        list.add(oldFieldAndStack);
 
         List<String> refLinks = new ArrayList<>();
         refLinks.add("testLink");
 
-
-        Profile profile = new Profile(refLinks, "selfIntro", "career", skills);
+        Profile profile = new Profile(refLinks, "selfIntro", "career");
+        profile.setFieldAndStacks(list);
 
         newUser.getFields().add(Field.BACKEND);
         newUser.updateProfile(profile);
 
         User saveUser = userRepository.save(newUser);
 
+        //업데이트
         List<String> newSkills = new ArrayList<>();
         newSkills.add("MYSQL");
+        newSkills.add("JAVA");
+
+        FieldAndStackRequest fieldAndStackRequest = new FieldAndStackRequest("BACKEND", newSkills);
+        List<FieldAndStackRequest> newList = new ArrayList<>();
+        newList.add(fieldAndStackRequest);
 
         List<String> updateRefLinks = new ArrayList<>();
         updateRefLinks.add("updateLink");
 
-
         ProfileUpdateRequest request = ProfileUpdateRequest.builder()
                 .selfIntro("updateIntro")
                 .career("updateCareer")
-                .stack(newSkills)
+                .fieldAndStacks(newList)
                 .refLinks(updateRefLinks)
                 .build();
 
@@ -392,7 +420,8 @@ class UserServiceTest {
         Profile findProfile = saveUser.getProfile();
         assertEquals("updateIntro", findProfile.getSelfIntro());
         assertEquals("updateCareer", findProfile.getCareer());
-        assertEquals("MySQL", findProfile.getSkill().get(0).getValue());
+        FieldAndStack fieldAndStack = findProfile.getFieldAndStacks().get(0);
+        assertEquals(Stack.MYSQL, fieldAndStack.getStacks().get(0));
     }
 
     @Test
