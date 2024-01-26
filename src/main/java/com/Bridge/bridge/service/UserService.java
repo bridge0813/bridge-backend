@@ -138,6 +138,7 @@ public class UserService {
                               List<MultipartFile> refFiles) {
         User findUser = find(userId);
         Profile profile = findUser.getProfile();
+        findUser.updateName(profileUpdateRequest.getName());
         List<Long> oldFileIds = profile.updateProfile(profileUpdateRequest);
         if (oldFileIds != null) {
             oldFileIds.stream()
