@@ -9,6 +9,7 @@ import com.Bridge.bridge.repository.UserRepository;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ class JwtTokenProviderTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @BeforeEach
+    void clean() {
+        userRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("유효한 JWT 토큰 셍성")
