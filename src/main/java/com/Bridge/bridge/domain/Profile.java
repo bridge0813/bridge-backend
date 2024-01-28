@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -26,9 +27,9 @@ public class Profile {
 
     @ElementCollection
     private List<String> refLinks = new ArrayList<>();         // 참고 링크
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    private List<Stack> skill = new ArrayList<>();           // 기술 스택
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FieldAndStack> fieldAndStacks = new ArrayList<>();   // 기술 스택
 
     @OneToOne(mappedBy = "profile")
     private User user;              // 해당 프로필을 작성한 유저
@@ -41,11 +42,10 @@ public class Profile {
     private List<File> refFiles = new ArrayList<>();           // 첨부 파일
 
     @Builder
-    public Profile(List<String> refLinks, String selfIntro, String career, List<Stack> skill) {
+    public Profile(List<String> refLinks, String selfIntro, String career) {
         this.refLinks = refLinks;
         this.selfIntro = selfIntro;
         this.career = career;
-        this.skill = skill;
     }
 
     public void updateUser(User user) {
@@ -55,9 +55,16 @@ public class Profile {
     public List<Long> updateProfile(ProfileUpdateRequest request) {
         this.selfIntro = request.getSelfIntro();
         this.career = request.getCareer();
-        this.skill = request.getStack().stream()
-                .map(s -> Stack.valueOf(s))
+
+        //필드 + 스택 업데이트
+        this.fieldAndStacks.clear();
+        List<FieldAndStack> newFieldAndStacks = request.getFieldAndStacks().stream()
+                .map(l -> l.toEntity())
                 .collect(Collectors.toList());
+
+        this.fieldAndStacks.addAll(newFieldAndStacks);
+        newFieldAndStacks.stream()
+                .forEach(l -> l.setProfile(this));
 
         this.refLinks = request.getRefLinks() == null ? new ArrayList<>() : request.getRefLinks();
 
@@ -94,5 +101,11 @@ public class Profile {
     public void setRefFiles(List<File> files) {
         this.refFiles.addAll(files);
         files.stream().forEach(f -> f.setProfile(this));
+    }
+
+    public void setFieldAndStacks(List<FieldAndStack> fieldAndStacks) {
+        this.fieldAndStacks = fieldAndStacks;
+        fieldAndStacks.stream()
+                .forEach(l -> l.setProfile(this));
     }
 }

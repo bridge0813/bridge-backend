@@ -369,7 +369,7 @@ class ChatServiceTest {
         chatRepository.save(room1);
 
         //when
-        chatService.readNotReadMessage("1", "1");
+        chatService.readNotReadMessage("1", String.valueOf(saveUser1.getId()));
 
         //then
         Chat findChat = chatRepository.findAll().get(0);

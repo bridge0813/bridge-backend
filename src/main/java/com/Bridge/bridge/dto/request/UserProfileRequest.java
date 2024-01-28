@@ -1,5 +1,7 @@
 package com.Bridge.bridge.dto.request;
 
+import com.Bridge.bridge.domain.Field;
+import com.Bridge.bridge.domain.FieldAndStack;
 import com.Bridge.bridge.domain.Profile;
 import com.Bridge.bridge.domain.Stack;
 import lombok.AccessLevel;
@@ -8,7 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -20,15 +24,15 @@ public class UserProfileRequest {
 
     private String career;          // 경력 사항
 
-    private List<String> stack;     // 스택
+    private List<FieldAndStackRequest> fieldAndStacks;     // 필드와 스택
 
     private List<String> refLinks;         // 침고 링크
 
     @Builder
-    public UserProfileRequest(String selfIntro, String career, List<String> stack, List<String> refLinks) {
+    public UserProfileRequest(String selfIntro, String career, List<FieldAndStackRequest> fieldAndStacks, List<String> refLinks) {
         this.selfIntro = selfIntro;
         this.career = career;
-        this.stack = stack;
+        this.fieldAndStacks = fieldAndStacks;
         this.refLinks = refLinks;
     }
 
@@ -37,13 +41,19 @@ public class UserProfileRequest {
             refLinks = new ArrayList<>();
         }
 
-        return Profile.builder()
+        //필드 + 스택 조합 저장
+        List<FieldAndStack> fieldAndStackList = new ArrayList<>();
+        fieldAndStacks.stream()
+                .forEach(l -> fieldAndStackList.add(l.toEntity()));
+
+
+        Profile newProfile = Profile.builder()
                 .refLinks(refLinks)
                 .selfIntro(selfIntro)
                 .career(career)
-                .skill(stack.stream()
-                        .map(s -> Stack.valueOf(s))
-                        .collect(Collectors.toList()))
                 .build();
+
+        newProfile.setFieldAndStacks(fieldAndStackList);
+        return newProfile;
     }
 }

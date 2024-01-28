@@ -5,6 +5,7 @@ import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.response.OAuthTokenResponse;
 import com.Bridge.bridge.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ class AuthServiceTest {
     private UserRepository userRepository;
 
 
-    @AfterEach
+    @BeforeEach
     void clean() {
         userRepository.deleteAll();
     }

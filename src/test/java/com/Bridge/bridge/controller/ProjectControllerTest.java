@@ -1009,7 +1009,8 @@ class ProjectControllerTest {
         //expected
         mockMvc.perform(put("/projects/accept")
                         .header("Authorization", "Bearer " + token)
-                        .param("projectId", saveProject.getId().toString())
+                        .param("userId", String.valueOf(saveUser1.getId()))
+                        .param("projectId",  String.valueOf(saveProject.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))
@@ -1048,7 +1049,8 @@ class ProjectControllerTest {
         //expected
         mockMvc.perform(put("/projects/reject")
                         .header("Authorization", "Bearer " + token)
-                        .param("projectId", saveProject.getId().toString())
+                        .param("userId", String.valueOf(saveUser1.getId()))
+                        .param("projectId",  String.valueOf(saveProject.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true))

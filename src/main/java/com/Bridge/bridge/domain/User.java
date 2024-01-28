@@ -109,4 +109,8 @@ public class User {
 
         this.getFields().addAll(newFields);
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
