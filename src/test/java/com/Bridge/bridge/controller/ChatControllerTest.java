@@ -157,8 +157,8 @@ class ChatControllerTest {
                         .param("chatRoomId", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].senderType").value("MAKER"))
-                .andExpect(jsonPath("$[1].senderType").value("APPLIER"))
+                .andExpect(jsonPath("$.chatHistory[0].content").value("content1"))
+                .andExpect(jsonPath("$.chatHistory[1].content").value("content2"))
                 .andDo(print());
     }
 
