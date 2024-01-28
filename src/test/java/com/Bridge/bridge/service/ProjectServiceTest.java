@@ -21,6 +21,7 @@ import com.Bridge.bridge.repository.ProjectRepository;
 import com.Bridge.bridge.repository.SearchWordRepository;
 import com.Bridge.bridge.repository.UserRepository;
 import com.Bridge.bridge.security.JwtTokenProvider;
+import com.google.auth.oauth2.GoogleCredentials;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.assertj.core.api.Assertions;
@@ -29,9 +30,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -1545,7 +1548,7 @@ class ProjectServiceTest {
 
     @Test
     @DisplayName("프로젝트 거절하기 - 일치하는 경우")
-    void rejectApply() {
+    void rejectApply() throws IOException {
         //given
         User user1 = new User("bridge1", Platform.APPLE, "test");
         User user2 = new User("bridge2", Platform.APPLE, "test2");
@@ -1566,6 +1569,8 @@ class ProjectServiceTest {
 
         user1.getApplyProjects().add(applyProject1);
         User saveUser1 = userRepository.save(user1);
+
+
 
         //when
         projectService.rejectApply(saveProject.getId(), saveUser1.getId());
@@ -1699,12 +1704,6 @@ class ProjectServiceTest {
             recruit.get(0).setProject(project);
             projectRepository.save(project);
 
-//            Project project2 = Project.builder()
-//                    .title("project"+(i+21))
-//                    .dueDate(LocalDateTime.of(2050,11,i+1,0,0,0))
-//                    .build();
-//            recruit.get(0).setProject(project2);
-//            projectRepository.save(project2);
         }
 
         // when
