@@ -16,6 +16,8 @@ public class ApplyUserResponse {
 
     private Long userId;
 
+    private String photoUrl;
+
     private String name;
 
     private List<String> fields; //관심 분야
@@ -23,8 +25,9 @@ public class ApplyUserResponse {
     private String career;  //경력 사항
 
     @Builder
-    private ApplyUserResponse(Long userId, String name, List<String> fields, String career) {
+    private ApplyUserResponse(Long userId, String photoUrl, String name, List<String> fields, String career) {
         this.userId = userId;
+        this.photoUrl = photoUrl;
         this.name = name;
         this.fields = fields;
         this.career = career;
@@ -33,6 +36,13 @@ public class ApplyUserResponse {
     // 지원한 프로젝트를 통한 응답 DTO 생성
     public static ApplyUserResponse from(ApplyProject project) {
         User applyUser = project.getUser();
+
+        String photoUrl = "no photo";
+        if (applyUser.getProfile() != null) {
+            if(applyUser.getProfile().getProfilePhoto() != null) {
+               photoUrl = applyUser.getProfile().getProfilePhoto().getUploadFileUrl();
+            }
+        }
 
         List<String> fields = applyUser.getFields().stream()
                 .map(f -> f.getValue())
@@ -45,6 +55,7 @@ public class ApplyUserResponse {
 
         return ApplyUserResponse.builder()
                 .userId(applyUser.getId())
+                .photoUrl(photoUrl)
                 .name(applyUser.getName())
                 .fields(fields)
                 .career(career).build();
