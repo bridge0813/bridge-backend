@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +58,10 @@ public class UserService {
 
         Profile profile = request.toEntity();
         findUser.updateProfile(profile);
+
+        if (request.getName() != null) {
+            findUser.updateName(request.getName());
+        }
 
         // 프로필 사진 등록
         if (profilePhoto != null) {
