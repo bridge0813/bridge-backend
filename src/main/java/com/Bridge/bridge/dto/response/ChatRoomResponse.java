@@ -12,12 +12,18 @@ public class ChatRoomResponse {
 
     private Long makeUserId;
 
+    private String makeUserPhotoUrl;
+
     private Long receiveUserId;
 
+    private String receiveUserPhotoUrl;
+
     @Builder
-    public ChatRoomResponse(String chatRoomId, Long makeUserId, Long receiveUserId) {
+    public ChatRoomResponse(String chatRoomId, Long makeUserId, String makeUserPhotoUrl, Long receiveUserId, String receiveUserPhotoUrl) {
         this.chatRoomId = chatRoomId;
         this.makeUserId = makeUserId;
+        this.makeUserPhotoUrl = makeUserPhotoUrl;
         this.receiveUserId = receiveUserId;
+        this.receiveUserPhotoUrl = receiveUserPhotoUrl;
     }
 }
