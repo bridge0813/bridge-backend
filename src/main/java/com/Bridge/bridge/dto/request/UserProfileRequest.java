@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserProfileRequest {
 
+    private String name;    //이름
 
     private String selfIntro;       // 자기소개서
 
