@@ -13,7 +13,7 @@ import java.io.IOException;
 @Configuration
 public class FCMConfig {
 
-    private final ClassPathResource firebaseResource = new ClassPathResource("firebase/bridge-79c01-firebase-adminsdk-mpsb0-dd17f808a6.json");
+    private final ClassPathResource firebaseResource = new ClassPathResource("firebase/bridge-950ec-firebase-adminsdk-o692d-8249202110.json");
 
     @Bean
     FirebaseApp firebaseApp() throws IOException {
