@@ -68,11 +68,15 @@ public class Profile {
 
         this.refLinks = request.getRefLinks() == null ? new ArrayList<>() : request.getRefLinks();
 
+
         //파일 업데이트
-        if (request.getFileIds() != null && !request.getFileIds().isEmpty()) {
+        if (request.getFileIds() != null) {
             List<Long> oldFileIds = this.getRefFiles().stream()
                     .map(f -> f.getId())
                     .collect(Collectors.toList());
+
+            // 기존에 유지되는 파일이 있을 경우
+            if(!request.getFileIds().isEmpty()) {
             System.out.println("oldFileIds" + oldFileIds.size());
             System.out.println("want id" + request.getFileIds());
 
@@ -80,8 +84,12 @@ public class Profile {
 
             System.out.println("oldFileIds" + oldFileIds.size());
             return oldFileIds;
+            }
+
+            // 전부 삭제되는 경우
+            return oldFileIds;
         }
-        return null;
+        throw new NullPointerException();
     }
 
     // --연관관계 메소드 -- //
