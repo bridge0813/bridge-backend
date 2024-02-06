@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,5 +79,28 @@ public class SearchWordService {
                         .searchWord(searchWord.getContent())
                         .build()))
                 .collect(Collectors.toList());
+    }
+
+    /*
+        Func : 검색어 전체 삭제
+        Parameter : userId
+        Return : List<SearchWordResponseDto>
+    */
+    @Transactional
+    public boolean deleteAllSearchWord(HttpServletRequest request){
+        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+
+        // 해당 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException());
+
+        try {
+            searchWordRepository.deleteAllByUser(user);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+
+        return true;
     }
 }
