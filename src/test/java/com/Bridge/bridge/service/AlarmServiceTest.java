@@ -252,7 +252,4 @@ public class AlarmServiceTest {
         Assertions.assertThat(responses.size()).isEqualTo(2);
 
     }
-
-
-
 }

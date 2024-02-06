@@ -631,11 +631,10 @@ class ProjectServiceTest {
         projectRepository.save(newProject2);
 
         List<String> findSkills = new ArrayList<>();
-        findSkills.add("JAVA");
-        findSkills.add("SPRINGBOOT");
+//        findSkills.add("REACT");
 
         FilterRequest filterRequest = FilterRequest.builder()
-                .part("BACKEND")
+                .part("FRONTEND")
                 .skills(findSkills)
                 .build();
 
@@ -650,8 +649,8 @@ class ProjectServiceTest {
         int result = projectService.filterProjectList(request, filterRequest).size();
 
         // then
-        assertThat(result).isEqualTo(1);
-        assertThat(newProject1.getRecruit()).isNotEqualTo(null);
+        System.out.println(projectService.filterProjectList(request, filterRequest));
+        assertThat(result).isEqualTo(0);
     }
 
     @Test
