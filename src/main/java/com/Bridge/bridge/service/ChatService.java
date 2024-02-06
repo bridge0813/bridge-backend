@@ -1,6 +1,7 @@
 package com.Bridge.bridge.service;
 
 import com.Bridge.bridge.domain.Chat;
+import com.Bridge.bridge.domain.File;
 import com.Bridge.bridge.domain.Message;
 import com.Bridge.bridge.domain.User;
 import com.Bridge.bridge.dto.request.ChatMessageRequest;
@@ -47,6 +48,24 @@ public class ChatService {
         User makeUser = userService.find(chatRoomRequest.getMakeUserId());
         User receiveUser = userService.find(chatRoomRequest.getReceiveUserId());
 
+        // 모집자 프로필 사진
+        String makeUserPhotoUrl = "no photo";
+        if(makeUser.getProfile() != null) {
+            File makeUserPhoto = makeUser.getProfile().getProfilePhoto();
+            if (makeUserPhoto != null) {
+                makeUserPhotoUrl = makeUserPhoto.getUploadFileUrl();
+            }
+        }
+
+        // 지원자 프로필 사진
+        String receiveUserPhotoUrl = "no photo";
+        if(receiveUser.getProfile() != null) {
+            File receiveUserPhoto = receiveUser.getProfile().getProfilePhoto();
+            if (receiveUserPhoto != null) {
+                receiveUserPhotoUrl = receiveUserPhoto.getUploadFileUrl();
+            }
+        }
+
         Chat chat = chatRepository.findByMakeUserAndReceiveUser(makeUser, receiveUser)
                 .orElseGet(() -> {
                    Chat newChat =  chatRoomRequest.toEntity();
@@ -57,7 +76,9 @@ public class ChatService {
         return ChatRoomResponse.builder()
                 .chatRoomId(chat.getChatRoomId())
                 .makeUserId(makeUser.getId())
+                .makeUserPhotoUrl(makeUserPhotoUrl)
                 .receiveUserId(receiveUser.getId())
+                .receiveUserPhotoUrl(receiveUserPhotoUrl)
                 .build();
     }
 
