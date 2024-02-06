@@ -164,15 +164,12 @@ public class ProjectService {
         LocalDateTime localDateTime = LocalDateTime.now();
 
         List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
-        System.out.println(allProject.size());
 
         List<Project> findProject = allProject.stream()
                 .filter((project) ->
-                {
-                    System.out.println(theSearchWord);
-                    System.out.println(project.getTitle().contains(theSearchWord));
-                    return project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord);
-                })
+
+                   project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord)
+                )
                 .collect(Collectors.toList());
 
         List<ProjectListResponse> response = new ArrayList<>();

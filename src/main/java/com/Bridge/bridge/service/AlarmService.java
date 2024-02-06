@@ -63,7 +63,6 @@ public class AlarmService {
        Parameter: NotificationRequestDto -> 알림 수신자, 알림 제목, 알림 내용
     */
     public void sendNotification(NotificationRequest notificationRequest) throws FirebaseMessagingException {
-        System.out.println();
         // 알림 받을 유저 찾기
         User user = userRepository.findById(notificationRequest.getUserId())
                 .orElseThrow(() -> new NotFoundUserException());
@@ -83,7 +82,6 @@ public class AlarmService {
                 .setNotification(notification)
                 .putData("time", localDateTime.toString())
                 .build();
-        System.out.println(message);
         try {
             firebaseMessaging.send(message);
         }
@@ -144,8 +142,6 @@ public class AlarmService {
 
         if(sender.equals(chat.getMakeUser())){ // 메세지를 보낸 사람이 채팅방을 만든 사람이라면
             log.info("Sender User(Maker) Name = {}", sender.getName());
-
-            System.out.println("testtesttesttest");
 
             // 알림보내기
             NotificationRequest notificationRequest = NotificationRequest.builder()
