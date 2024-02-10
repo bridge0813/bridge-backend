@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +40,10 @@ public class SearchWordService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException());
 
-        List<SearchWord> searchWords = user.getSearchWords();
+        List<SearchWord> searchWords = searchWordRepository.findAllByUserOrderByHistoryDesc(user);
 
         if(searchWords.isEmpty()){
-            throw new NotFoundSearchWordException();
+            return new ArrayList<>();
         }
         return searchWords.stream()
                 .map((searchWord -> SearchWordResponse.builder()

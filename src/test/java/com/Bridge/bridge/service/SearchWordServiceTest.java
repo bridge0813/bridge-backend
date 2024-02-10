@@ -32,6 +32,9 @@ public class SearchWordServiceTest {
     private SearchWordService searchWordService;
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @DisplayName("최근 검색어 조회")
@@ -41,29 +44,33 @@ public class SearchWordServiceTest {
         User user = new User("user1", Platform.APPLE, "Test");
         user = userRepository.save(user);
 
-        SearchWord newSearch1 = SearchWord.builder()
-                .content("검색어1")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch2 = SearchWord.builder()
-                .content("검색어2")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
-        SearchWord newSearch3 = SearchWord.builder()
-                .content("검색어3")
-                .user(user)
-                .history(LocalDateTime.now())
-                .build();
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
-        searchWordRepository.save(newSearch1);
-        searchWordRepository.save(newSearch2);
-        searchWordRepository.save(newSearch3);
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
 
-        user.getSearchWords().add(newSearch1);
-        user.getSearchWords().add(newSearch2);
-        user.getSearchWords().add(newSearch3);
+        request.addHeader("Authorization", "Bearer " + token);
+
+        // when
+        projectService.findByTitleAndContent(request, "검색어1");
+        projectService.findByTitleAndContent(request, "검색어2");
+        projectService.findByTitleAndContent(request, "검색어3");
+        List<SearchWordResponse> searchWordResponse = searchWordService.resentSearchWord(request);
+
+        // then
+        Assertions.assertThat(searchWordResponse.get(0).getSearchWord()).isEqualTo("검색어3");
+        Assertions.assertThat(searchWordResponse.get(1).getSearchWord()).isEqualTo("검색어2");
+        Assertions.assertThat(searchWordResponse.get(2).getSearchWord()).isEqualTo("검색어1");
+    }
+
+    @DisplayName("최근 검색어 조회_최근 검색어가 없는 경우 빈 배열 반환")
+    @Test
+    void resentSearchWord_nothing() {
+        // given
+        User user = new User("user1", Platform.APPLE, "Test");
+        user = userRepository.save(user);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -76,9 +83,7 @@ public class SearchWordServiceTest {
 
         // when
         List<SearchWordResponse> searchWordResponse = searchWordService.resentSearchWord(request);
-        Assertions.assertThat(searchWordResponse.get(0).getSearchWord()).isEqualTo("검색어1");
-        Assertions.assertThat(searchWordResponse.get(1).getSearchWord()).isEqualTo("검색어2");
-        Assertions.assertThat(searchWordResponse.get(2).getSearchWord()).isEqualTo("검색어3");
+        Assertions.assertThat(searchWordResponse.size()).isEqualTo(0);
     }
 
     @DisplayName("최근 검색어 삭제")
@@ -173,7 +178,7 @@ public class SearchWordServiceTest {
         //then
         Assertions.assertThat(result).isEqualTo(true);
 
-        List<SearchWord> searchWords = searchWordRepository.findAllByUser(user);
+        List<SearchWord> searchWords = searchWordRepository.findAllByUserOrderByHistoryDesc(user);
         Assertions.assertThat(searchWords.size()).isEqualTo(0);
     }
 
@@ -199,7 +204,7 @@ public class SearchWordServiceTest {
         //then
         Assertions.assertThat(result).isEqualTo(true);
 
-        List<SearchWord> searchWords = searchWordRepository.findAllByUser(user);
+        List<SearchWord> searchWords = searchWordRepository.findAllByUserOrderByHistoryDesc(user);
         Assertions.assertThat(searchWords.size()).isEqualTo(0);
     }
 }
