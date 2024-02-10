@@ -159,8 +159,6 @@ public class ProjectService {
                 .build();
         searchWordRepository.save(searchWord);
 
-        user.getSearchWords().add(searchWord);
-
         LocalDateTime localDateTime = LocalDateTime.now();
 
         List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);

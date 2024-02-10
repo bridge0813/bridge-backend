@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SearchWordRepository extends JpaRepository<SearchWord, Long> {
 
-    List<SearchWord> findAllByUser(User user);
+    List<SearchWord> findAllByUserOrderByHistoryDesc(User user);
 
     void deleteAllByUser(User user);
 }
