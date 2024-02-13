@@ -297,9 +297,9 @@ class ProjectServiceTest {
         ProjectUpdateRequest updateProject = ProjectUpdateRequest.builder()
                 .title("Update project")
                 .overview("This is Updated Project.")
-                .dueDate(dueDate)
-                .startDate(startDate)
-                .endDate(endDate)
+                .dueDate(LocalDateTime.of(2024,12,31,0,0,0))
+                .startDate(LocalDateTime.of(2024,12,31,0,0,0))
+                .endDate(LocalDateTime.of(2025,12,31,0,0,0))
                 .recruit(updateRecruit)
                 .tagLimit(new ArrayList<>())
                 .meetingWay("Offline")
@@ -311,7 +311,15 @@ class ProjectServiceTest {
         ProjectResponse result = projectService.updateProject(newProject.getId(), updateProject);
 
         // then
+
+        LocalDateTime targetDuedate = LocalDateTime.of(2024,12,31,0,0,0);
+        LocalDateTime targetStartdate = LocalDateTime.of(2024,12,31,0,0,0);
+        LocalDateTime targetEnddate = LocalDateTime.of(2025,12,31,0,0,0);
         assertThat(result.getTitle()).isEqualTo("Update project");
+        assertThat(result.getDueDate()).isEqualTo(targetDuedate+targetDuedate.format(DateTimeFormatter.ofPattern(":ss")));
+        assertThat(result.getStartDate()).isEqualTo(targetStartdate+targetStartdate.format(DateTimeFormatter.ofPattern(":ss")));
+        assertThat(result.getEndDate()).isEqualTo(targetEnddate+targetEnddate.format(DateTimeFormatter.ofPattern(":ss")));
+        System.out.println(result);
     }
 
     @Test
@@ -1636,7 +1644,7 @@ class ProjectServiceTest {
         int month = localDateTime.getMonthValue();
         int day = localDateTime.getDayOfMonth();
 
-        for(int i=1; i<31; i++) {
+        for(int i=1; i<29; i++) {
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
                     .recruitPart(Field.BACKEND)
@@ -1670,7 +1678,7 @@ class ProjectServiceTest {
         List<TopProjectResponse> result = projectService.topProjects(null);
 
         // then
-        Assertions.assertThat(result.size()).isEqualTo(30 - day + 1);
+        Assertions.assertThat(result.size()).isEqualTo(28 - day + 1);
     }
 
     @DisplayName("마감 임박 프로젝트 조회 기능")
@@ -1686,7 +1694,7 @@ class ProjectServiceTest {
         int month = now.getMonthValue();
         int day = now.getDayOfMonth();
 
-        for (int i=1; i<31; i++){
+        for (int i=1; i<29; i++){
             List<Part> recruit = new ArrayList<>();
             recruit.add(Part.builder()
                     .recruitPart(Field.BACKEND)
@@ -1709,7 +1717,7 @@ class ProjectServiceTest {
         List<imminentProjectResponse> responses = projectService.getdeadlineImminentProejcts(user.getId());
 
         // then
-        Assertions.assertThat(responses.size()).isEqualTo(30 - day + 1);
+        Assertions.assertThat(responses.size()).isEqualTo(28 - day + 1);
         Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(year,month,day,23,59,59).toString());
         Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project" + day);
     }

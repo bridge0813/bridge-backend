@@ -110,7 +110,7 @@ public class ProjectService {
     }
 
     /*
-        Func : 프로젝트 모집글 수정 - 지민
+        Func : 프로젝트 모집글 수정
         Parameter : 프로젝트 모집글 수정폼
         Return : PrjectResponseDto -> 수정본
     */
