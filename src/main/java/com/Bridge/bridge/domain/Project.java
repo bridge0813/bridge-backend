@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,29 +82,41 @@ public class Project {
                 .map((part) -> part.toDto())
                 .collect(Collectors.toList());
 
+        LocalDateTime dueDate = this.dueDate;
         LocalDateTime startDate = this.startDate;
         LocalDateTime endDate = this.endDate;
+
+        String s_dueDate = "";
         String s_startDate = "";
         String s_endDate = "";
+
+        s_dueDate = dueDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        s_dueDate = s_dueDate+"T";
+        s_dueDate = s_dueDate + dueDate.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         if(startDate == null){
             s_startDate = "미정";
         }
         else {
-            s_startDate = startDate.toString();
+            s_startDate = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            s_startDate = s_startDate+"T";
+            s_startDate = s_startDate+startDate.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
         }
         if(endDate == null){
             s_endDate = "미정";
         }
         else {
-            s_endDate = endDate.toString();
+            s_endDate = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            s_endDate = s_endDate+"T";
+            s_endDate = s_endDate + endDate.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         }
 
 
         return ProjectResponse.builder()
                 .title(this.getTitle())
                 .overview(this.getOverview())
-                .dueDate(this.getDueDate().toString())
+                .dueDate(s_dueDate)
                 .startDate(s_startDate)
                 .endDate(s_endDate)
                 .recruit(recruit)
