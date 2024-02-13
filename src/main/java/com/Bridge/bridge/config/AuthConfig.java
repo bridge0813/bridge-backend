@@ -15,11 +15,11 @@ public class AuthConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/users/*", "/searchWords","/project","/projects/category",
+                .addPathPatterns("/users/**", "/searchWords","/project","/projects/category",
                         "/projects", "/projects/mypart", "/project/deadline",
                         "/project/scrap","/projects/apply","/projects/apply/cancel",
                         "/projects/apply/users","/projects/accept","/projects/reject",
-                        "/chat/*", "/alarm", "/alarms")
-                .excludePathPatterns("/home", "/login/apple");
+                        "/chat/**", "/alarm", "/alarms")
+                .excludePathPatterns("/home", "/login/apple", "/users/profile");
     }
 }
