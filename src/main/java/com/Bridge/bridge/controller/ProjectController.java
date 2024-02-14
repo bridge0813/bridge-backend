@@ -91,7 +91,7 @@ public class ProjectController {
     }
 
     // 프로젝트 모집글 상세보기
-    @GetMapping("/project")
+    @GetMapping("/project/one")
     @Operation(summary = "모집글 상세보기 기능", description = "모집글의 구체적인 사항들을 조회할 수 있다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모집글 상세보기 조회 완료"),
