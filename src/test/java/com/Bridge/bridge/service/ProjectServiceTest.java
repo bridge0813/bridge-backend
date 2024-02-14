@@ -1626,10 +1626,16 @@ class ProjectServiceTest {
         // when
         List<TopProjectResponse> result = projectService.topProjects(null);
 
+        // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+        String duedate = LocalDateTime.of(2050,1,12,0,0,0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                +"T"
+                +LocalDateTime.of(2050,1,12,0,0,0).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
         // then
         Assertions.assertThat(result.size()).isEqualTo(20);
         Assertions.assertThat(result.get(0).getTitle()).isEqualTo("제목1");
         Assertions.assertThat(result.get(19).getTitle()).isEqualTo("제목20");
+        Assertions.assertThat(result.get(19).getDueDate()).isEqualTo(duedate);
     }
 
     @DisplayName("인기글 조회_마감 지난 게시글은 제외")
@@ -1716,10 +1722,12 @@ class ProjectServiceTest {
         // when
         List<imminentProjectResponse> responses = projectService.getdeadlineImminentProejcts(user.getId());
 
+
         // then
         Assertions.assertThat(responses.size()).isEqualTo(28 - day + 1);
         Assertions.assertThat(responses.get(0).getDueDate()).isEqualTo(LocalDateTime.of(year,month,day,23,59,59).toString());
         Assertions.assertThat(responses.get(0).getTitle()).isEqualTo("project" + day);
+
     }
 
 }

@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -186,10 +187,16 @@ public class ProjectService {
                 isScrap = true;
             }
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = findProject.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +findProject.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+
             ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(findProject.get(i).getId())
                     .title(findProject.get(i).getTitle())
-                    .dueDate(findProject.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
@@ -263,10 +270,15 @@ public class ProjectService {
                 isScrap = true;
             }
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(projects.get(i).getId())
                     .title(projects.get(i).getTitle())
-                    .dueDate(projects.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
@@ -313,11 +325,16 @@ public class ProjectService {
                 status = "현재 모집중";
             }
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = myProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +myProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             MyProjectResponse myProjectResponse = MyProjectResponse.builder()
                     .projectId(myProjects.get(i).getId())
                     .title(myProjects.get(i).getTitle())
                     .overview(myProjects.get(i).getOverview())
-                    .dueDate(myProjects.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitTotalNum(total[0])
                     .status(status)
                     .build();
@@ -351,10 +368,16 @@ public class ProjectService {
                 allProjects.get(i).getRecruit().stream()
                         .forEach((part -> total[0] += part.getRecruitNum()));
 
+
+                // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+                String duedate = allProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        +"T"
+                        +allProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
                 ProjectListResponse projectListResponse = ProjectListResponse.builder()
                         .projectId(allProjects.get(i).getId())
                         .title(allProjects.get(i).getTitle())
-                        .dueDate(allProjects.get(i).getDueDate().toString())
+                        .dueDate(duedate)
                         .recruitTotalNum(total[0])
                         .scrap(false)
                         .build();
@@ -382,10 +405,15 @@ public class ProjectService {
                 isScrap = true;
             }
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = allProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +allProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(allProjects.get(i).getId())
                     .title(allProjects.get(i).getTitle())
-                    .dueDate(allProjects.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
@@ -433,10 +461,15 @@ public class ProjectService {
                 isScrap = true;
             }
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = myPartProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +myPartProjects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             ProjectListResponse projectListResponse = ProjectListResponse.builder()
                     .projectId(myPartProjects.get(i).getId())
                     .title(myPartProjects.get(i).getTitle())
-                    .dueDate(myPartProjects.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitTotalNum(total[0])
                     .scrap(isScrap)
                     .build();
@@ -559,11 +592,16 @@ public class ProjectService {
                     isScrap = true;
                 }
 
+                // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+                String duedate = top20.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        +"T"
+                        +top20.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
                 topProjectResponses.add(TopProjectResponse.builder()
                         .rank(i+1)
                         .projectId(top20.get(i).getId())
                         .title(top20.get(i).getTitle())
-                        .dueDate(top20.get(i).getDueDate().toString())
+                        .dueDate(duedate)
                         .recruitNum(total[0])
                         .scrap(isScrap)
                         .build());
@@ -577,11 +615,16 @@ public class ProjectService {
             top20.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = top20.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +top20.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             topProjectResponses.add(TopProjectResponse.builder()
                     .rank(i+1)
                     .projectId(top20.get(i).getId())
                     .title(top20.get(i).getTitle())
-                    .dueDate(top20.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitNum(total[0])
                     .scrap(false)
                     .build());
@@ -756,11 +799,16 @@ public class ProjectService {
                     isScrap = true;
                 }
 
+                // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+                String duedate = projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        +"T"
+                        +projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
                 imminentProjectResponses.add(imminentProjectResponse.builder()
                         .imminentRank(i+1)
                         .projectId(projects.get(i).getId())
                         .title(projects.get(i).getTitle())
-                        .dueDate(projects.get(i).getDueDate().toString())
+                        .dueDate(duedate)
                         .recruitNum(total[0])
                         .scrap(isScrap)
                         .build());
@@ -776,11 +824,16 @@ public class ProjectService {
             projects.get(i).getRecruit().stream()
                     .forEach((part -> total[0] += part.getRecruitNum()));
 
+            // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+            String duedate = projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    +"T"
+                    +projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             imminentProjectResponses.add(imminentProjectResponse.builder()
                     .imminentRank(i+1)
                     .projectId(projects.get(i).getId())
                     .title(projects.get(i).getTitle())
-                    .dueDate(projects.get(i).getDueDate().toString())
+                    .dueDate(duedate)
                     .recruitNum(total[0])
                     .scrap(false)
                     .build());
