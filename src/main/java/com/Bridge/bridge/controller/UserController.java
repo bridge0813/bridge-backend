@@ -71,7 +71,7 @@ public class UserController {
     /**
      * 유저 개인 프로필 확인
      */
-    @GetMapping("/users/profile")
+    @GetMapping("/users/profile/one")
     public ResponseEntity<?> showProfile(@RequestParam("userId") Long userId) {
         UserProfileResponse profile = userService.getProfile(userId);
 
