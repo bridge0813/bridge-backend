@@ -14,7 +14,7 @@ public class BookmarkListResponse {
 
     private Long projectId;
 
-    private long dDay;
+    private String dDay;
 
     private String title;
 
@@ -25,7 +25,7 @@ public class BookmarkListResponse {
     private int recruitTotalNum; // 총 모집 인원
 
     @Builder
-    private BookmarkListResponse(Long projectId, long dDay, String title, LocalDateTime startDate, LocalDateTime endDate, int recruitTotalNum) {
+    private BookmarkListResponse(Long projectId, String dDay, String title, LocalDateTime startDate, LocalDateTime endDate, int recruitTotalNum) {
         this.projectId = projectId;
         this.dDay = dDay;
         this.title = title;
@@ -56,7 +56,7 @@ public class BookmarkListResponse {
         return null;
     }
 
-    private static long getBetweenDays(LocalDateTime start, LocalDateTime end) {
-        return ChronoUnit.DAYS.between(start, end);
+    private static String getBetweenDays(LocalDateTime start, LocalDateTime end) {
+        return String.valueOf(ChronoUnit.DAYS.between(start, end));
     }
 }
