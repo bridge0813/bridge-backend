@@ -20,6 +20,6 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/project/scrap","/projects/apply","/projects/apply/cancel",
                         "/projects/apply/users","/projects/accept","/projects/reject",
                         "/chat/**", "/alarm", "/alarms")
-                .excludePathPatterns("/home", "/login/apple", "/users/profile", "/project/one");
+                .excludePathPatterns("/home", "/login/apple", "/users/profile/one", "/project/one");
     }
 }
