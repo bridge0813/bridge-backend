@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum Stack {
 
     SWIFT("Swift"), OBJECTIVE_C("Objective-c"), UIKIT("UIKit"), SWIFTUI("SwiftUI"), RXSWIFT("RxSwift"),
-    COMBINE("Combine"), XCTEST("XCTest"), TUIST("Tuist"), REACTNATIVE("Reactive Native"), FLUTTER("Flutter"),
+    COMBINE("Combine"), XCTEST("XCTest"), TUIST("Tuist"), REACTNATIVE("React Native"), FLUTTER("Flutter"),
     KOTLIN("Kotlin"), JAVA("Java"), COMPOSE("Compose"), RXJAVA("RXJava"), COROUTINE("Coroutine"),
     JAVASCRIPT("JavaScript"), TYPESCRIPT("TypeScript"), HTML("HTML"), CSS("CSS"), REACT("React"),
     VUE("Vue"), ANGULAR("Angular"), SVELTE("Svelte"), JQUERY("JQuery"), BACKBONE("Backbone"), PINIA("Pinia"),
