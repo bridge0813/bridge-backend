@@ -1766,4 +1766,84 @@ class ProjectServiceTest {
 
     }
 
+    @Test
+    @DisplayName("마감된 모집글 수정 테스트")
+    void updateClosedProject() {
+        // given
+        User user = new User("update", Platform.APPLE, "updateTest");
+        userRepository.save(user);
+
+        List<Stack> skill = new ArrayList<>();
+        skill.add(Stack.JAVA);
+        skill.add(Stack.SPRINGBOOT);
+
+        List<Part> recruit = new ArrayList<>();
+        recruit.add(Part.builder()
+                .recruitPart(Field.BACKEND)
+                .recruitNum(3)
+                .recruitSkill(skill)
+                .requirement("아무거나")
+                .build());
+
+        LocalDateTime dueDate = LocalDateTime.of(2023,1,12,0,0,0);
+        LocalDateTime startDate = LocalDateTime.of(2023,2,12,0,0,0);
+        LocalDateTime endDate = LocalDateTime.of(2023,3,12,0,0,0);
+
+
+        Project newProject = Project.builder()
+                .title("어플 프로젝트")
+                .overview("This is new Project.")
+                .dueDate(dueDate)
+                .startDate(startDate)
+                .endDate(endDate)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .user(user)
+                .stage("Before Start")
+                .build();
+
+        recruit.get(0).setProject(newProject);
+        projectRepository.save(newProject);
+
+
+        List<String> updateSkill = new ArrayList<>();
+        updateSkill.add("JAVASCRIPT");
+        updateSkill.add("REACT");
+
+        List<PartRequest> updateRecruit = new ArrayList<>();
+        updateRecruit.add(PartRequest.builder()
+                .recruitPart("FRONTEND")
+                .recruitNum(2)
+                .recruitSkill(updateSkill)
+                .requirement("화이팅")
+                .build());
+
+        ProjectUpdateRequest updateProject = ProjectUpdateRequest.builder()
+                .title("Update project")
+                .overview("This is Updated Project.")
+                .dueDate(LocalDateTime.of(2024,12,31,0,0,0))
+                .startDate(LocalDateTime.of(2024,12,31,0,0,0))
+                .endDate(LocalDateTime.of(2025,12,31,0,0,0))
+                .recruit(updateRecruit)
+                .tagLimit(new ArrayList<>())
+                .meetingWay("Offline")
+                .stage("Before Start")
+                .build();
+
+
+        // when
+        ProjectResponse result = projectService.updateProject(newProject.getId(), updateProject);
+
+        // then
+
+        LocalDateTime targetDuedate = LocalDateTime.of(2024,12,31,0,0,0);
+        LocalDateTime targetStartdate = LocalDateTime.of(2024,12,31,0,0,0);
+        LocalDateTime targetEnddate = LocalDateTime.of(2025,12,31,0,0,0);
+        assertThat(result.getTitle()).isEqualTo("Update project");
+        assertThat(result.getDueDate()).isEqualTo(targetDuedate+targetDuedate.format(DateTimeFormatter.ofPattern(":ss")));
+        assertThat(result.getStartDate()).isEqualTo(targetStartdate+targetStartdate.format(DateTimeFormatter.ofPattern(":ss")));
+        assertThat(result.getEndDate()).isEqualTo(targetEnddate+targetEnddate.format(DateTimeFormatter.ofPattern(":ss")));
+        System.out.println(result);
+    }
+
 }
