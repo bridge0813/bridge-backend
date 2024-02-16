@@ -146,7 +146,7 @@ class ProjectServiceTest {
 
 
         // When
-        List<ProjectListResponse> result = projectService.findByTitleAndContent(request,"어플");
+        List<ProjectListResponse> result = projectService.findByTitleAndContent(-1,"어플");
 
         // Then
         assertEquals(result.get(0).getTitle(),"어플 프로젝트" );
@@ -640,9 +640,9 @@ class ProjectServiceTest {
         projectRepository.save(newProject2);
 
         List<String> findSkills = new ArrayList<>();
-//        findSkills.add("REACT");
 
         FilterRequest filterRequest = FilterRequest.builder()
+                .userId(user.getId())
                 .part("FRONTEND")
                 .skills(findSkills)
                 .build();
@@ -655,10 +655,10 @@ class ProjectServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        int result = projectService.filterProjectList(request, filterRequest).size();
+        int result = projectService.filterProjectList(filterRequest).size();
 
         // then
-        System.out.println(projectService.filterProjectList(request, filterRequest));
+        System.out.println(projectService.filterProjectList(filterRequest));
         assertThat(result).isEqualTo(0);
     }
 

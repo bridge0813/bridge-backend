@@ -53,8 +53,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "401", description = "인증 실패 (Unauthorized)"),
             @ApiResponse(responseCode = "404", description = "유저 찾기 실패")
     })
-    public List<ProjectListResponse> searchProject(HttpServletRequest request, @RequestBody SearchWordRequest searchWord){
-        return projectService.findByTitleAndContent(request, searchWord.getSearchWord());
+    public List<ProjectListResponse> searchProject( @RequestBody SearchWordRequest searchWord){
+        return projectService.findByTitleAndContent(searchWord.getUserId(), searchWord.getSearchWord());
     }
 
     // 프로젝트 모집글 삭제
@@ -110,8 +110,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "모집글 필터링 조회 완료"),
             @ApiResponse(responseCode = "400", description = "모집글 필터링 조회 실패")
     })
-    public List<ProjectListResponse> filterProjects(HttpServletRequest request, @RequestBody FilterRequest filterRequest){
-        return projectService.filterProjectList(request, filterRequest);
+    public List<ProjectListResponse> filterProjects(@RequestBody FilterRequest filterRequest){
+        return projectService.filterProjectList(filterRequest);
     }
 
 

@@ -54,9 +54,9 @@ public class SearchWordServiceTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         // when
-        projectService.findByTitleAndContent(request, "검색어1");
-        projectService.findByTitleAndContent(request, "검색어2");
-        projectService.findByTitleAndContent(request, "검색어3");
+        projectService.findByTitleAndContent(user.getId(), "검색어1");
+        projectService.findByTitleAndContent(user.getId(), "검색어2");
+        projectService.findByTitleAndContent(user.getId(), "검색어3");
         List<SearchWordResponse> searchWordResponse = searchWordService.resentSearchWord(request);
 
         // then

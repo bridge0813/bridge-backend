@@ -351,20 +351,15 @@ class ProjectControllerTest {
         findSkills.add("SPRINGBOOT");
 
         FilterRequest filterRequest = FilterRequest.builder()
+                .userId(user.getId())
                 .part("BACKEND")
                 .skills(findSkills)
                 .build();
 
         String body = objectMapper.writeValueAsString(filterRequest);
 
-        String token = Jwts.builder()
-                .setSubject(String.valueOf(user.getId()))
-                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
-                .compact();
-
         // when
         mockMvc.perform(post("/projects/category")
-                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
