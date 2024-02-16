@@ -143,9 +143,53 @@ public class ProjectService {
         Return : 프로젝트 모집글 List
     */
     @Transactional
-    public List<ProjectListResponse> findByTitleAndContent(HttpServletRequest request, String theSearchWord){
+    public List<ProjectListResponse> findByTitleAndContent(long userId, String theSearchWord){
 
-        Long userId = jwtTokenProvider.getUserIdFromRequest(request);
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
+
+        List<Project> findProject = allProject.stream()
+                .filter((project) ->
+
+                        project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord)
+                )
+                .collect(Collectors.toList());
+
+        System.out.println(findProject.size());
+        System.out.println(theSearchWord);
+        List<ProjectListResponse> response = new ArrayList<>();
+
+        if (userId == -1){ // 로그인 하지 않은 유저일 경우
+
+
+            for(int i =0; i<findProject.size(); i++) {
+                final int[] total = {0};
+
+                findProject.get(i).getRecruit().stream()
+                        .forEach((part -> total[0] += part.getRecruitNum()));
+
+                boolean isScrap = false;
+
+                // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+                String duedate = findProject.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        + "T"
+                        + findProject.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+
+                ProjectListResponse projectListResponse = ProjectListResponse.builder()
+                        .projectId(findProject.get(i).getId())
+                        .title(findProject.get(i).getTitle())
+                        .dueDate(duedate)
+                        .recruitTotalNum(total[0])
+                        .scrap(isScrap)
+                        .build();
+                response.add(projectListResponse);
+            }
+
+            return  response;
+        }
+        //로그인 한 유저일 경우
 
         // 모집글 작성한 user 찾기
         User user = userRepository.findById(userId)
@@ -159,19 +203,6 @@ public class ProjectService {
                 .user(user)
                 .build();
         searchWordRepository.save(searchWord);
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-
-        List<Project> allProject = projectRepository.findAllByDueDateGreaterThanEqualOrderByUploadTime(localDateTime);
-
-        List<Project> findProject = allProject.stream()
-                .filter((project) ->
-
-                   project.getOverview().contains(theSearchWord) || project.getTitle().contains(theSearchWord)
-                )
-                .collect(Collectors.toList());
-
-        List<ProjectListResponse> response = new ArrayList<>();
 
         for(int i =0; i<findProject.size(); i++){
             final int[] total = {0};
@@ -237,15 +268,12 @@ public class ProjectService {
         Parameter : List<String>,
         Return : projectResponse
     */
-    public List<ProjectListResponse> filterProjectList(HttpServletRequest request, FilterRequest filterRequest){
-
-        Long adminUserId = jwtTokenProvider.getUserIdFromRequest(request);
-
-        User user = userRepository.findById(adminUserId).orElseThrow(()->new NotFoundUserException());
+    public List<ProjectListResponse> filterProjectList(FilterRequest filterRequest){
 
         List<Stack> skills = filterRequest.getSkills().stream()
                 .map(s -> Stack.valueOf(s))
                 .collect(Collectors.toList());
+
 
         Field recruitPart = Field.valueOf(filterRequest.getPart());
         List<Part> parts = partRepository.findAllByRecruitSkillInAndAndRecruitPart(skills, recruitPart);
@@ -253,8 +281,37 @@ public class ProjectService {
         LocalDateTime localDateTime = LocalDateTime.now();
         List<Project> projects = projectRepository.findAllByRecruitInAndDueDateGreaterThanEqual(parts, localDateTime);
 
-
         List<ProjectListResponse> response = new ArrayList<>();
+
+        if (filterRequest.getUserId() == -1){ // 로그인 하지 않은 유저일 경우
+            for(int i =0; i<projects.size(); i++){
+                final int[] total = {0};
+
+                projects.get(i).getRecruit().stream()
+                        .forEach((part -> total[0] += part.getRecruitNum()));
+
+                boolean isScrap = false;
+
+                // 0초일 경우 초 단위가 출력되지 않는 현상을 방지하기 위해
+                String duedate = projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        +"T"
+                        +projects.get(i).getDueDate().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+                ProjectListResponse projectListResponse = ProjectListResponse.builder()
+                        .projectId(projects.get(i).getId())
+                        .title(projects.get(i).getTitle())
+                        .dueDate(duedate)
+                        .recruitTotalNum(total[0])
+                        .scrap(isScrap)
+                        .build();
+                response.add(projectListResponse);
+            }
+
+            return response;
+        }
+
+        // 로그인 한 유저일 경우
+        User user = userRepository.findById(filterRequest.getUserId()).orElseThrow(()->new NotFoundUserException());
 
         for(int i =0; i<projects.size(); i++){
             final int[] total = {0};

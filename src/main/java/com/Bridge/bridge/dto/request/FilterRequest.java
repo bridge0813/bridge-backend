@@ -10,12 +10,15 @@ import java.util.List;
 @NoArgsConstructor
 public class FilterRequest {
 
+    private long userId;
+
     private String part;
 
     private List<String> skills;
 
     @Builder
-    public FilterRequest(String part, List<String> skills) {
+    public FilterRequest(long userId, String part, List<String> skills) {
+        this.userId = userId;
         this.part = part;
         this.skills = skills;
     }
