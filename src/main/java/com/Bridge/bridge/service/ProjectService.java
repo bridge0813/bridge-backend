@@ -6,6 +6,7 @@ import com.Bridge.bridge.dto.request.ProjectUpdateRequest;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.ProjectRequest;
 import com.Bridge.bridge.exception.BridgeException;
+import com.Bridge.bridge.exception.conflict.ConflictApplyProjectException;
 import com.Bridge.bridge.repository.*;
 import com.Bridge.bridge.dto.response.ProjectResponse;
 import com.Bridge.bridge.repository.BookmarkRepository;
@@ -630,6 +631,13 @@ public class ProjectService {
 
         Project findProject = projectRepository.findById(projectId)
                         .orElseThrow(() -> new NotFoundProjectException());
+
+        //이미 지원한 경우 예외 반환
+        //새로 지원하는 경우 생성
+        if (applyProjectRepository.findByUserAndProject(findUser, findProject)
+                .isPresent()) {
+            throw new ConflictApplyProjectException();
+        }
 
         ApplyProject applyProject = new ApplyProject();
         applyProject.setUserAndProject(findUser, findProject);
