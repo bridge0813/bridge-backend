@@ -14,6 +14,7 @@ import com.Bridge.bridge.dto.request.ProjectUpdateRequest;
 import com.Bridge.bridge.dto.response.*;
 import com.Bridge.bridge.dto.request.PartRequest;
 import com.Bridge.bridge.dto.request.ProjectRequest;
+import com.Bridge.bridge.exception.conflict.ConflictApplyProjectException;
 import com.Bridge.bridge.repository.BookmarkRepository;
 import com.Bridge.bridge.exception.notfound.NotFoundProjectException;
 import com.Bridge.bridge.repository.ApplyProjectRepository;
@@ -783,6 +784,41 @@ class ProjectServiceTest {
         assertEquals(1, saveUser2.getApplyProjects().size());
         assertEquals(1, saveProject.getApplyProjects().size());
         assertTrue(apply);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("프로젝트 지원하기 - 중복지원 시 예외 반환")
+    void apply_Dup() {
+        //given
+        User user1 = new User("bridge1", Platform.APPLE, "1");
+        User user2 = new User("bridge2", Platform.APPLE, "1");
+        userRepository.save(user1);
+
+        Project project1 = Project.builder()
+                .title("title1")
+                .overview("overview1")
+                .user(user1)
+                .stage("stage1")
+                .dueDate(LocalDateTime.of(2050,1,12,0,0,0))
+                .build();
+
+        Project saveProject = projectRepository.save(project1);
+        User saveUser2 = userRepository.save(user2);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String token = Jwts.builder()
+                .setSubject(String.valueOf(user2.getId()))
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProvider.getKey())
+                .compact();
+
+        request.addHeader("Authorization", "Bearer " + token);
+
+        boolean apply = projectService.apply(request, saveProject.getId());
+
+        //when
+        assertThrows(ConflictApplyProjectException.class, () -> projectService.apply(request, saveProject.getId()));
     }
 
     @DisplayName("내가 작성한 모집글")
